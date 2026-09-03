@@ -1,15 +1,15 @@
 # AI Paper Analysis
 
-AI Paper Analysis is a Codex plugin and standalone Skill suite for legal paper discovery, source-grounded paper interpretation, exclusive classification, and auditable category comparison. Reports may use the language requested by the user; maintained Skill instructions, code, schemas, and repository documentation are English.
+AI Paper Analysis is a complete Codex plugin suite for legal paper discovery, source-grounded paper interpretation, exclusive classification, and auditable category comparison. Finder can also be installed on its own for paper discovery and classification. Reports may use the language requested by the user; maintained Skill instructions, code, schemas, and repository documentation are English.
 
 ## Included Skills
 
 - `$ai-paper-analysis` routes a request through the smallest required workflow and requires the three child Skills to be installed.
-- `$ai-paper-analysis-finder` is independently installable and handles discovery, legal PDF acquisition, identity and relevance checks, and optional exclusive classification.
-- `$ai-paper-analysis-interpreter` is independently installable and creates or revises detailed seven-section paper reports from verified original sources.
-- `$ai-paper-analysis-comparator` is independently installable and creates category reports from verified classifications and complete paper reports.
+- `$ai-paper-analysis-finder` is the only child Skill recommended for standalone installation and handles discovery, legal PDF acquisition, identity and relevance checks, and optional exclusive classification.
+- `$ai-paper-analysis-interpreter` is a complete-plugin workflow component that creates or revises detailed seven-section paper reports from verified original sources.
+- `$ai-paper-analysis-comparator` is a complete-plugin workflow component that creates category reports from verified classifications and complete paper reports.
 
-The router is eligible for automatic selection. The child Skills are explicit-only. A child Skill does not require the router or its siblings, while the router stops and identifies any missing child instead of imitating it.
+The router is eligible for automatic selection. The child Skills are explicit-only. Finder may be installed alone; install the complete plugin for any workflow that uses Interpreter, Comparator, or the router. The router stops and identifies any missing child instead of imitating it.
 
 ## Prerequisites
 
@@ -18,7 +18,7 @@ The router is eligible for automatic selection. The child Skills are explicit-on
 - Network access for discovery and first-use dependency installation.
 - Optional: SOPS and age for encrypted project credentials, and OCRmyPDF for user-approved OCR.
 
-The Skill launchers create no virtual environment inside an installed Skill or paper library. They use a locked, versioned cache under the platform cache directory, or `APA_CACHE_DIR` when set. Installing a child first and the router or full plugin later reuses a compatible runtime instead of reinstalling it. Renderer dependencies are added lazily only when an interpretation or comparison audit needs them. Incompatible future runtime APIs can coexist, and only the two newest initialized versions of each layer are retained.
+The Skill launchers create no virtual environment inside an installed Skill or paper library. They use a locked, versioned cache under the platform cache directory, or `APA_CACHE_DIR` when set. Installing Finder first and the full plugin later reuses a compatible runtime instead of reinstalling it. Renderer dependencies are added lazily only when an interpretation or comparison audit needs them. Incompatible future runtime APIs can coexist, and only the two newest initialized versions of each layer are retained.
 
 ## Install as a plugin
 
@@ -32,15 +32,15 @@ codex plugin add ai-paper-analysis@ai-paper-analysis
 
 The plugin contains the router and all three child Skills. Start a new Codex thread after installation or update so the available Skills are refreshed.
 
-## Install standalone Skills
+## Install Finder standalone
 
-Copy only the required directories from `skills/` into the Codex Skill directory. For example, this installs Finder without the other capabilities:
+Finder is the only child Skill recommended for standalone installation. Copy its directory into the Codex Skill directory:
 
 ```bash
 cp -R skills/ai-paper-analysis-finder ~/.codex/skills/ai-paper-analysis-finder
 ```
 
-Install all three child directories before installing `skills/ai-paper-analysis` when the router is required. A later child or router installation detects and reuses the shared cached runtime created by an earlier child.
+For interpretation, comparison, or routed multi-step work, install the complete plugin instead of copying Interpreter, Comparator, or the router separately. A later complete-plugin installation detects and reuses the shared cached runtime created by Finder.
 
 ## Install the local Python distribution
 
@@ -66,7 +66,7 @@ Keep age private keys outside the project. If encrypted configuration is selecte
 
 ## Repository layout
 
-- `skills/` contains the canonical, independently installable Skills.
+- `skills/` contains the canonical Skill sources; only Finder is recommended for standalone installation.
 - `src/ai_paper_analysis/` contains the canonical deterministic runtime.
 - `contracts/` and `templates/` contain public artifact contracts and report templates.
 - `plugins/ai-paper-analysis/` is the generated complete plugin mirror.
