@@ -1,0 +1,6 @@
+interface:
+  display_name: "AI Paper Analysis"
+  short_description: "Route rigorous paper research and reporting workflows"
+  default_prompt: "Use $ai-paper-analysis to plan and route my paper research request."
+policy:
+  allow_implicit_invocation: true

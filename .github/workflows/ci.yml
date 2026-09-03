@@ -1,0 +1,62 @@
+name: Compatibility
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  python-linux:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.11", "3.12", "3.13", "3.14"]
+
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10
+        with:
+          enable-cache: true
+      - run: uv python install ${{ matrix.python }}
+      - run: uv sync --extra dev --frozen --python ${{ matrix.python }}
+      - run: uv run --python ${{ matrix.python }} pytest -m "not live"
+
+  platform-baseline:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10
+        with:
+          enable-cache: true
+      - run: uv python install 3.12
+      - run: uv sync --extra dev --frozen --python 3.12
+      - run: uv run --python 3.12 pytest -m "not live"
+
+  report-rendering:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10
+        with:
+          enable-cache: true
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          cache: npm
+      - run: uv python install 3.12
+      - run: uv sync --frozen --python 3.12
+      - run: npm ci --ignore-scripts
+      - run: npm run install:browser
+      - run: uv run --python 3.12 node scripts/render_report.mjs templates/paper-report.md

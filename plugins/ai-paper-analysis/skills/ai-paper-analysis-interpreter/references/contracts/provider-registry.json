@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0.0",
+  "providers": [
+    {"id": "doi-publisher", "name": "DOI and Publisher Pages", "tier": "core", "roles": ["identity", "metadata", "pdf_resolution"], "access": "public_or_authorized", "adapter": "doi"},
+    {"id": "crossref", "name": "Crossref", "tier": "core", "roles": ["discovery", "identity", "metadata"], "access": "public", "adapter": "crossref"},
+    {"id": "openalex", "name": "OpenAlex", "tier": "core", "roles": ["discovery", "identity", "metadata", "citation_graph"], "access": "public", "adapter": "openalex"},
+    {"id": "semantic-scholar", "name": "Semantic Scholar", "tier": "core", "roles": ["discovery", "metadata", "citation_graph"], "access": "public_or_api_key", "adapter": "semantic_scholar"},
+    {"id": "arxiv", "name": "arXiv", "tier": "core", "roles": ["discovery", "metadata", "pdf_resolution"], "access": "public", "adapter": "arxiv"},
+    {"id": "unpaywall", "name": "Unpaywall", "tier": "core", "roles": ["pdf_resolution", "version_relation"], "access": "contact_email", "adapter": "unpaywall"},
+    {"id": "europe-pmc", "name": "Europe PMC and PMC", "tier": "extension", "roles": ["discovery", "metadata", "pdf_resolution"], "access": "public", "adapter": "europe_pmc"},
+    {"id": "biorxiv-medrxiv", "name": "bioRxiv and medRxiv", "tier": "extension", "roles": ["discovery", "metadata", "pdf_resolution"], "access": "public", "adapter": "browser_or_api"},
+    {"id": "openreview", "name": "OpenReview", "tier": "extension", "roles": ["discovery", "metadata", "pdf_resolution"], "access": "public_or_authorized", "adapter": "browser_or_api"},
+    {"id": "dblp", "name": "DBLP", "tier": "extension", "roles": ["discovery", "identity", "metadata"], "access": "public", "adapter": "dblp"},
+    {"id": "acl-anthology", "name": "ACL Anthology", "tier": "extension", "roles": ["discovery", "metadata", "pdf_resolution"], "access": "public", "adapter": "browser_or_api"},
+    {"id": "pmlr", "name": "Proceedings of Machine Learning Research", "tier": "extension", "roles": ["discovery", "metadata", "pdf_resolution"], "access": "public", "adapter": "browser_or_api"},
+    {"id": "hal", "name": "HAL", "tier": "extension", "roles": ["discovery", "metadata", "pdf_resolution"], "access": "public", "adapter": "hal"},
+    {"id": "zenodo", "name": "Zenodo", "tier": "extension", "roles": ["discovery", "metadata", "pdf_resolution"], "access": "public", "adapter": "zenodo"},
+    {"id": "core", "name": "CORE", "tier": "extension", "roles": ["discovery", "metadata", "pdf_resolution"], "access": "api_key", "adapter": "core"},
+    {"id": "institutional-repositories", "name": "Institutional Repositories", "tier": "extension", "roles": ["discovery", "metadata", "pdf_resolution"], "access": "public_or_authorized", "adapter": "browser"},
+    {"id": "google-scholar-api", "name": "Google Scholar via User-Configured API", "tier": "extension", "roles": ["discovery", "citation_graph"], "access": "user_configured_api", "adapter": "configured_api", "direct_crawl": false},
+    {"id": "authorized-commercial", "name": "Authorized Commercial Databases", "tier": "extension", "roles": ["discovery", "metadata", "pdf_resolution"], "access": "explicit_authorization_and_existing_session", "adapter": "browser"},
+    {"id": "authorized-chinese", "name": "Authorized Chinese Academic Databases", "tier": "extension", "roles": ["discovery", "metadata", "pdf_resolution"], "access": "explicit_authorization_and_existing_session", "adapter": "browser"}
+  ]
+}
+

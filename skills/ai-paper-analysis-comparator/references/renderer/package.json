@@ -1,0 +1,27 @@
+{
+  "name": "ai-paper-analysis-markdown-gates",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Cross-renderer Markdown, mathematics, and Mermaid quality gates",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "install:browser": "puppeteer browsers install chrome-headless-shell",
+    "lint:markdown": "markdownlint-cli2",
+    "test:mermaid-syntax": "node tests/test_mermaid_syntax.mjs",
+    "test:render": "node scripts/render_markdown.mjs"
+  },
+  "devDependencies": {
+    "@mathjax/src": "^4.1.3",
+    "@mermaid-js/mermaid-cli": "^11.9.0",
+    "katex": "^0.16.22",
+    "jsdom": "^26.1.0",
+    "markdown-it": "^15.0.1",
+    "markdown-it-footnote": "^4.0.0",
+    "markdown-it-task-lists": "^2.1.1",
+    "markdown-it-texmath": "^1.0.0",
+    "markdownlint-cli2": "^0.23.2",
+    "mermaid": "11.17.2"
+  }
+}

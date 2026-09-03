@@ -1,0 +1,101 @@
+[build-system]
+requires = ["hatchling>=1.32"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ai-paper-analysis"
+dynamic = ["version"]
+description = "Deterministic runtime for the AI Paper Analysis Codex Skills"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "AkihaTatsu" }]
+dependencies = [
+  "httpx>=0.28,<1",
+  "jsonschema>=4.23,<5",
+  "markdown-it-py>=3.0,<5",
+  "mkdocs>=1.6,<2",
+  "mkdocs-material>=9.6,<10",
+  "pymupdf>=1.25,<2",
+  "pypdf>=5.1,<7",
+  "pymdown-extensions>=11.0.1",
+  "pyyaml>=6.0,<7",
+  "typer>=0.15,<1",
+]
+
+[project.urls]
+Homepage = "https://github.com/AkihaTatsu/AI-Paper-Analysis-Skill-Codex"
+Repository = "https://github.com/AkihaTatsu/AI-Paper-Analysis-Skill-Codex"
+Issues = "https://github.com/AkihaTatsu/AI-Paper-Analysis-Skill-Codex/issues"
+
+[project.optional-dependencies]
+ocr = ["ocrmypdf>=16.7,<18"]
+dev = [
+  "mypy>=1.14,<2",
+  "pytest>=8.3,<10",
+  "ruff>=0.9,<1",
+  "types-jsonschema>=4.23,<5",
+  "types-pyyaml>=6.0,<7",
+]
+
+[project.scripts]
+ai-paper-analysis-runtime = "ai_paper_analysis.cli:app"
+
+[tool.hatch.version]
+path = "VERSION"
+pattern = "^(?P<version>[0-9]+\\.[0-9]+\\.[0-9]+)\\s*$"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ai_paper_analysis"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"contracts" = "ai_paper_analysis/_data/contracts"
+"templates" = "ai_paper_analysis/_data/templates"
+"scripts/check_mermaid.mjs" = "ai_paper_analysis/_data/renderer/scripts/check_mermaid.mjs"
+"scripts/render_report.mjs" = "ai_paper_analysis/_data/renderer/scripts/render_report.mjs"
+"package.json" = "ai_paper_analysis/_data/renderer/package.json"
+"package-lock.json" = "ai_paper_analysis/_data/renderer/package-lock.json"
+".markdownlint-cli2.yaml" = "ai_paper_analysis/_data/renderer/.markdownlint-cli2.yaml"
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "/src",
+  "/contracts",
+  "/templates",
+  "/scripts/check_mermaid.mjs",
+  "/scripts/render_report.mjs",
+  "/.markdownlint-cli2.yaml",
+  "/package.json",
+  "/package-lock.json",
+  "/pyproject.toml",
+  "/uv.lock",
+  "/README.md",
+  "/LICENSE",
+  "/VERSION",
+]
+
+[tool.pytest.ini_options]
+addopts = "-q --strict-markers"
+testpaths = ["tests"]
+markers = ["live: requires network access and explicit credentials"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = [
+  "skills/*/scripts/_vendor",
+  "plugins/ai-paper-analysis/skills/*/scripts/_vendor",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+packages = ["ai_paper_analysis"]
+
+[[tool.mypy.overrides]]
+module = ["pymupdf", "pymupdf.*"]
+ignore_missing_imports = true

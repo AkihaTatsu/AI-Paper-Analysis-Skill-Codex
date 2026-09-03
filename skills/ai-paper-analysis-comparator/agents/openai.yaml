@@ -1,0 +1,6 @@
+interface:
+  display_name: "AI Paper Analysis Comparator"
+  short_description: "Compare verified papers within exclusive categories"
+  default_prompt: "Use $ai-paper-analysis-comparator to compare the verified papers by category."
+policy:
+  allow_implicit_invocation: false

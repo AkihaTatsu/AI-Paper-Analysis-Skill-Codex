@@ -1,0 +1,20 @@
+{
+  "name": "ai-paper-analysis",
+  "interface": {
+    "displayName": "AI Paper Analysis"
+  },
+  "plugins": [
+    {
+      "name": "ai-paper-analysis",
+      "source": {
+        "source": "local",
+        "path": "./plugins/ai-paper-analysis"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_USE"
+      },
+      "category": "Research"
+    }
+  ]
+}

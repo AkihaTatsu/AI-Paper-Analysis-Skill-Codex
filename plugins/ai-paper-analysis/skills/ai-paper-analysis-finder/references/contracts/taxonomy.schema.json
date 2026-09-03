@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/AkihaTatsu/AI-Paper-Analysis-Skill-Codex/contracts/taxonomy.schema.json",
+  "title": "Exclusive Paper Taxonomy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "taxonomy_id", "taxonomy_version", "title", "categories", "confirmed"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "taxonomy_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+    "taxonomy_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "title": {"type": "string", "minLength": 1},
+    "description": {"type": "string"},
+    "categories": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/category"}
+    },
+    "confirmed": {"const": true},
+    "confirmed_at": {"type": "string", "format": "date-time"},
+    "confirmation_summary": {"type": "string"}
+  },
+  "$defs": {
+    "subcategory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subcategory_id", "name", "definition", "include_when", "exclude_when"],
+      "properties": {
+        "subcategory_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+        "name": {"type": "string", "minLength": 1},
+        "definition": {"type": "string", "minLength": 1},
+        "include_when": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "exclude_when": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "category": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["category_id", "name", "definition", "include_when", "exclude_when", "subcategories"],
+      "properties": {
+        "category_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+        "name": {"type": "string", "minLength": 1},
+        "definition": {"type": "string", "minLength": 1},
+        "include_when": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "exclude_when": {"type": "array", "items": {"type": "string"}},
+        "subcategories": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/subcategory"}}
+      }
+    }
+  }
+}
+

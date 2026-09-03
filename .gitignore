@@ -1,0 +1,32 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+dist/
+build/
+site/
+*.egg-info/
+node_modules/
+.DS_Store
+.idea/
+.vscode/
+*.log
+.env
+.env.*
+!.env.example
+
+# Runtime state and credentials generated in target paper libraries.
+.ai-paper-analysis/
+credentials.sops.yaml
+credentials.sops.yml
+credentials*.sops.yaml
+credentials*.sops.yml
+*.age
+
+# Optional local renderer output.
+tests/rendered/

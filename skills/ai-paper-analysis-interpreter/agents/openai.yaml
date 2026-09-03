@@ -1,0 +1,6 @@
+interface:
+  display_name: "AI Paper Analysis Interpreter"
+  short_description: "Write audited, evidence-grounded paper reports"
+  default_prompt: "Use $ai-paper-analysis-interpreter to create a rigorous report for this paper."
+policy:
+  allow_implicit_invocation: false

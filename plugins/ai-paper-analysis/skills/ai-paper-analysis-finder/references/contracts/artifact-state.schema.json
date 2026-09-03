@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/AkihaTatsu/AI-Paper-Analysis-Skill-Codex/contracts/artifact-state.schema.json",
+  "title": "AI Paper Analysis Artifact State",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact",
+    "sources",
+    "last_run_id",
+    "status",
+    "updated_at"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "path"],
+      "properties": {
+        "kind": {
+          "enum": ["paper-pdf", "paper-report", "classification", "taxonomy", "category-report"]
+        },
+        "path": {"type": "string", "minLength": 1}
+      }
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path"],
+        "properties": {
+          "path": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "last_run_id": {"type": "string", "minLength": 1},
+    "status": {"const": "published"},
+    "updated_at": {"type": "string", "format": "date-time"}
+  }
+}

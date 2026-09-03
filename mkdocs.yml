@@ -1,0 +1,20 @@
+site_name: AI Paper Analysis Markdown Fixture
+docs_dir: tests/mkdocs/docs
+site_dir: tests/rendered/mkdocs
+strict: true
+theme:
+  name: material
+markdown_extensions:
+  - tables
+  - footnotes
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+

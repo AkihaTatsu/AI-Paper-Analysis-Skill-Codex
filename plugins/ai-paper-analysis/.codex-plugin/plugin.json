@@ -1,0 +1,28 @@
+{
+  "name": "ai-paper-analysis",
+  "version": "0.1.0",
+  "description": "Auditable paper discovery, interpretation, and category comparison",
+  "author": {
+    "name": "AkihaTatsu",
+    "url": "https://github.com/AkihaTatsu"
+  },
+  "homepage": "https://github.com/AkihaTatsu/AI-Paper-Analysis-Skill-Codex",
+  "repository": "https://github.com/AkihaTatsu/AI-Paper-Analysis-Skill-Codex",
+  "license": "MIT",
+  "keywords": ["research", "papers", "pdf", "literature-review", "academic"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "AI Paper Analysis",
+    "shortDescription": "Find, verify, interpret, and compare research papers.",
+    "longDescription": "A source-grounded workflow for legal PDF discovery, strict paper interpretation, exclusive classification, and auditable category reports.",
+    "developerName": "AkihaTatsu",
+    "category": "Research",
+    "capabilities": ["Interactive", "Write"],
+    "websiteURL": "https://github.com/AkihaTatsu/AI-Paper-Analysis-Skill-Codex",
+    "defaultPrompt": [
+      "Find and validate papers for my research question.",
+      "Create an evidence-grounded report for this paper.",
+      "Compare the verified papers in each category."
+    ]
+  }
+}
