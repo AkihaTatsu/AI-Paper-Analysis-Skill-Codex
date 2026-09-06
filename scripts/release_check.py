@@ -105,6 +105,7 @@ def _deterministic_steps(temporary: Path) -> list[Result]:
             _run("node install", [npm, "ci", "--ignore-scripts"], logs),
             _run("markdownlint", [npm, "run", "lint:markdown"], logs),
             _run("Mermaid parser", [npm, "run", "test:mermaid-syntax"], logs),
+            _run("Mermaid layout", [npm, "run", "test:mermaid-layout"], logs),
         )
     )
 

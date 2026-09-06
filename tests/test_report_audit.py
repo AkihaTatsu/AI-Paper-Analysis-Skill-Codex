@@ -15,7 +15,7 @@ TEMPLATES = Path(__file__).parents[1] / "templates"
 
 def _disable_external_renderers(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(markdown_audit, "_full_renderer_errors", lambda path: [])
-    monkeypatch.setattr(markdown_audit, "_mermaid_syntax_audit", lambda blocks: ([], []))
+    monkeypatch.setattr(markdown_audit, "_mermaid_syntax_audit", lambda blocks, **kwargs: ([], []))
 
 
 def test_paper_report_audit_reports_structure_not_factual_verification(

@@ -150,6 +150,7 @@ COMMANDS = {
         "publish",
         "promote-revision",
         "record-state",
+        "fix-mermaid-direction",
         "audit-markdown",
         "audit-paper-report",
         "cleanup-run",
@@ -163,6 +164,7 @@ COMMANDS = {
         "promote-revision",
         "record-state",
         "validate-classification",
+        "fix-mermaid-direction",
         "audit-markdown",
         "audit-category-report",
         "cleanup-run",
@@ -171,9 +173,14 @@ COMMANDS = {
 RENDERER_COMMANDS = {
     "ai-paper-analysis": (),
     "ai-paper-analysis-finder": (),
-    "ai-paper-analysis-interpreter": ("audit-markdown", "audit-paper-report"),
+    "ai-paper-analysis-interpreter": (
+        "fix-mermaid-direction",
+        "audit-markdown",
+        "audit-paper-report",
+    ),
     "ai-paper-analysis-comparator": (
         "validate-classification",
+        "fix-mermaid-direction",
         "audit-markdown",
         "audit-category-report",
     ),

@@ -7,9 +7,11 @@ import os
 import re
 import shutil
 import subprocess
-from collections import Counter, defaultdict, deque
+import tempfile
+from collections import Counter
 from dataclasses import asdict, dataclass
 from pathlib import Path
+from typing import Any
 from urllib.parse import unquote, urlparse
 
 from markdown_it import MarkdownIt
@@ -31,36 +33,25 @@ class MarkdownAudit:
         return asdict(self)
 
 
+def _closed_fence(line: str, markup: str) -> bool:
+    # CommonMark container prefixes may precede a closing fence.
+    return bool(re.fullmatch(rf"[ >\t]*{re.escape(markup[0])}{{{len(markup)},}}\s*", line))
+
+
 def _outside_fences(lines: list[str]) -> tuple[list[str], list[tuple[int, str]]]:
-    visible: list[str] = []
-    mermaid_blocks: list[tuple[int, str]] = []
-    fence: str | None = None
-    language = ""
-    buffer: list[str] = []
-    start = 0
-    for number, line in enumerate(lines, start=1):
-        match = re.match(r"^(`{3,}|~{3,})([^`]*)$", line.rstrip())
-        if fence is None and match:
-            fence = match.group(1)
-            language = match.group(2).strip().lower()
-            buffer = []
-            start = number
-            visible.append("")
+    visible = lines.copy()
+    blocks: list[tuple[int, str]] = []
+    for token in MarkdownIt("commonmark").parse("\n".join(lines)):
+        if token.type not in {"fence", "code_block"} or token.map is None:
             continue
-        if fence is not None:
-            if re.match(rf"^{re.escape(fence[0])}{{{len(fence)},}}\s*$", line):
-                if language == "mermaid":
-                    mermaid_blocks.append((start, "\n".join(buffer)))
-                fence = None
-                language = ""
-            else:
-                buffer.append(line)
-            visible.append("")
-            continue
-        visible.append(line)
-    if fence is not None:
-        visible.append(f"APA_UNCLOSED_FENCE_AT_{start}")
-    return visible, mermaid_blocks
+        start, end = token.map
+        visible[start:end] = [""] * (end - start)
+        if token.type == "fence":
+            if token.info.strip().lower() == "mermaid":
+                blocks.append((start + 1, token.content))
+            if end <= start + 1 or not _closed_fence(lines[end - 1], token.markup):
+                visible[start] = f"APA_UNCLOSED_FENCE_AT_{start + 1}"
+    return visible, blocks
 
 
 def _strip_inline_code(line: str) -> str:
@@ -151,79 +142,6 @@ def _heading_errors(lines: list[str]) -> list[str]:
     return errors
 
 
-def _extract_graph(code: str) -> tuple[str, set[str], list[tuple[str, str]], bool]:
-    lines = code.splitlines()
-    direction = ""
-    if lines:
-        match = re.match(r"\s*(?:flowchart|graph)\s+(TB|TD|BT|LR|RL)\b", lines[0])
-        if match:
-            direction = "TB" if match.group(1) == "TD" else match.group(1)
-    nodes: set[str] = set()
-    edges: list[tuple[str, str]] = []
-    node_pattern = re.compile(r"^\s*([A-Za-z_][A-Za-z0-9_-]*)\s*(?:\[|\(|\{|$)")
-    edge_pattern = re.compile(
-        r"([A-Za-z_][A-Za-z0-9_-]*)\s*(?:\[[^]]*\]|\([^)]*\)|\{[^}]*\})?\s*"
-        r"(?:-->|---|-.->|==>)\s*([A-Za-z_][A-Za-z0-9_-]*)"
-    )
-    for line in lines[1:]:
-        if node_match := node_pattern.match(line):
-            nodes.add(node_match.group(1))
-        for left, right in edge_pattern.findall(line):
-            nodes.update((left, right))
-            edges.append((left, right))
-    has_subgraph = any(re.match(r"\s*subgraph\b", line) for line in lines)
-    return direction, nodes, edges, has_subgraph
-
-
-def _graph_metrics(nodes: set[str], edges: list[tuple[str, str]]) -> tuple[bool, int, int]:
-    outgoing: dict[str, list[str]] = defaultdict(list)
-    indegree = {node: 0 for node in nodes}
-    degree = Counter({node: 0 for node in nodes})
-    for left, right in edges:
-        outgoing[left].append(right)
-        indegree[right] = indegree.get(right, 0) + 1
-        indegree.setdefault(left, 0)
-        degree[left] += 1
-        degree[right] += 1
-    queue = deque(node for node, value in indegree.items() if value == 0)
-    distances = {node: 1 for node in nodes}
-    visited = 0
-    while queue:
-        node = queue.popleft()
-        visited += 1
-        for child in outgoing[node]:
-            distances[child] = max(distances.get(child, 1), distances[node] + 1)
-            indegree[child] -= 1
-            if indegree[child] == 0:
-                queue.append(child)
-    acyclic = visited == len(indegree)
-    longest_chain = max(distances.values(), default=0) if acyclic else len(nodes)
-    maximum_degree = max(degree.values(), default=0)
-    return acyclic, longest_chain, maximum_degree
-
-
-def _mermaid_errors(blocks: list[tuple[int, str]], *, require_module_subgraphs: bool) -> list[str]:
-    errors: list[str] = []
-    for line_number, code in blocks:
-        direction, nodes, edges, has_subgraph = _extract_graph(code)
-        if direction not in {"TB", "LR"}:
-            errors.append(f"line {line_number}: Mermaid graph must declare TB or LR")
-            continue
-        acyclic, longest_chain, maximum_degree = _graph_metrics(nodes, edges)
-        lr_allowed = len(nodes) <= 6 and longest_chain <= 4 and acyclic and maximum_degree <= 2
-        if direction == "LR" and not lr_allowed:
-            errors.append(
-                f"line {line_number}: graph is too complex for LR; use TB "
-                f"(nodes={len(nodes)}, longest_chain={longest_chain}, "
-                f"acyclic={acyclic}, max_degree={maximum_degree})"
-            )
-        if require_module_subgraphs and len(nodes) > 2 and not has_subgraph:
-            errors.append(f"line {line_number}: module flow must use at least one subgraph")
-        if "<" in code or ">" in code.replace("-->", "").replace("==>", ""):
-            errors.append(f"line {line_number}: Mermaid labels must not contain raw HTML")
-    return errors
-
-
 def _mermaid_checker_path() -> Path | None:
     configured = os.environ.get("APA_RENDERER_ROOT")
     roots = [Path(configured).resolve()] if configured else []
@@ -248,19 +166,20 @@ def _renderer_script_path() -> Path | None:
     return None
 
 
-def _mermaid_syntax_audit(
-    blocks: list[tuple[int, str]],
-) -> tuple[list[str], list[str]]:
-    """Validate Mermaid with the official parser when its local runtime is available."""
+def _mermaid_check_records(blocks: list[tuple[int, str]]) -> list[dict[str, Any]]:
+    """Return official syntax and pure layout estimates through one Node process."""
 
     if not blocks:
-        return [], []
+        return []
     node = shutil.which("node")
     checker = _mermaid_checker_path()
     if node is None or checker is None:
         missing = "Node.js" if node is None else "the Mermaid checker script"
-        return [f"official Mermaid syntax check unavailable: {missing}"], []
-    payload = {"blocks": [{"line": line_number, "code": code} for line_number, code in blocks]}
+        raise ValueError(f"official Mermaid syntax check unavailable: {missing}")
+    payload = {
+        "blocks": [{"line": line_number, "code": code} for line_number, code in blocks],
+        "layout": True,
+    }
     try:
         completed = subprocess.run(
             [node, str(checker)],
@@ -271,36 +190,182 @@ def _mermaid_syntax_audit(
             timeout=MERMAID_CHECK_TIMEOUT_SECONDS,
         )
     except (OSError, subprocess.TimeoutExpired) as error:
-        return [f"official Mermaid syntax check failed to run: {error}"], []
+        raise ValueError(f"official Mermaid syntax check failed to run: {error}") from error
     if completed.returncode:
         detail = " ".join((completed.stderr or completed.stdout).split())[:500]
-        suffix = f": {detail}" if detail else ""
-        return [f"official Mermaid syntax parser failed{suffix}"], []
+        raise ValueError(f"official Mermaid syntax parser failed: {detail}")
     try:
         result = json.loads(completed.stdout)
         records = result["results"]
         if not isinstance(records, list) or len(records) != len(blocks):
             raise ValueError("result count does not match Mermaid block count")
-        if any(
-            not isinstance(record, dict) or not isinstance(record.get("valid"), bool)
-            for record in records
-        ):
-            raise ValueError("result records must contain a Boolean valid field")
+        for record, (line, _) in zip(records, blocks, strict=True):
+            if (
+                not isinstance(record, dict)
+                or not isinstance(record.get("valid"), bool)
+                or record.get("line") != line
+            ):
+                raise ValueError(
+                    "result records must contain matching lines and Boolean valid fields"
+                )
+        return records
     except (json.JSONDecodeError, KeyError, TypeError, ValueError) as error:
-        return [f"official Mermaid syntax parser returned invalid output ({error})"], []
+        raise ValueError(
+            f"official Mermaid syntax parser returned invalid output ({error})"
+        ) from error
 
-    errors: list[str] = []
-    for record in records:
-        if not isinstance(record, dict) or record.get("valid") is not False:
-            continue
-        fence_line = record.get("line")
+
+def _record_errors(record: dict[str, Any], *, enforce_direction: bool) -> list[str]:
+    line = record["line"]
+    if not record["valid"]:
         parser_line = record.get("parser_line")
-        line_number = fence_line if isinstance(fence_line, int) else "?"
-        if isinstance(line_number, int) and isinstance(parser_line, int) and parser_line > 0:
-            line_number += parser_line
+        if isinstance(parser_line, int) and parser_line > 0:
+            line += parser_line
         message = " ".join(str(record.get("message") or "parse error").split())[:500]
-        errors.append(f"line {line_number}: invalid Mermaid syntax: {message}")
+        return [f"line {line}: invalid Mermaid syntax: {message}"]
+    if record.get("layout_error"):
+        return [f"line {line}: Mermaid layout estimation failed: {record['layout_error']}"]
+    layout = record.get("layout")
+    if not isinstance(layout, dict):
+        return [f"line {line}: Mermaid layout estimate unavailable"]
+    if layout.get("skipped"):
+        return []
+    try:
+        if layout["current"] not in {"TB", "TD", "LR"} or layout["recommended"] not in {"TB", "LR"}:
+            raise ValueError("invalid direction")
+        if not isinstance(layout["changed"], bool) or not isinstance(
+            layout["direction_offset"], int
+        ):
+            raise ValueError("invalid change or source offset")
+        if layout["changed"] != (
+            ("TB" if layout["current"] == "TD" else layout["current"]) != layout["recommended"]
+        ):
+            raise ValueError("inconsistent direction change")
+        if not isinstance(layout["sizes"], dict):
+            raise ValueError("invalid sizes object")
+        for size in layout["sizes"].values():
+            if not isinstance(size, dict):
+                raise ValueError("invalid size object")
+            if any(
+                not isinstance(size[key], (int, float)) or not 0 <= size[key] < float("inf")
+                for key in ("width", "height")
+            ):
+                raise ValueError("invalid dimensions")
+        tb, lr = layout["sizes"]["TB"], layout["sizes"]["LR"]
+    except (KeyError, TypeError, ValueError) as error:
+        return [f"line {line}: invalid Mermaid layout estimate ({error})"]
+    if enforce_direction and layout["changed"]:
+        return [
+            f"line {line}: Mermaid direction should be {layout['recommended']}; "
+            f"estimated TB={tb['width']:g} x {tb['height']:g}, "
+            f"LR={lr['width']:g} x {lr['height']:g}; run fix-mermaid-direction"
+        ]
+    return []
+
+
+def _mermaid_syntax_audit(
+    blocks: list[tuple[int, str]], *, require_module_subgraphs: bool = False
+) -> tuple[list[str], list[str]]:
+    """Check syntax and estimated direction without modifying the report."""
+
+    try:
+        records = _mermaid_check_records(blocks)
+    except ValueError as error:
+        return [str(error)], []
+    errors = [
+        error for record in records for error in _record_errors(record, enforce_direction=True)
+    ]
+    for record in records:
+        layout = record.get("layout")
+        if not isinstance(layout, dict):
+            continue
+        if layout.get("skipped"):
+            errors.append(f"line {record['line']}: Mermaid graph must declare TB or LR")
+        if (
+            require_module_subgraphs
+            and isinstance(layout.get("node_count"), int)
+            and layout["node_count"] > 2
+            and not layout.get("has_subgraph")
+        ):
+            errors.append(f"line {record['line']}: module flow must use at least one subgraph")
     return errors, []
+
+
+def fix_mermaid_direction(path: Path, *, dry_run: bool = False) -> dict[str, Any]:
+    """Atomically replace only top-level direction tokens in one Markdown file."""
+
+    path = path.resolve()
+    original = path.read_bytes()
+    text = original.decode("utf-8")
+    lines = text.splitlines(keepends=True)
+    tokens = MarkdownIt("commonmark").parse(text)
+    blocks: list[tuple[int, str]] = []
+    starts: list[int] = []
+    offsets = [0]
+    for line in lines:
+        offsets.append(offsets[-1] + len(line))
+    for token in tokens:
+        if token.type != "fence" or token.info.strip().lower() != "mermaid" or token.map is None:
+            continue
+        start, end = token.map
+        if end <= start + 1 or not _closed_fence(lines[end - 1], token.markup):
+            raise ValueError(f"line {start + 1}: unclosed Mermaid fence")
+        blocks.append((start + 1, token.content))
+        starts.append(start + 1)
+    records = _mermaid_check_records(blocks)
+    errors = [
+        error for record in records for error in _record_errors(record, enforce_direction=False)
+    ]
+    if errors:
+        raise ValueError("; ".join(errors))
+    edits: list[tuple[int, int, str]] = []
+    for record, (_, code), start in zip(records, blocks, starts, strict=True):
+        layout = record["layout"]
+        if layout.get("skipped") or not layout["changed"]:
+            continue
+        unit_offset = layout["direction_offset"]
+        if unit_offset < 0:
+            raise ValueError("Invalid Mermaid source offset")
+        offset = len(code.encode("utf-16-le")[: unit_offset * 2].decode("utf-16-le"))
+        current = layout["current"]
+        if code[offset : offset + len(current)] != current:
+            raise ValueError("Mermaid source direction does not match the analyzed token")
+        before = code[:offset]
+        source_line = start + before.count("\n")
+        content_line = code.splitlines()[before.count("\n")]
+        column = len(before.rsplit("\n", 1)[-1])
+        prefix = lines[source_line].find(content_line)
+        if prefix < 0:
+            raise ValueError("Cannot map the parsed Mermaid direction to its source line")
+        source_offset = offsets[source_line] + prefix + column
+        edits.append((source_offset, source_offset + len(current), layout["recommended"]))
+    for start, end, replacement in reversed(edits):
+        text = text[:start] + replacement + text[end:]
+    if edits and not dry_run:
+        descriptor, name = tempfile.mkstemp(
+            prefix=f".{path.name}.", suffix=".updating", dir=path.parent
+        )
+        temporary = Path(name)
+        try:
+            with os.fdopen(descriptor, "wb") as stream:
+                stream.write(text.encode("utf-8"))
+                stream.flush()
+                os.fsync(stream.fileno())
+            shutil.copymode(path, temporary)
+            if path.read_bytes() != original:
+                raise ValueError(
+                    "Report changed during analysis; refusing to overwrite newer content"
+                )
+            os.replace(temporary, path)
+        finally:
+            temporary.unlink(missing_ok=True)
+    return {
+        "path": str(path),
+        "dry_run": dry_run,
+        "changed": bool(edits),
+        "written": bool(edits) and not dry_run,
+        "results": records,
+    }
 
 
 def _full_renderer_errors(path: Path) -> list[str]:
@@ -387,8 +452,9 @@ def audit_markdown(path: Path, *, report_kind: str = "generic") -> MarkdownAudit
     errors.extend(_heading_errors(visible))
     math_errors, formula_count = _math_errors(visible)
     errors.extend(math_errors)
-    errors.extend(_mermaid_errors(mermaid_blocks, require_module_subgraphs=report_kind == "paper"))
-    mermaid_syntax_errors, warnings = _mermaid_syntax_audit(mermaid_blocks)
+    mermaid_syntax_errors, warnings = _mermaid_syntax_audit(
+        mermaid_blocks, require_module_subgraphs=report_kind == "paper"
+    )
     errors.extend(mermaid_syntax_errors)
     errors.extend(_section_errors(visible, report_kind))
     errors.extend(_relative_link_errors(path, text))

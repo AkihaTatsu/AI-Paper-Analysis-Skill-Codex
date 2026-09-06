@@ -58,5 +58,7 @@ jobs:
       - run: uv python install 3.12
       - run: uv sync --frozen --python 3.12
       - run: npm ci --ignore-scripts
+      - run: npm run test:mermaid-syntax
+      - run: npm run test:mermaid-layout
       - run: npm run install:browser
       - run: uv run --python 3.12 node scripts/render_report.mjs templates/paper-report.md

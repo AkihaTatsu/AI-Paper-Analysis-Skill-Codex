@@ -97,6 +97,12 @@ These structural failures block publication. An unavailable Markdown parser,
 Mermaid parser, renderer, or required browser is itself a blocking audit
 failure.
 
+Run `scripts/apa.py fix-mermaid-direction <candidate.md>` before the final
+audit to estimate both TB/LR layouts and apply the direction with the shorter
+horizontal side. Use `--dry-run` to inspect sizes without modifying the file.
+The command changes only top-level direction tokens; continue the existing
+candidate review and publication workflow afterward.
+
 ## Revision invariant
 
 Keep only the candidate report in the hidden run directory while it awaits

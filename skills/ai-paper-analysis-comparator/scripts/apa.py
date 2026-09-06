@@ -20,12 +20,14 @@ COMMANDS = (
     "promote-revision",
     "record-state",
     "validate-classification",
+    "fix-mermaid-direction",
     "audit-markdown",
     "audit-category-report",
     "cleanup-run",
 )
 RENDERER_COMMANDS = (
     "validate-classification",
+    "fix-mermaid-direction",
     "audit-markdown",
     "audit-category-report",
 )

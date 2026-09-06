@@ -20,11 +20,13 @@ COMMANDS = (
     "publish",
     "promote-revision",
     "record-state",
+    "fix-mermaid-direction",
     "audit-markdown",
     "audit-paper-report",
     "cleanup-run",
 )
 RENDERER_COMMANDS = (
+    "fix-mermaid-direction",
     "audit-markdown",
     "audit-paper-report",
 )

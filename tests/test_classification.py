@@ -16,7 +16,7 @@ FIXTURES = Path(__file__).parent / "fixtures"
 @pytest.fixture(autouse=True)
 def disable_external_renderers(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(markdown_audit, "_full_renderer_errors", lambda path: [])
-    monkeypatch.setattr(markdown_audit, "_mermaid_syntax_audit", lambda blocks: ([], []))
+    monkeypatch.setattr(markdown_audit, "_mermaid_syntax_audit", lambda blocks, **kwargs: ([], []))
 
 
 def taxonomy() -> dict[str, object]:

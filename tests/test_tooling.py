@@ -110,3 +110,27 @@ def test_cache_keeps_current_and_one_previous_api(
     assert not versions[0].exists()
     assert versions[1].exists()
     assert versions[2].exists()
+
+
+def test_node_only_bootstrap_defers_browser(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    source = tmp_path / "source"
+    (source / "scripts").mkdir(parents=True)
+    for name in ("package.json", "package-lock.json", ".markdownlint-cli2.yaml"):
+        (source / name).write_text("{}\n")
+    for name in ("check_mermaid.mjs", "render_report.mjs"):
+        (source / "scripts" / name).write_text("// fixture\n")
+    commands: list[list[str]] = []
+    monkeypatch.setattr(tooling, "cache_root", lambda: tmp_path / "cache")
+    monkeypatch.setattr(tooling, "_system_browser", lambda: None)
+    monkeypatch.setattr(tooling.shutil, "which", lambda name: f"/fixture/{name}")
+    monkeypatch.setattr(tooling, "_run", lambda command, **kwargs: commands.append(command))
+    tooling.prepare_renderer(source, require_browser=False)
+    tooling.prepare_renderer(source, require_browser=False)
+    assert len(commands) == 1
+    assert "browsers" not in commands[0]
+    tooling.prepare_renderer(source)
+    tooling.prepare_renderer(source)
+    assert len(commands) == 2
+    assert "browsers" in commands[1]

@@ -232,7 +232,7 @@ def _refresh_renderer_program(source: Path, destination: Path) -> None:
             temporary.unlink(missing_ok=True)
 
 
-def prepare_renderer(source: Path | None = None) -> dict[str, str]:
+def prepare_renderer(source: Path | None = None, *, require_browser: bool = True) -> dict[str, str]:
     """Create or reuse the locked full report-rendering environment."""
 
     source = (source or renderer_source()).resolve()
@@ -267,21 +267,6 @@ def prepare_renderer(source: Path | None = None) -> dict[str, str]:
                         ],
                         environment=environment,
                     )
-                    if browser is None:
-                        _run(
-                            [
-                                npm,
-                                "exec",
-                                "--prefix",
-                                str(temporary),
-                                "--",
-                                "puppeteer",
-                                "browsers",
-                                "install",
-                                "chrome-headless-shell",
-                            ],
-                            environment=environment,
-                        )
                     _write_manifest(temporary, kind="renderer", api_version=RENDERER_API_VERSION)
                     if destination.exists():
                         shutil.rmtree(destination)
@@ -292,6 +277,30 @@ def prepare_renderer(source: Path | None = None) -> dict[str, str]:
                 _prune_versions(parent, destination)
     with _directory_lock(parent / ".program.lock"):
         _refresh_renderer_program(source, destination)
+    if require_browser and browser is None:
+        with _directory_lock(parent / ".browser.lock"):
+            ready = destination / ".browser-ready"
+            if not ready.is_file():
+                npm = shutil.which("npm")
+                if npm is None:
+                    raise ToolBootstrapError("npm is required to initialize the report browser")
+                environment = os.environ.copy()
+                environment["PUPPETEER_CACHE_DIR"] = str(destination / "browser")
+                _run(
+                    [
+                        npm,
+                        "exec",
+                        "--prefix",
+                        str(destination),
+                        "--",
+                        "puppeteer",
+                        "browsers",
+                        "install",
+                        "chrome-headless-shell",
+                    ],
+                    environment=environment,
+                )
+                ready.write_text("chrome-headless-shell\n", encoding="utf-8")
     environment_updates = {
         "APA_RENDERER_ROOT": str(destination),
         "PUPPETEER_CACHE_DIR": str(destination / "browser"),
@@ -325,7 +334,12 @@ def reexecute_skill(
     requested = sys.argv[1] if len(sys.argv) > 1 else ""
     if requested in renderer_commands:
         environment["APA_RENDERER_SOURCE"] = str(skill_root / "references" / "renderer")
-        environment.update(prepare_renderer(skill_root / "references" / "renderer"))
+        environment.update(
+            prepare_renderer(
+                skill_root / "references" / "renderer",
+                require_browser=requested != "fix-mermaid-direction",
+            )
+        )
     executable_directory = python.parent
     environment["PATH"] = os.pathsep.join((str(executable_directory), environment.get("PATH", "")))
     os.execve(

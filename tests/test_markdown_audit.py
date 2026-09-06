@@ -14,7 +14,7 @@ FIXTURES = Path(__file__).parent / "fixtures"
 
 def test_portable_paper_report_passes(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(markdown_audit, "_full_renderer_errors", lambda path: [])
-    monkeypatch.setattr(markdown_audit, "_mermaid_syntax_audit", lambda blocks: ([], []))
+    monkeypatch.setattr(markdown_audit, "_mermaid_syntax_audit", lambda blocks, **kwargs: ([], []))
     audit = audit_markdown(FIXTURES / "portable-report.md", report_kind="paper")
     assert audit.valid, audit.errors
     assert audit.display_formula_count == 1
@@ -33,7 +33,27 @@ def test_unbalanced_math_and_raw_html_fail(tmp_path: Path) -> None:
     assert any("raw HTML" in error for error in audit.errors)
 
 
-def test_complex_lr_graph_requires_tb(tmp_path: Path) -> None:
+def test_long_lr_chain_requires_tb(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(
+        markdown_audit,
+        "_mermaid_check_records",
+        lambda blocks: [
+            {
+                "line": 3,
+                "valid": True,
+                "layout": {
+                    "current": "LR",
+                    "recommended": "TB",
+                    "changed": True,
+                    "direction_offset": 10,
+                    "sizes": {
+                        "TB": {"width": 54, "height": 694},
+                        "LR": {"width": 582, "height": 70},
+                    },
+                },
+            }
+        ],
+    )
     report = tmp_path / "graph.md"
     report.write_text(
         "# Graph\n\n```mermaid\nflowchart LR\n"
@@ -42,7 +62,7 @@ def test_complex_lr_graph_requires_tb(tmp_path: Path) -> None:
     )
     audit = audit_markdown(report)
     assert not audit.valid
-    assert any("too complex" in error for error in audit.errors)
+    assert any("direction should be TB" in error for error in audit.errors)
 
 
 def test_official_mermaid_syntax_error_is_blocking(

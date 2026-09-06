@@ -72,6 +72,13 @@ Keep age private keys outside the project. If encrypted configuration is selecte
 - `plugins/ai-paper-analysis/` is the generated complete plugin mirror.
 - `.agents/plugins/marketplace.json` exposes the local repository marketplace.
 
+Use `ai-paper-analysis-runtime fix-mermaid-direction report.md` to estimate TB
+and LR layouts and update only flowchart direction tokens in one Markdown file.
+Add `--dry-run` for a read-only JSON preview. The estimator uses the locked
+Mermaid parser and Dagre with approximate text dimensions and needs no browser;
+report publication still requires the full rendering checks. Installed
+Interpreter and Comparator Skills expose the same command through `scripts/apa.py`.
+
 Generated Skill runtimes and the plugin mirror must match canonical sources. Regenerate them with `uv run python scripts/sync_materialized.py`; verify without changes by adding `--check`.
 
 ## Development and release checks

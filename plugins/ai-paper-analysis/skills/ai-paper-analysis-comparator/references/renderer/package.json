@@ -10,6 +10,7 @@
     "install:browser": "puppeteer browsers install chrome-headless-shell",
     "lint:markdown": "markdownlint-cli2",
     "test:mermaid-syntax": "node tests/test_mermaid_syntax.mjs",
+    "test:mermaid-layout": "node tests/test_mermaid_layout.mjs",
     "test:render": "node scripts/render_markdown.mjs"
   },
   "devDependencies": {
@@ -17,6 +18,7 @@
     "@mermaid-js/mermaid-cli": "^11.9.0",
     "katex": "^0.16.22",
     "jsdom": "^26.1.0",
+    "dagre-d3-es": "7.0.14",
     "markdown-it": "^15.0.1",
     "markdown-it-footnote": "^4.0.0",
     "markdown-it-task-lists": "^2.1.1",

@@ -41,9 +41,32 @@ syntax requires.
 
 ## Mermaid
 
-Use `flowchart TB` unless the graph has at most six nodes, longest chain at most
-four, no cycle, and maximum degree at most two. Only then may it use LR. Wrap
-paper modules in `subgraph`. Avoid raw HTML and formulas in labels.
+Choose `flowchart TB` or `flowchart LR` by estimating both layouts before
+publication. Run `fix-mermaid-direction <candidate.md>` before the final audit;
+add `--dry-run` to inspect the estimates without writing. This command processes
+all supported flowcharts in the specified file and changes only their top-level
+direction tokens. It accepts TD as a TB alias and reports other diagram types
+or directions as skipped. A parse or estimation failure leaves the entire file
+unchanged. Use it on the candidate during the existing report revision workflow.
+
+Prefer the layout whose horizontal side is the short side (width <= height).
+If both qualify, minimize width, then height. If neither qualifies, minimize
+width/height, then width. Preserve the current direction on an exact tie and
+for zero- or one-node graphs. Do not decide from node counts, chain length,
+cycles, or maximum degree.
+
+Dimensions are deterministic estimates from the locked Mermaid parser and
+Dagre layout engine, including disconnected nodes, labels, and subgraphs.
+Text uses an approximate half-em ordinary character width, one em for CJK and
+emoji, and a 1.5-em line height; combining marks have no advance. Node shapes,
+padding, Markdown-label wrapping, and spacing contribute to the bounds. These
+are estimates, not measured SVG dimensions. Unsupported layouts, shapes, or
+size-affecting CSS fail explicitly. Estimation needs Node.js but no browser;
+the final rendering gate still requires its browser.
+
+The read-only audit uses the same estimates and blocks a mismatched direction,
+reporting both sizes and the recommended replacement. Wrap paper modules in
+`subgraph`. Avoid raw HTML and formulas in labels.
 
 Every Mermaid block must pass the official locked `mermaid.parse()` syntax
 check. A reported syntax error blocks publication. An unavailable parser,

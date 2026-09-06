@@ -46,13 +46,13 @@ def _load_object(path: Path) -> dict[str, Any]:
     return payload
 
 
-def _ensure_renderer() -> None:
+def _ensure_renderer(*, require_browser: bool = True) -> None:
     if os.environ.get("APA_RENDERER_ROOT"):
         return
     from .tooling import ToolBootstrapError, prepare_renderer
 
     try:
-        os.environ.update(prepare_renderer())
+        os.environ.update(prepare_renderer(require_browser=require_browser))
     except ToolBootstrapError as error:
         _fail("renderer-bootstrap", error)
 
@@ -301,6 +301,19 @@ def validate_classification_command(
     _emit(audit.__dict__)
     if not audit.valid:
         raise typer.Exit(1)
+
+
+@_register("fix-mermaid-direction")
+def fix_mermaid_direction_command(path: Path, dry_run: bool = False) -> None:
+    """Estimate TB/LR dimensions and fix directions in one Markdown file."""
+
+    _ensure_renderer(require_browser=False)
+    from .markdown_audit import fix_mermaid_direction
+
+    try:
+        _emit(fix_mermaid_direction(path, dry_run=dry_run))
+    except (OSError, UnicodeError, ValueError) as error:
+        _fail("mermaid-direction", error)
 
 
 @_register("audit-markdown")

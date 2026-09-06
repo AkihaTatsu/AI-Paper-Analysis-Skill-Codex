@@ -52,6 +52,12 @@ relationship evidence, and cross-artifact semantics. Any syntax or audit
 failure blocks formal publication; an unavailable Markdown parser, Mermaid
 parser, renderer, or required browser is itself a blocking failure.
 
+Run `scripts/apa.py fix-mermaid-direction <candidate.md>` before the final
+audit to estimate both TB/LR layouts and apply the direction with the shorter
+horizontal side. Use `--dry-run` to inspect sizes without modifying the file.
+The command changes only top-level direction tokens; continue the existing
+candidate review and publication workflow afterward.
+
 Keep relationship ledgers, graph renderings, detailed audits, diffs, and any
 one-off scripts in a randomly named system temporary directory created with
 `create-temp`, then remove it with `cleanup-temp`. In the hidden run directory
