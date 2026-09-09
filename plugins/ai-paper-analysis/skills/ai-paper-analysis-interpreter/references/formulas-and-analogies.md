@@ -41,6 +41,17 @@ portable LaTeX
 $$
 ```
 
+Use `$...$` directly from the first draft, including in every table cell. Never
+use `\(...\)` as an intermediate form or rely on a later delimiter conversion.
+Before publication, resolve every parenthesized identifier, shape, range,
+comparison, or TeX-like fragment as either `$...$` mathematics or backticked
+code.
+
+For an equation derived from code rather than printed in the paper, trace the
+value through every later scale, limit, clip, or storage operation. Give raw
+intermediates and stored outputs distinct symbols, verify the branch guard, and
+never assign a pre-transform distribution directly to a post-transform value.
+
 Immediately below, place a table with these semantic columns translated into
 the output language:
 

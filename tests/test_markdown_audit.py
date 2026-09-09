@@ -33,6 +33,54 @@ def test_unbalanced_math_and_raw_html_fail(tmp_path: Path) -> None:
     assert any("raw HTML" in error for error in audit.errors)
 
 
+@pytest.mark.parametrize(
+    "fragment",
+    [
+        "(K)",
+        "(N,K)",
+        "(N-1,K)",
+        "(K^2)",
+        "(p_i)",
+        "(x/2)",
+        r"(p\ge0.5)",
+        "([-1,1])",
+        "(N(0,1))",
+    ],
+)
+def test_probable_lost_inline_math_delimiters_fail(
+    tmp_path: Path, fragment: str
+) -> None:
+    report = tmp_path / "bare-math.md"
+    report.write_text(
+        "# Bare Math\n\n| Item | Value |\n| --- | --- |\n" f"| parameter | {fragment} |\n",
+        encoding="utf-8",
+    )
+
+    audit = audit_markdown(report)
+
+    assert not audit.valid
+    assert any("probable bare mathematics" in error for error in audit.errors)
+
+
+def test_math_audit_preserves_ordinary_parentheses_and_code(tmp_path: Path) -> None:
+    report = tmp_path / "ordinary-parentheses.md"
+    report.write_text(
+        "# Ordinary Parentheses\n\n"
+        "The random setting (Figure 1) uses $K$ variables and links to "
+        "[a draft](https://example.com/paper_(draft)).[^x_1]\n\n"
+        "| Item | Value |\n"
+        "| --- | --- |\n"
+        "| panel | (a) |\n"
+        "| array shape | `(N,K)` |\n\n"
+        "[^x_1]: Synthetic source note.\n",
+        encoding="utf-8",
+    )
+
+    audit = audit_markdown(report)
+
+    assert audit.valid, audit.errors
+
+
 def test_long_lr_chain_requires_tb(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(
         markdown_audit,

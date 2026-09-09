@@ -73,6 +73,75 @@ def _unescaped_dollars(line: str) -> list[int]:
     return positions
 
 
+_MARKDOWN_LINK = re.compile(r"!?\[([^\]]*)\]\((?:[^()]|\([^()]*\))*\)")
+_FOOTNOTE_MARKER = re.compile(r"\[\^[^\]]+\]")
+_AUTOLINK = re.compile(r"<(?:https?://|mailto:)[^>]+>")
+_BARE_TEX_COMMAND = re.compile(r"\\[A-Za-z]+")
+_BARE_SCRIPTED_SYMBOL = re.compile(
+    r"(?<![A-Za-z0-9_])(?:[A-Za-z]|[\u0370-\u03ff\u1f00-\u1fff])"
+    r"(?:[_^](?:\{[^{}\n]+\}|[A-Za-z0-9]))"
+)
+_PARENTHESIZED_FRAGMENT = re.compile(r"\(([^()\n]{1,80})\)")
+_MATH_PUNCTUATION = frozenset("+-*/=<>^_,[]{}≤≥≈±×÷−")
+_FIGURE_PANEL_LABELS = frozenset("abcd")
+
+
+def _mask_inline_math(line: str) -> str:
+    characters = list(line)
+    dollars = _unescaped_dollars(line)
+    for left, right in zip(dollars[::2], dollars[1::2], strict=False):
+        characters[left : right + 1] = " " * (right - left + 1)
+    return "".join(characters)
+
+
+def _looks_like_bare_parenthesized_math(fragment: str, *, table_row: bool) -> bool:
+    compact = fragment.strip()
+    if compact in {"K", "N"}:
+        return True
+    if (
+        table_row
+        and len(compact) == 1
+        and compact.isalpha()
+        and compact.lower() not in _FIGURE_PANEL_LABELS
+    ):
+        return True
+    if not any(character in _MATH_PUNCTUATION for character in compact):
+        return False
+    if re.search(r"[A-Za-z]{2,}", compact):
+        return False
+    return bool(
+        re.fullmatch(
+            r"[A-Za-z0-9\s.,+\-*/=<>^_{}\[\]\\≤≥≈±×÷−]+",
+            compact,
+        )
+    )
+
+
+def _bare_math_error(line: str, number: int) -> str | None:
+    visible = _strip_inline_code(line)
+    visible = _MARKDOWN_LINK.sub(r"\1", visible)
+    visible = _FOOTNOTE_MARKER.sub("", visible)
+    visible = _AUTOLINK.sub("", visible)
+    visible = _mask_inline_math(visible)
+
+    match = _BARE_TEX_COMMAND.search(visible) or _BARE_SCRIPTED_SYMBOL.search(visible)
+    if match is not None:
+        fragment = match.group(0)
+        return (
+            f"line {number}: probable bare mathematics {fragment!r}; "
+            "use $...$ for math or backticks for code"
+        )
+
+    table_row = visible.lstrip().startswith("|")
+    for match in _PARENTHESIZED_FRAGMENT.finditer(visible):
+        if _looks_like_bare_parenthesized_math(match.group(1), table_row=table_row):
+            return (
+                f"line {number}: probable bare mathematics {match.group(0)!r}; "
+                "use $...$ for math or backticks for code"
+            )
+    return None
+
+
 def _math_errors(lines: list[str]) -> tuple[list[str], int]:
     errors: list[str] = []
     display_open_at: int | None = None
@@ -106,6 +175,8 @@ def _math_errors(lines: list[str]) -> tuple[list[str], int]:
         for left, right in zip(dollars[::2], dollars[1::2], strict=False):
             if not line[left + 1 : right].strip():
                 errors.append(f"line {number}: empty inline-math span")
+        if bare_math_error := _bare_math_error(line, number):
+            errors.append(bare_math_error)
     if display_open_at is not None:
         errors.append(f"line {display_open_at}: unclosed display-math block")
     return errors, display_count
