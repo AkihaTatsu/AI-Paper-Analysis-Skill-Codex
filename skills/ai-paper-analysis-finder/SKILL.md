@@ -1,70 +1,45 @@
 ---
 name: ai-paper-analysis-finder
-description: Discover research papers across a confirmed finite source set, acquire legal PDFs through temporary staging, validate identity and relevance, publish verified files atomically, and optionally create an exclusive classification CSV. Use explicitly for paper search or acquisition workflows.
+description: Discover papers within confirmed search bounds, acquire and verify legal originals, and optionally prepare an exclusive classification. Use explicitly for paper search or acquisition.
 ---
 
 # AI Paper Analysis Finder
 
-Use this Skill only when explicitly invoked or selected by
-`$ai-paper-analysis`.
+Use explicitly or when selected for the requested paper workflow. This Skill
+is self-contained: obtain missing materials through its bundled shared roles
+and `scripts/apa.py`, without requiring a sibling Skill.
 
-Before execution, read [references/workflow.md](references/workflow.md). When
-classification is requested, also read
-[references/classification.md](references/classification.md). Read
-[references/sources.md](references/sources.md) when selecting providers or
-credentials.
+Read [references/roles/intake.md](references/roles/intake.md) for fact-first
+questions, acquisition/full-execution approval, final confirmation, and per-run
+subagent authorization. Read
+[references/roles/orchestration.md](references/roles/orchestration.md) for bounded
+assignments and minimal contexts. Only the coordinator asks the user. Plan Mode
+is read-only; execute only after approval and Plan Mode exit. Return to Plan
+Mode on material ambiguity; stop if `request_user_input` is unavailable.
 
-## Non-negotiable gate
+Read [references/contracts/execution-plan.md](references/contracts/execution-plan.md)
+and create or resume the task's one visible `update_plan` checklist. If the tool
+is unavailable, explain and maintain the specified text table while continuing
+authorized work.
 
-Do not search or download until the user has confirmed all material fields in
-Plan Mode through `request_user_input`: research topic, inclusion and exclusion
-rules, date/language/type bounds, provider set, access mode, stopping policy,
-target root, classification choice, any explicitly requested staging-retention
-destination, and any query expansion.
+## Discovery and publication
 
-The stopping policy must be either a target accepted count plus candidate cap,
-or exhaustive paging within explicit bounds. Batch-review borderline
-candidates. Confirm the complete exclusive classification preview before
-publishing it. Staging is temporary unless the user explicitly requests and
-confirms an absolute visible retention directory outside
-`.ai-paper-analysis`. Stop if the question tool is unavailable.
+Confirm search criteria, finite providers, access mode, stopping bounds,
+query expansions, target root, and optional classification before search.
+Dispatch [references/roles/sources.md](references/roles/sources.md) for acquisition,
+identity/version/structure/full-text relevance checks, and legal-source rules.
+Read [references/roles/classification.md](references/roles/classification.md)
+only when classification is requested. After per-run authorization, independent
+identities or provider batches may run concurrently within the shared limits.
 
-## Access boundary
+The coordinator publishes validated originals atomically under their stable
+PDF stems, retains compact state, and cleans temporary artifacts. A readable
+PDF with inconclusive identity is a candidate requiring confirmation, never a
+verified input. Never overwrite an ambiguous identity/version, bypass an access
+control, or use unconfirmed OCR. Confirm the complete exclusive assignment
+preview before publishing classification or taxonomy.
 
-Never bypass a paywall, CAPTCHA, robots exclusion, rate limit, or access
-control. Google Scholar batch search requires a user-configured API. Chinese or
-commercial databases require explicit authorization and a valid existing
-session. Record inaccessible sources; do not improvise an evasion.
-
-## Publication invariant
-
-Download each candidate into a randomly named system temporary directory.
-Validate PDF structure, identity, inclusion criteria, full-text relevance,
-and version before publication. Preserve one primary PDF in the order:
-legally available version of record, author manuscript, latest preprint. Record
-alternatives in temporary decision notes while the run is active.
-
-Publish only with the deterministic runtime. The PDF and eventual report share
-the stem `{year}_{first-author}_{ascii-title-slug}_{id-digest10}` under
-`papers/`. Reuse an existing file only after its bibliographic identity,
-version, and PDF structure match the confirmed work. Any identity or version
-ambiguity requires another Plan Mode decision and must not overwrite. After
-publication, use `record-state` to retain only the PDF's stable path, run ID,
-and publication status.
-
-A structurally readable PDF with no reliable title, identifier, author, or
-source-chain signal is a valid candidate with `identity_status=inconclusive`,
-not a verified paper. Show it to the user for identity confirmation before it
-can be published as verified or used in any novelty, Benchmark, or category
-comparison.
-
-Delete failed binaries and temporary decision notes at run completion. When
-retained staging was approved, publish the requested copies to its confirmed
-visible destination instead of the hidden run directory. OCR requires a
-separate question-tool confirmation, operates on a temporary copy, and never
-replaces the original PDF.
-
-Do not persist one-off search, conversion, or audit scripts. A project helper
-may enter `.ai-paper-analysis/tools/` only after individual user approval and
-only when it has no report-specific constants, has a short English purpose
-note, and has a focused test.
+Use this Skill's shared `tools list`, `tools doctor`, `tools ensure`, `read-pdf`,
+`render-pdf-pages`, and other CLI operations as needed; inspect command `--help`
+for arguments. Missing compatible shared tools are resolved by capability,
+not by installing another paper-analysis Skill.

@@ -7,9 +7,12 @@ import os
 import re
 import shutil
 import subprocess
+import sys
 import tempfile
+import time
 from collections import Counter
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
+from hashlib import sha256
 from pathlib import Path
 from typing import Any
 from urllib.parse import unquote, urlparse
@@ -17,6 +20,81 @@ from urllib.parse import unquote, urlparse
 from markdown_it import MarkdownIt
 
 MERMAID_CHECK_TIMEOUT_SECONDS = 15
+
+
+@dataclass(frozen=True)
+class Diagnostic:
+    code: str
+    message: str
+    stage: str
+    severity: str = "error"
+    line: int | None = None
+
+
+@dataclass(frozen=True)
+class AuditStage:
+    name: str
+    status: str
+    elapsed_seconds: float
+    reason: str | None = None
+
+
+@dataclass
+class AuditContext:
+    """Disposable cache owned by one preparation/audit invocation."""
+
+    mermaid: dict[str, list[dict[str, Any]]] = field(default_factory=dict)
+    renderer: dict[str, list[str]] = field(default_factory=dict)
+
+
+def _tool_fingerprint() -> str:
+    digest = sha256()
+    digest.update(Path(__file__).read_bytes())
+    digest.update(sys.version.encode("utf-8"))
+    for path in (_mermaid_checker_path(), _renderer_script_path()):
+        if path is not None:
+            digest.update(str(path).encode("utf-8"))
+            for resource in (
+                path,
+                path.parent.parent / "package-lock.json",
+                path.parent.parent / ".markdownlint-cli2.yaml",
+                path.parent.parent / "manifest.json",
+                path.parent.parent / "node_modules" / ".package-lock.json",
+            ):
+                if resource.is_file():
+                    digest.update(resource.read_bytes())
+    for name in (
+        "PATH",
+        "APA_PYTHON",
+        "PUPPETEER_EXECUTABLE_PATH",
+        "PUPPETEER_CACHE_DIR",
+        "APA_TOOL_VERSIONS",
+    ):
+        digest.update(os.environ.get(name, "").encode("utf-8"))
+    for executable in (
+        shutil.which("node"),
+        os.environ.get("APA_PYTHON", sys.executable),
+        os.environ.get("PUPPETEER_EXECUTABLE_PATH"),
+    ):
+        if executable and Path(executable).is_file():
+            path = Path(executable).resolve()
+            stat = path.stat()
+            digest.update(f"{path}:{stat.st_size}:{stat.st_mtime_ns}".encode())
+    return digest.hexdigest()
+
+
+def _check_records(
+    blocks: list[tuple[int, str]], context: AuditContext | None = None
+) -> list[dict[str, Any]]:
+    if not blocks:
+        return []
+    if context is None:
+        return _mermaid_check_records(blocks)
+    key = sha256(json.dumps(blocks, ensure_ascii=False).encode("utf-8")).hexdigest()
+    key += _tool_fingerprint()
+    if key not in context.mermaid:
+        context.mermaid[key] = _mermaid_check_records(blocks)
+    return context.mermaid[key]
 
 
 @dataclass(frozen=True)
@@ -28,6 +106,8 @@ class MarkdownAudit:
     mermaid_count: int
     errors: tuple[str, ...]
     warnings: tuple[str, ...]
+    diagnostics: tuple[Diagnostic, ...] = ()
+    stages: tuple[AuditStage, ...] = ()
 
     def to_dict(self) -> dict[str, object]:
         return asdict(self)
@@ -149,7 +229,7 @@ def _math_errors(lines: list[str]) -> tuple[list[str], int]:
     display_count = 0
     for number, raw in enumerate(lines, start=1):
         line = _strip_inline_code(raw)
-        if "\\(" in line or "\\)" in line or "\\[" in line or "\\]" in line:
+        if "\\(" in line or "\\)" in line or re.search(r"(?<!\\)\\[\[\]]", line):
             errors.append(f"line {number}: only $ and $$ mathematical delimiters are allowed")
         if line.strip() == "$$":
             if display_open_at is None:
@@ -258,6 +338,8 @@ def _mermaid_check_records(blocks: list[tuple[int, str]]) -> list[dict[str, Any]
             capture_output=True,
             check=False,
             text=True,
+            encoding="utf-8",
+            errors="replace",
             timeout=MERMAID_CHECK_TIMEOUT_SECONDS,
         )
     except (OSError, subprocess.TimeoutExpired) as error:
@@ -302,12 +384,19 @@ def _record_errors(record: dict[str, Any], *, enforce_direction: bool) -> list[s
     if layout.get("skipped"):
         return []
     try:
-        if layout["current"] not in {"TB", "TD", "LR"} or layout["recommended"] not in {"TB", "LR"}:
+        if layout["current"] not in {None, "TB", "TD", "LR"} or layout[
+            "recommended"
+        ] not in {"TB", "LR"}:
             raise ValueError("invalid direction")
         if not isinstance(layout["changed"], bool) or not isinstance(
             layout["direction_offset"], int
         ):
             raise ValueError("invalid change or source offset")
+        direction_length = layout.get(
+            "direction_length", len(layout["current"]) if layout["current"] else 0
+        )
+        if not isinstance(direction_length, int) or direction_length < 0:
+            raise ValueError("invalid direction length")
         if layout["changed"] != (
             ("TB" if layout["current"] == "TD" else layout["current"]) != layout["recommended"]
         ):
@@ -335,12 +424,15 @@ def _record_errors(record: dict[str, Any], *, enforce_direction: bool) -> list[s
 
 
 def _mermaid_syntax_audit(
-    blocks: list[tuple[int, str]], *, require_module_subgraphs: bool = False
+    blocks: list[tuple[int, str]],
+    *,
+    require_module_subgraphs: bool = False,
+    context: AuditContext | None = None,
 ) -> tuple[list[str], list[str]]:
     """Check syntax and estimated direction without modifying the report."""
 
     try:
-        records = _mermaid_check_records(blocks)
+        records = _check_records(blocks, context)
     except ValueError as error:
         return [str(error)], []
     errors = [
@@ -362,12 +454,10 @@ def _mermaid_syntax_audit(
     return errors, []
 
 
-def fix_mermaid_direction(path: Path, *, dry_run: bool = False) -> dict[str, Any]:
-    """Atomically replace only top-level direction tokens in one Markdown file."""
-
-    path = path.resolve()
-    original = path.read_bytes()
-    text = original.decode("utf-8")
+def _fix_mermaid_text(
+    text: str, *, context: AuditContext | None = None
+) -> tuple[str, list[dict[str, Any]]]:
+    """Analyze and edit text without writing a file."""
     lines = text.splitlines(keepends=True)
     tokens = MarkdownIt("commonmark").parse(text)
     blocks: list[tuple[int, str]] = []
@@ -383,7 +473,7 @@ def fix_mermaid_direction(path: Path, *, dry_run: bool = False) -> dict[str, Any
             raise ValueError(f"line {start + 1}: unclosed Mermaid fence")
         blocks.append((start + 1, token.content))
         starts.append(start + 1)
-    records = _mermaid_check_records(blocks)
+    records = _check_records(blocks, context)
     errors = [
         error for record in records for error in _record_errors(record, enforce_direction=False)
     ]
@@ -398,8 +488,9 @@ def fix_mermaid_direction(path: Path, *, dry_run: bool = False) -> dict[str, Any
         if unit_offset < 0:
             raise ValueError("Invalid Mermaid source offset")
         offset = len(code.encode("utf-16-le")[: unit_offset * 2].decode("utf-16-le"))
-        current = layout["current"]
-        if code[offset : offset + len(current)] != current:
+        current = layout["current"] or ""
+        direction_length = layout.get("direction_length", len(current))
+        if code[offset : offset + direction_length] != current:
             raise ValueError("Mermaid source direction does not match the analyzed token")
         before = code[:offset]
         source_line = start + before.count("\n")
@@ -409,17 +500,28 @@ def fix_mermaid_direction(path: Path, *, dry_run: bool = False) -> dict[str, Any
         if prefix < 0:
             raise ValueError("Cannot map the parsed Mermaid direction to its source line")
         source_offset = offsets[source_line] + prefix + column
-        edits.append((source_offset, source_offset + len(current), layout["recommended"]))
+        replacement = layout["recommended"] if current else f" {layout['recommended']}"
+        edits.append((source_offset, source_offset + direction_length, replacement))
     for start, end, replacement in reversed(edits):
         text = text[:start] + replacement + text[end:]
-    if edits and not dry_run:
+    return text, records
+
+
+def _write_report_atomic(path: Path, original: bytes, updated: bytes) -> None:
+    """Serialize cooperating writers and reject content changed during analysis."""
+
+    from .tooling import _directory_lock
+
+    with _directory_lock(path.with_name(f".{path.name}.edit.lock")):
+        if path.read_bytes() != original:
+            raise ValueError("Report changed during analysis; refusing to overwrite newer content")
         descriptor, name = tempfile.mkstemp(
             prefix=f".{path.name}.", suffix=".updating", dir=path.parent
         )
         temporary = Path(name)
         try:
             with os.fdopen(descriptor, "wb") as stream:
-                stream.write(text.encode("utf-8"))
+                stream.write(updated)
                 stream.flush()
                 os.fsync(stream.fileno())
             shutil.copymode(path, temporary)
@@ -430,11 +532,22 @@ def fix_mermaid_direction(path: Path, *, dry_run: bool = False) -> dict[str, Any
             os.replace(temporary, path)
         finally:
             temporary.unlink(missing_ok=True)
+
+
+def fix_mermaid_direction(path: Path, *, dry_run: bool = False) -> dict[str, Any]:
+    """Atomically replace only top-level direction tokens in one Markdown file."""
+
+    path = path.resolve()
+    original = path.read_bytes()
+    text, records = _fix_mermaid_text(original.decode("utf-8"))
+    changed = text.encode("utf-8") != original
+    if changed and not dry_run:
+        _write_report_atomic(path, original, text.encode("utf-8"))
     return {
         "path": str(path),
         "dry_run": dry_run,
-        "changed": bool(edits),
-        "written": bool(edits) and not dry_run,
+        "changed": changed,
+        "written": changed and not dry_run,
         "results": records,
     }
 
@@ -451,11 +564,20 @@ def _full_renderer_errors(path: Path) -> list[str]:
             capture_output=True,
             check=False,
             text=True,
+            encoding="utf-8",
+            errors="replace",
             timeout=120,
         )
     except (OSError, subprocess.TimeoutExpired) as error:
         return [f"full Markdown renderer failed to run: {error}"]
     if completed.returncode:
+        try:
+            payload = json.loads(completed.stdout)
+            reported = payload.get("errors", [])
+            if isinstance(reported, list) and all(isinstance(item, str) for item in reported):
+                return [f"full Markdown renderer failed: {item}" for item in reported]
+        except (json.JSONDecodeError, AttributeError, TypeError):
+            pass
         detail = " ".join((completed.stderr or completed.stdout).split())[:1000]
         return [f"full Markdown renderer failed: {detail or 'unknown renderer error'}"]
     return []
@@ -465,9 +587,12 @@ def _relative_link_errors(path: Path, text: str) -> list[str]:
     if "templates" in path.parts:
         return []
     errors: list[str] = []
-    pattern = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
-    for destination in pattern.findall(text):
-        raw = destination.strip().strip("<>").split(maxsplit=1)[0]
+    destinations = []
+    for token in MarkdownIt("commonmark").parse(text):
+        for child in token.children or []:
+            if child.type in {"link_open", "image"}:
+                destinations.append(str(child.attrGet("href") or child.attrGet("src") or ""))
+    for raw in destinations:
         parsed = urlparse(raw)
         if not raw or raw.startswith("#") or parsed.scheme or parsed.netloc:
             continue
@@ -508,33 +633,101 @@ def _section_errors(lines: list[str], report_kind: str) -> list[str]:
     for section in required:
         if not any(re.match(rf"^##\s+{section}[.)]\s+", line) for line in lines):
             errors.append(f"missing numbered level-two section {section}")
+    actual = [
+        int(match.group(1))
+        for line in lines
+        if (match := re.match(r"^##\s+(\d+)[.)]\s+", line))
+    ]
+    if actual != list(required):
+        errors.append("numbered level-two sections must appear exactly once in required order")
     return errors
 
 
-def audit_markdown(path: Path, *, report_kind: str = "generic") -> MarkdownAudit:
-    """Audit one Markdown report against the approved portable profile."""
-
-    text = path.read_text(encoding="utf-8")
-    newline_errors = ["document must use LF newlines"] if "\r" in text else []
+def _basic_markdown_errors(
+    text: str, path: Path, report_kind: str
+) -> tuple[list[str], int, list[tuple[int, str]]]:
     lines = text.splitlines()
     visible, mermaid_blocks = _outside_fences(lines)
-    errors = newline_errors
+    errors = ["document must use LF newlines"] if "\r" in text else []
     errors.extend(_portable_syntax_errors(visible))
     errors.extend(_heading_errors(visible))
     math_errors, formula_count = _math_errors(visible)
     errors.extend(math_errors)
-    mermaid_syntax_errors, warnings = _mermaid_syntax_audit(
-        mermaid_blocks, require_module_subgraphs=report_kind == "paper"
-    )
-    errors.extend(mermaid_syntax_errors)
     errors.extend(_section_errors(visible, report_kind))
     errors.extend(_relative_link_errors(path, text))
     try:
         MarkdownIt("commonmark", {"html": False}).parse(text)
     except Exception as error:
         errors.append(f"CommonMark parser failed: {error}")
-    if report_kind in {"paper", "category"}:
-        errors.extend(_full_renderer_errors(path))
+    return errors, formula_count, mermaid_blocks
+
+
+def audit_markdown(
+    path: Path,
+    *,
+    report_kind: str = "generic",
+    publication_path: Path | None = None,
+    context: AuditContext | None = None,
+    full_render: bool = True,
+) -> MarkdownAudit:
+    """Audit one Markdown report against the approved portable profile."""
+
+    started = time.perf_counter()
+    text = path.read_bytes().decode("utf-8")
+    errors, formula_count, mermaid_blocks = _basic_markdown_errors(
+        text, publication_path or path, report_kind
+    )
+    diagnostics = [_diagnostic(error, "basic") for error in errors]
+    stages = [AuditStage("basic", "failed" if errors else "passed", time.perf_counter() - started)]
+    warnings: list[str] = []
+    if mermaid_blocks:
+        started = time.perf_counter()
+        options: dict[str, Any] = {"require_module_subgraphs": report_kind == "paper"}
+        if context is not None:
+            options["context"] = context
+        mermaid_errors, warnings = _mermaid_syntax_audit(mermaid_blocks, **options)
+        errors.extend(mermaid_errors)
+        diagnostics.extend(_diagnostic(error, "mermaid") for error in mermaid_errors)
+        stages.append(
+            AuditStage(
+                "mermaid", "failed" if mermaid_errors else "passed", time.perf_counter() - started
+            )
+        )
+    else:
+        stages.append(AuditStage("mermaid", "passed", 0, "no Mermaid blocks"))
+    if report_kind not in {"paper", "category"}:
+        stages.append(AuditStage("renderer", "skipped", 0, "generic report has no rendering gate"))
+    elif errors:
+        stages.append(AuditStage("renderer", "skipped", 0, "earlier checks failed"))
+    elif not full_render:
+        stages.append(
+            AuditStage("renderer", "pending", 0, "full rendering deferred to final audit")
+        )
+    else:
+        started = time.perf_counter()
+        cache_key = sha256(text.encode("utf-8")).hexdigest() + _tool_fingerprint()
+        if context is not None and cache_key in context.renderer:
+            renderer_errors = context.renderer[cache_key]
+        else:
+            renderer_errors = _full_renderer_errors(path)
+            if path.read_bytes().decode("utf-8") != text:
+                renderer_errors = [*renderer_errors, "report changed during rendering; rerun audit"]
+            elif context is not None:
+                context.renderer[cache_key] = renderer_errors
+        errors.extend(renderer_errors)
+        diagnostics.extend(_diagnostic(error, "renderer") for error in renderer_errors)
+        stages.append(
+            AuditStage(
+                "renderer", "failed" if renderer_errors else "passed", time.perf_counter() - started
+            )
+        )
+    if path.read_bytes().decode("utf-8") != text and not any(
+        "changed during rendering" in error for error in errors
+    ):
+        message = "report changed during audit; rerun audit"
+        errors.append(message)
+        diagnostics.append(_diagnostic(message, "consistency"))
+        stages.append(AuditStage("consistency", "failed", 0, message))
     return MarkdownAudit(
         valid=not errors,
         path=str(path),
@@ -543,4 +736,16 @@ def audit_markdown(path: Path, *, report_kind: str = "generic") -> MarkdownAudit
         mermaid_count=len(mermaid_blocks),
         errors=tuple(errors),
         warnings=tuple(warnings),
+        diagnostics=tuple(diagnostics),
+        stages=tuple(stages),
+    )
+
+
+def _diagnostic(message: str, stage: str) -> Diagnostic:
+    match = re.match(r"line (\d+):", message)
+    return Diagnostic(
+        code=f"{stage}.validation",
+        message=message,
+        stage=stage,
+        line=int(match[1]) if match else None,
     )

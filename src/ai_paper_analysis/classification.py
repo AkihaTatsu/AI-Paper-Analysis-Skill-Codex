@@ -4,9 +4,13 @@ from __future__ import annotations
 
 import csv
 import json
+import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from .markdown_audit import AuditContext
 
 from .constants import CLASSIFICATION_COLUMNS
 from .contracts import validate_instance
@@ -44,16 +48,41 @@ def _taxonomy_index(
 def _basic_information(path: Path) -> dict[str, str]:
     """Read exact key/value rows from the report's Basic Information table."""
 
+    from markdown_it import MarkdownIt
+
+    tokens = MarkdownIt("commonmark").enable("table").parse(path.read_text(encoding="utf-8"))
     values: dict[str, str] = {}
-    for line in path.read_text(encoding="utf-8").splitlines():
-        if not line.startswith("|"):
-            continue
-        cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
-        if len(cells) != 2 or cells[0] in {"Field", "---"}:
-            continue
-        if set(cells[0]) == {"-"}:
-            continue
-        values[cells[0]] = cells[1]
+    duplicates: set[str] = set()
+    aliases = {
+        "\u8bba\u6587 ID": "Paper ID",
+        "\u7a33\u5b9a\u8bba\u6587 ID": "Paper ID",
+        "\u7c7b\u522b ID": "Category ID",
+        "\u5b50\u7c7b\u522b ID": "Subcategory ID",
+    }
+    in_overview = in_table = False
+    cells: list[str] = []
+    for index, token in enumerate(tokens):
+        if token.type == "heading_open" and token.tag == "h2":
+            heading = tokens[index + 1].content
+            in_overview = bool(re.match(r"^1[.)]\s+", heading))
+        elif token.type == "table_open":
+            in_table = in_overview
+        elif token.type == "table_close":
+            in_table = False
+        elif in_table and token.type == "tr_open":
+            cells = []
+        elif in_table and token.type == "inline":
+            cells.append(token.content.strip())
+        elif in_table and token.type == "tr_close" and len(cells) >= 2:
+            key = aliases.get(cells[0], cells[0])
+            if key not in {"Paper ID", "Category ID", "Subcategory ID"}:
+                continue
+            if key in values:
+                duplicates.add(key)
+            values[key] = cells[1].strip("`")
+    for key in duplicates:
+        values.pop(key, None)
+
     return values
 
 
@@ -72,10 +101,15 @@ def validate_classification(
     *,
     target_root: Path | None = None,
     require_comparison_ready: bool = False,
+    audit_context: AuditContext | None = None,
 ) -> ClassificationAudit:
     """Validate schema, exclusive assignment, paths, and semantic IDs."""
 
     errors: list[str] = []
+    if require_comparison_ready and audit_context is None:
+        from .markdown_audit import AuditContext
+
+        audit_context = AuditContext()
     headers, rows = read_classification(csv_path)
     expected_headers = list(CLASSIFICATION_COLUMNS)
     if headers != expected_headers:
@@ -135,12 +169,22 @@ def validate_classification(
                 errors.append(f"{prefix}: subcategory_name does not match taxonomy.json")
 
         if require_comparison_ready:
-            errors.extend(_comparison_row_errors(row, prefix, target_root or csv_path.parent))
+            errors.extend(
+                _comparison_row_errors(
+                    row, prefix, target_root or csv_path.parent, audit_context=audit_context
+                )
+            )
 
     return ClassificationAudit(valid=not errors, row_count=len(rows), errors=tuple(errors))
 
 
-def _comparison_row_errors(row: dict[str, str], prefix: str, target_root: Path) -> list[str]:
+def _comparison_row_errors(
+    row: dict[str, str],
+    prefix: str,
+    target_root: Path,
+    *,
+    audit_context: AuditContext | None = None,
+) -> list[str]:
     from .pdf import validate_pdf
     from .report_audit import audit_paper_report
 
@@ -180,8 +224,24 @@ def _comparison_row_errors(row: dict[str, str], prefix: str, target_root: Path) 
 
     report = resolved.get("report_path")
     if report is not None:
-        report_audit = audit_paper_report(report)
+        from .content_review import load_artifact_review
+
+        review = load_artifact_review(target_root, report)
+        report_audit = audit_paper_report(
+            report,
+            content_review=review,
+            context=audit_context,
+        )
         errors.extend(f"{prefix}: report: {error}" for error in report_audit.errors)
+        if report_audit.content_status != "complete":
+            errors.append(
+                f"{prefix}: report requires a current complete content review; "
+                f"observed {report_audit.content_status}"
+            )
+        elif pdf is not None and review is not None:
+            reviewed_sources = {Path(source["path"]).resolve() for source in review["sources"]}
+            if pdf.resolve() not in reviewed_sources:
+                errors.append(f"{prefix}: selected PDF is not bound to the report content review")
         info = _basic_information(report)
         expected = {
             "Paper ID": row.get("paper_id", ""),

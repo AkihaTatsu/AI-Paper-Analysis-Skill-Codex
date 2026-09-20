@@ -64,7 +64,26 @@ def test_confirmed_spec_round_trip(tmp_path: Path) -> None:
     assert validation.valid, validation.errors
     path = tmp_path / "run-spec.json"
     path.write_text(json.dumps(spec), encoding="utf-8")
-    assert load_confirmed_run_spec(path)["run_id"] == spec["run_id"]
+    loaded = load_confirmed_run_spec(path)
+    assert loaded["run_id"] == spec["run_id"]
+    assert loaded["execution_preferences"] == {
+        "draft_model_policy": "fastest_suitable",
+        "evidence_cache": "project",
+    }
+
+
+def test_execution_preferences_are_optional_and_reject_unknown_values(tmp_path: Path) -> None:
+    spec = valid_spec(tmp_path)
+    assert validate_run_spec(spec).valid
+    spec["execution_preferences"] = {
+        "draft_model_policy": "fastest_suitable",
+        "evidence_cache": "disabled",
+    }
+    assert validate_run_spec(spec).valid
+    preferences = spec["execution_preferences"]
+    assert isinstance(preferences, dict)
+    preferences["draft_model_policy"] = "hard-coded-model"
+    assert not validate_run_spec(spec).valid
 
 
 def test_unconfirmed_spec_is_rejected(tmp_path: Path) -> None:

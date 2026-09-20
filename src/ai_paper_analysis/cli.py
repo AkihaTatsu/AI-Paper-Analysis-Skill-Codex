@@ -2,17 +2,22 @@
 
 from __future__ import annotations
 
+import hashlib
+import importlib.util
 import json
 import os
 from collections.abc import Callable
+from functools import wraps
 from pathlib import Path
-from typing import Annotated, Any, NoReturn, TypeVar
+from typing import Annotated, Any, NoReturn, TypeVar, cast
 
 import typer
 
 from .constants import DEFAULT_NETWORK
 
 app = typer.Typer(no_args_is_help=True, pretty_exceptions_show_locals=False)
+tools_app = typer.Typer(no_args_is_help=True)
+app.add_typer(tools_app, name="tools")
 Command = TypeVar("Command", bound=Callable[..., object])
 
 
@@ -27,7 +32,75 @@ def _register(name: str) -> Callable[[Command], Command]:
     allowed = _allowed_commands()
     if allowed is not None and name not in allowed:
         return lambda function: function
-    return app.command(name)
+
+    def decorate(function: Command) -> Command:
+        @wraps(function)
+        def guarded(*args: Any, **kwargs: Any) -> object:
+            _require_command_capabilities(name, kwargs)
+            return function(*args, **kwargs)
+
+        return cast(Command, app.command(name)(guarded))
+
+    return decorate
+
+
+def _missing_tools(missing: list[str]) -> NoReturn:
+    repair = "tools ensure " + " ".join(f"--capability {name}" for name in missing)
+    _emit(
+        {
+            "error": {
+                "kind": "missing-tools",
+                "message": "Required shared capabilities are not ready. Run this CLI with: "
+                + repair,
+                "missing_capabilities": missing,
+                "repair_command": repair,
+            }
+        }
+    )
+    raise typer.Exit(1)
+
+
+def _require_command_capabilities(name: str, arguments: dict[str, Any]) -> None:
+    from .capabilities import capability_closure, list_tools
+
+    registry = list_tools()
+    commands = {
+        "providers": ("sources",),
+        "discover": ("sources",),
+        "download-pdf": ("pdf",),
+        "validate-pdf": ("pdf",),
+        "read-pdf": ("pdf",),
+        "render-pdf-pages": ("pdf",),
+        "validate-classification": ("classification",),
+        "prepare-report": ("reports",),
+        "lookup-evidence-cache": ("core",),
+        "record-evidence-cache": ("core",),
+        "fix-mermaid-direction": ("reports",),
+        "audit-markdown": ("reports",),
+        "audit-paper-report": ("reports",),
+        "audit-category-report": ("classification", "reports"),
+    }
+    required = set(commands.get(name, ("core",)))
+    if name == "validate-classification" and arguments.get("comparison_ready"):
+        required.update(("pdf", "reports"))
+    if name == "audit-category-report" and (
+        arguments.get("classification") is not None or arguments.get("taxonomy") is not None
+    ):
+        required.add("pdf")
+    missing: list[str] = []
+    for capability in capability_closure(required, registry=registry):
+        for module in registry["capabilities"][capability]["imports"]:
+            try:
+                available = importlib.util.find_spec(module) is not None
+            except (ImportError, ValueError, AttributeError):
+                available = False
+            if not available:
+                missing.append(capability)
+                break
+    if missing:
+        _missing_tools(missing)
+    if "reports" in required:
+        _load_compatible_renderer_environment()
 
 
 def _emit(payload: object) -> None:
@@ -46,15 +119,258 @@ def _load_object(path: Path) -> dict[str, Any]:
     return payload
 
 
-def _ensure_renderer(*, require_browser: bool = True) -> None:
+def _load_compatible_renderer_environment() -> None:
+    """Discover an installed capability added after this Skill's fixed pointer.
+
+    Only metadata is read here. Actual tool availability remains the concern of
+    the corresponding audit stage, and the running code version never changes.
+    """
     if os.environ.get("APA_RENDERER_ROOT"):
         return
-    from .tooling import ToolBootstrapError, prepare_renderer
+    from .capabilities import list_tools
+    from .tooling import ToolBootstrapError, _read_json, cache_root, renderer_source, source_root
+
+    record = _read_json(cache_root() / "active.json")
+    try:
+        source = source_root()
+        lock_digest = hashlib.sha256((source / "uv.lock").read_bytes()).hexdigest()[:20]
+        if (
+            record.get("api_version") != list_tools()["api_version"]
+            or record.get("lock_digest") != lock_digest
+            or "reports" not in record.get("capabilities", [])
+        ):
+            return
+        expected = renderer_source()
+        active_source = Path(record["code_root"]) / "renderer"
+        for name in (
+            "package.json",
+            "package-lock.json",
+            ".markdownlint-cli2.yaml",
+            "scripts/check_mermaid.mjs",
+            "scripts/render_report.mjs",
+        ):
+            if (expected / name).read_bytes() != (active_source / name).read_bytes():
+                return
+    except (OSError, ValueError, KeyError, TypeError, ToolBootstrapError):
+        return
+    environment = record.get("environment", {})
+    if not isinstance(environment, dict):
+        return
+    for key in ("APA_RENDERER_ROOT", "PUPPETEER_CACHE_DIR", "PUPPETEER_EXECUTABLE_PATH"):
+        if isinstance(environment.get(key), str):
+            os.environ.setdefault(key, environment[key])
+    try:
+        versions = json.loads(os.environ.get("APA_TOOL_VERSIONS", "{}"))
+    except ValueError:
+        versions = {}
+    if isinstance(versions, dict) and isinstance(record.get("versions"), dict):
+        for key in ("node", "browser"):
+            if key in record["versions"]:
+                versions[key] = record["versions"][key]
+        os.environ["APA_TOOL_VERSIONS"] = json.dumps(versions, sort_keys=True)
+
+
+def _ensure_renderer(*, require_browser: bool = True) -> None:
+    _load_compatible_renderer_environment()
+    configured = os.environ.get("APA_RENDERER_ROOT", "")
+    root = Path(configured)
+    browser = Path(os.environ.get("PUPPETEER_EXECUTABLE_PATH", ""))
+    if not configured or not (root / "scripts" / "check_mermaid.mjs").is_file() or (
+        require_browser and not browser.is_file()
+    ):
+        _missing_tools(["reports"])
+
+
+@tools_app.command("list")
+def tools_list() -> None:
+    """Describe shared capabilities and independent Skill requirements."""
+    from .capabilities import list_tools
+
+    _emit(list_tools())
+
+
+@tools_app.command("ensure")
+def tools_ensure(
+    capability: Annotated[list[str], typer.Option("--capability")],
+    source_root: Path | None = None,
+    cache_dir: Path | None = None,
+) -> None:
+    """Add missing compatible tools and verify readiness."""
+    from .tooling import ensure_tools
 
     try:
-        os.environ.update(prepare_renderer(require_browser=require_browser))
-    except ToolBootstrapError as error:
-        _fail("renderer-bootstrap", error)
+        result = ensure_tools(capability, source_root=source_root, cache_dir=cache_dir)
+        _emit(result)
+        if not result["valid"]:
+            raise typer.Exit(1)
+    except (OSError, ValueError, RuntimeError) as error:
+        _fail("tool-install", error)
+
+
+@tools_app.command("doctor")
+def tools_doctor(
+    capability: Annotated[list[str] | None, typer.Option("--capability")] = None,
+    cache_dir: Path | None = None,
+) -> None:
+    """Check installed tools without treating a stale marker as success."""
+    from .tooling import doctor_tools
+
+    result = doctor_tools(capability, cache_dir=cache_dir)
+    _emit(result)
+    if not result["valid"]:
+        raise typer.Exit(1)
+
+
+@_register("read-pdf")
+def read_pdf_command(path: Path, pages: str | None = None, output: Path | None = None) -> None:
+    """Read original PDF text with explicit one-based page locators."""
+    from .pdf_read import read_pdf
+
+    try:
+        result = read_pdf(path, pages=pages)
+        if output:
+            from .artifacts import write_json_atomic
+
+            write_json_atomic(output, result)
+            _emit({"output": str(output), "page_count": result["page_count"]})
+        else:
+            _emit(result)
+    except (OSError, ValueError) as error:
+        _fail("pdf-read", error)
+
+
+@_register("render-pdf-pages")
+def render_pdf_pages_command(path: Path, output: Path, pages: str, dpi: int = 144) -> None:
+    """Render selected original pages for visual verification."""
+    from .pdf_read import render_pdf_pages
+
+    try:
+        _emit(render_pdf_pages(path, output, pages=pages, dpi=dpi))
+    except (OSError, ValueError) as error:
+        _fail("pdf-render", error)
+
+
+@_register("prepare-report")
+def prepare_report_command(
+    path: Path,
+    report_kind: str = "paper",
+    dry_run: bool = False,
+    publication_path: Path | None = None,
+    render: Annotated[bool, typer.Option(help="Run complete rendering after repairs.")] = False,
+    evidence: Annotated[
+        list[Path] | None,
+        typer.Option("--evidence", help="Completed evidence-cache packet; repeat as needed."),
+    ] = None,
+    forbid_literal: Annotated[
+        list[str] | None,
+        typer.Option(
+            "--forbid-literal", help="Previously identified exact text that must be gone."
+        ),
+    ] = None,
+    coverage_matrix: Annotated[
+        Path | None,
+        typer.Option(help="Temporary section-bound evidence coverage matrix."),
+    ] = None,
+    review_issues: Annotated[
+        Path | None,
+        typer.Option(help="Consolidated review issues with automatic closure checks."),
+    ] = None,
+) -> None:
+    """Repair deterministic defects in a complete draft and collect residual issues."""
+    from .report_prepare import prepare_report
+
+    try:
+        result = prepare_report(
+            path,
+            report_kind=report_kind,
+            dry_run=dry_run,
+            publication_path=publication_path,
+            render=render,
+            evidence_paths=tuple(evidence or ()),
+            forbidden_literals=tuple(forbid_literal or ()),
+            coverage_matrix=coverage_matrix,
+            review_issues=review_issues,
+        )
+        _emit(result.to_dict())
+        if not result.valid:
+            raise typer.Exit(1)
+    except (OSError, ValueError) as error:
+        _fail("report-prepare", error)
+
+
+@_register("lookup-evidence-cache")
+def lookup_evidence_cache_command(
+    target_root: Path,
+    source: Path,
+    source_class: str,
+    coverage_fingerprint: str,
+) -> None:
+    """Look up concise evidence by source bytes, policy, class, and coverage scope."""
+
+    from .evidence_cache import lookup_evidence_cache
+
+    try:
+        result = lookup_evidence_cache(
+            target_root, source, source_class, coverage_fingerprint
+        )
+        _emit(result)
+        if not result["hit"]:
+            raise typer.Exit(2)
+    except (OSError, ValueError) as error:
+        _fail("evidence-cache", error)
+
+
+@_register("record-evidence-cache")
+def record_evidence_cache_command(
+    target_root: Path,
+    source: Path,
+    source_class: str,
+    coverage_fingerprint: str,
+    evidence: Path,
+) -> None:
+    """Validate and atomically record one concise, fully covered evidence packet."""
+
+    from .evidence_cache import record_evidence_cache
+
+    try:
+        _emit(
+            record_evidence_cache(
+                target_root,
+                source,
+                source_class,
+                coverage_fingerprint,
+                _load_object(evidence),
+            )
+        )
+    except (OSError, ValueError) as error:
+        _fail("evidence-cache", error)
+
+
+@_register("record-content-review")
+def record_content_review_command(
+    report: Path,
+    assessment: Path,
+    output: Path,
+    source: Annotated[list[Path], typer.Option("--source")],
+    report_kind: str = "paper",
+    publication_path: Path | None = None,
+) -> None:
+    """Bind an already performed semantic assessment to the reviewed file version."""
+    from .artifacts import write_json_atomic
+    from .content_review import create_content_review
+
+    try:
+        result = create_content_review(
+            report,
+            _load_object(assessment),
+            tuple(source),
+            report_kind=report_kind,
+            publication_path=publication_path,
+        )
+        write_json_atomic(output, result)
+        _emit({"output": str(output), "content_status": result["content_status"]})
+    except (OSError, ValueError) as error:
+        _fail("content-review", error)
 
 
 @_register("providers")
@@ -266,6 +582,7 @@ def record_state_command(
     artifact_kind: str,
     run_id: str,
     sources: Annotated[list[Path] | None, typer.Option("--source")] = None,
+    content_review: Path | None = None,
 ) -> None:
     """Record paths for one published formal artifact."""
 
@@ -277,6 +594,7 @@ def record_state_command(
         artifact_kind=artifact_kind,
         run_id=run_id,
         sources=tuple(sources or ()),
+        content_review=_load_object(content_review) if content_review else None,
     )
     _emit({"state": str(state_path)})
 
@@ -317,19 +635,24 @@ def fix_mermaid_direction_command(path: Path, dry_run: bool = False) -> None:
 
 
 @_register("audit-markdown")
-def audit_markdown_command(path: Path, report_kind: str = "generic") -> None:
+def audit_markdown_command(
+    path: Path,
+    report_kind: str = "generic",
+    publication_path: Path | None = None,
+) -> None:
     """Audit portable Markdown, mathematics, Mermaid, and numbered sections."""
 
-    _ensure_renderer()
     from .markdown_audit import audit_markdown
 
-    audit = audit_markdown(path, report_kind=report_kind)
+    audit = audit_markdown(path, report_kind=report_kind, publication_path=publication_path)
     _emit(
         {
             "valid": audit.valid,
             "path": audit.path,
             "errors": audit.errors,
             "warnings": audit.warnings,
+            "diagnostics": audit.to_dict()["diagnostics"],
+            "stages": audit.to_dict()["stages"],
         }
     )
     if not audit.valid:
@@ -337,18 +660,29 @@ def audit_markdown_command(path: Path, report_kind: str = "generic") -> None:
 
 
 @_register("audit-paper-report")
-def audit_paper_report_command(report: Path) -> None:
+def audit_paper_report_command(
+    report: Path,
+    content_review: Path | None = None,
+    publication_path: Path | None = None,
+) -> None:
     """Audit a paper report without encoding content ledgers."""
 
-    _ensure_renderer()
     from .report_audit import audit_paper_report
 
-    audit = audit_paper_report(report)
+    audit = audit_paper_report(
+        report,
+        content_review=_load_object(content_review) if content_review else None,
+        publication_path=publication_path,
+    )
     _emit(
         {
             "valid": audit.valid,
             "format_status": audit.format_status,
             "content_status": audit.content_status,
+            "publication_ready": audit.publication_ready,
+            "comparison_ready": audit.valid and audit.content_status == "complete",
+            "diagnostics": audit.markdown.get("diagnostics", ()),
+            "stages": audit.markdown.get("stages", ()),
             "errors": audit.errors,
             "warnings": audit.markdown.get("warnings", ()),
         }
@@ -364,14 +698,23 @@ def audit_category_report_command(
     classification: Path | None = None,
     taxonomy: Path | None = None,
     target_root: Path | None = None,
+    content_review: Path | None = None,
+    publication_path: Path | None = None,
 ) -> None:
     """Audit a category report, relationships, and optional comparison inputs."""
 
-    _ensure_renderer()
     from .classification import validate_classification
+    from .markdown_audit import AuditContext
     from .report_audit import audit_category_report
 
-    audit = audit_category_report(report, relationships)
+    context = AuditContext()
+    audit = audit_category_report(
+        report,
+        relationships,
+        publication_path=publication_path,
+        content_review=_load_object(content_review) if content_review else None,
+        context=context,
+    )
     classification_valid: bool | None = None
     classification_errors: tuple[str, ...] = ()
     if classification is not None or taxonomy is not None:
@@ -385,6 +728,7 @@ def audit_category_report_command(
             taxonomy,
             target_root=target_root,
             require_comparison_ready=True,
+            audit_context=context,
         )
         classification_valid = inputs.valid
         classification_errors = inputs.errors
@@ -397,6 +741,10 @@ def audit_category_report_command(
             "relationship_valid": audit.relationship_valid,
             "classification_valid": classification_valid,
             "input_ready": input_ready,
+            "content_status": audit.content_status,
+            "publication_ready": input_ready and audit.content_status in {"complete", "partial"},
+            "diagnostics": audit.markdown.get("diagnostics", ()),
+            "stages": audit.markdown.get("stages", ()),
             "errors": errors,
             "warnings": audit.markdown.get("warnings", ()),
         }

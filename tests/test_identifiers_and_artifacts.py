@@ -8,6 +8,7 @@ import pytest
 
 from ai_paper_analysis.artifacts import (
     ArtifactConflictError,
+    _rename_without_replacement,
     archive_and_promote,
     atomic_publish,
     ensure_target_layout,
@@ -71,6 +72,17 @@ def test_archive_and_promote_preserves_both_versions(tmp_path: Path) -> None:
     archived = list((tmp_path / "archive" / "report").glob("*.md"))
     assert len(archived) == 1
     assert archived[0].read_text(encoding="utf-8") == "old report\n"
+
+
+def test_atomic_claim_rejects_destination_created_after_preflight(tmp_path: Path) -> None:
+    source = tmp_path / "complete.tmp"
+    source.write_bytes(b"new")
+    destination = tmp_path / "concurrent.txt"
+    destination.write_bytes(b"other writer")
+    with pytest.raises(FileExistsError):
+        _rename_without_replacement(source, destination)
+    assert source.read_bytes() == b"new"
+    assert destination.read_bytes() == b"other writer"
 
 
 def test_archive_and_promote_keeps_only_latest_replaced_report(tmp_path: Path) -> None:
@@ -142,3 +154,24 @@ def test_record_artifact_state_rejects_sources_outside_target(tmp_path: Path) ->
             run_id="20260831T010203Z-abcdef12",
             sources=(outside,),
         )
+
+
+def test_unsupported_directory_sync_does_not_report_failed_publication(tmp_path, monkeypatch):
+    import errno
+    import os
+    import stat
+
+    from ai_paper_analysis import artifacts
+
+    original_sync = os.fsync
+
+    def sync(fd):
+        if stat.S_ISDIR(os.fstat(fd).st_mode):
+            raise OSError(errno.ENOTSUP, "directory sync unsupported")
+        original_sync(fd)
+
+    monkeypatch.setattr(artifacts.os, "fsync", sync)
+    source, destination = tmp_path / "source", tmp_path / "destination"
+    source.write_bytes(b"complete")
+    assert atomic_publish(source, destination).destination == destination
+    assert destination.read_bytes() == b"complete"

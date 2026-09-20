@@ -10,22 +10,22 @@ resolution-markers = [
 name = "ai-paper-analysis"
 source = { editable = "." }
 dependencies = [
-    { name = "httpx" },
     { name = "jsonschema" },
-    { name = "markdown-it-py" },
-    { name = "mkdocs" },
-    { name = "mkdocs-material" },
-    { name = "pymdown-extensions" },
-    { name = "pymupdf" },
-    { name = "pypdf" },
-    { name = "pyyaml" },
     { name = "typer" },
 ]
 
 [package.optional-dependencies]
 dev = [
+    { name = "httpx" },
+    { name = "markdown-it-py" },
+    { name = "mkdocs" },
+    { name = "mkdocs-material" },
     { name = "mypy" },
+    { name = "pymdown-extensions" },
+    { name = "pymupdf" },
+    { name = "pypdf" },
     { name = "pytest" },
+    { name = "pyyaml" },
     { name = "ruff" },
     { name = "types-jsonschema" },
     { name = "types-pyyaml" },
@@ -33,27 +33,53 @@ dev = [
 ocr = [
     { name = "ocrmypdf" },
 ]
+pdf = [
+    { name = "httpx" },
+    { name = "pymupdf" },
+    { name = "pypdf" },
+]
+reports = [
+    { name = "markdown-it-py" },
+    { name = "mkdocs" },
+    { name = "mkdocs-material" },
+    { name = "pymdown-extensions" },
+    { name = "pyyaml" },
+]
+sources = [
+    { name = "httpx" },
+    { name = "pyyaml" },
+]
 
 [package.metadata]
 requires-dist = [
-    { name = "httpx", specifier = ">=0.28,<1" },
+    { name = "httpx", marker = "extra == 'dev'", specifier = ">=0.28,<1" },
+    { name = "httpx", marker = "extra == 'pdf'", specifier = ">=0.28,<1" },
+    { name = "httpx", marker = "extra == 'sources'", specifier = ">=0.28,<1" },
     { name = "jsonschema", specifier = ">=4.23,<5" },
-    { name = "markdown-it-py", specifier = ">=3.0,<5" },
-    { name = "mkdocs", specifier = ">=1.6,<2" },
-    { name = "mkdocs-material", specifier = ">=9.6,<10" },
+    { name = "markdown-it-py", marker = "extra == 'dev'", specifier = ">=3.0,<5" },
+    { name = "markdown-it-py", marker = "extra == 'reports'", specifier = ">=3.0,<5" },
+    { name = "mkdocs", marker = "extra == 'dev'", specifier = ">=1.6,<2" },
+    { name = "mkdocs", marker = "extra == 'reports'", specifier = ">=1.6,<2" },
+    { name = "mkdocs-material", marker = "extra == 'dev'", specifier = ">=9.6,<10" },
+    { name = "mkdocs-material", marker = "extra == 'reports'", specifier = ">=9.6,<10" },
     { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.14,<2" },
     { name = "ocrmypdf", marker = "extra == 'ocr'", specifier = ">=16.7,<18" },
-    { name = "pymdown-extensions", specifier = ">=11.0.1" },
-    { name = "pymupdf", specifier = ">=1.25,<2" },
-    { name = "pypdf", specifier = ">=5.1,<7" },
+    { name = "pymdown-extensions", marker = "extra == 'dev'", specifier = ">=11.0.1" },
+    { name = "pymdown-extensions", marker = "extra == 'reports'", specifier = ">=11.0.1" },
+    { name = "pymupdf", marker = "extra == 'dev'", specifier = ">=1.25,<2" },
+    { name = "pymupdf", marker = "extra == 'pdf'", specifier = ">=1.25,<2" },
+    { name = "pypdf", marker = "extra == 'dev'", specifier = ">=5.1,<7" },
+    { name = "pypdf", marker = "extra == 'pdf'", specifier = ">=5.1,<7" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.3,<10" },
-    { name = "pyyaml", specifier = ">=6.0,<7" },
+    { name = "pyyaml", marker = "extra == 'dev'", specifier = ">=6.0,<7" },
+    { name = "pyyaml", marker = "extra == 'reports'", specifier = ">=6.0,<7" },
+    { name = "pyyaml", marker = "extra == 'sources'", specifier = ">=6.0,<7" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.9,<1" },
     { name = "typer", specifier = ">=0.15,<1" },
     { name = "types-jsonschema", marker = "extra == 'dev'", specifier = ">=4.23,<5" },
     { name = "types-pyyaml", marker = "extra == 'dev'", specifier = ">=6.0,<7" },
 ]
-provides-extras = ["dev", "ocr"]
+provides-extras = ["dev", "ocr", "pdf", "reports", "sources"]
 
 [[package]]
 name = "annotated-doc"

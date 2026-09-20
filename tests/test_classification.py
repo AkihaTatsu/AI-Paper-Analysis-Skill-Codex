@@ -108,8 +108,44 @@ def test_comparison_ready_classification(tmp_path: Path) -> None:
         target_root=tmp_path,
         require_comparison_ready=True,
     )
+    assert not audit.valid
+    assert any("current complete content review" in error for error in audit.errors)
+    from ai_paper_analysis.artifacts import record_artifact_state
+    from ai_paper_analysis.content_review import CHECKS, create_content_review
+
+    review = create_content_review(
+        report,
+        {
+            "reviewer": "fixture",
+            "reviewed_sections": list(range(1, 8)),
+            "checks": dict.fromkeys(CHECKS, True),
+            "content_status": "complete",
+            "limitations": [],
+        },
+        (pdf,),
+    )
+    record_artifact_state(
+        tmp_path,
+        report,
+        artifact_kind="paper-report",
+        run_id="fixture",
+        sources=(pdf,),
+        content_review=review,
+    )
+    audit = validate_classification(
+        csv_path, taxonomy_path, target_root=tmp_path, require_comparison_ready=True
+    )
     assert audit.valid, audit.errors
     assert audit.row_count == 1
+    replacement = pdf.with_name("other-version.pdf")
+    replacement.write_bytes(pdf.read_bytes())
+    row["local_pdf_path"] = "papers/other-version.pdf"
+    write_classification(csv_path, [row])
+    audit = validate_classification(
+        csv_path, taxonomy_path, target_root=tmp_path, require_comparison_ready=True
+    )
+    assert not audit.valid
+    assert any("not bound" in error for error in audit.errors)
 
 
 def test_comparison_ready_rejects_fake_pdf_and_loose_report_ids(tmp_path: Path) -> None:
@@ -155,3 +191,21 @@ def test_comparison_ready_rejects_fake_pdf_and_loose_report_ids(tmp_path: Path) 
     assert not audit.valid
     assert any("PDF" in error for error in audit.errors)
     assert any("Basic Information" in error for error in audit.errors)
+
+
+def test_basic_information_ignores_code_and_other_sections_and_rejects_duplicates(tmp_path):
+    from ai_paper_analysis.classification import _basic_information
+
+    report = tmp_path / "report.md"
+    original = (
+        "# Paper\n\n## 1. Overview\n\n"
+        "| Field | Value |\n| --- | --- |\n| Paper ID | actual |\n\n"
+        "```markdown\n| Paper ID | forged |\n```\n\n"
+        "## 2. Content\n\n| Field | Value |\n| --- | --- |\n| Paper ID | forged |\n"
+    )
+    report.write_text(original)
+    assert _basic_information(report)["Paper ID"] == "actual"
+    report.write_text(
+        original.replace("| Paper ID | actual |", "| Paper ID | actual |\n| Paper ID | forged |")
+    )
+    assert "Paper ID" not in _basic_information(report)

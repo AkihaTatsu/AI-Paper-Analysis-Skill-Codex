@@ -26,7 +26,7 @@ def test_paper_report_audit_reports_structure_not_factual_verification(
 
     assert audit.valid, audit.errors
     assert audit.format_status == "structure-valid"
-    assert audit.content_status == "complete"
+    assert audit.content_status == "unreviewed"
 
 
 def test_paper_report_cli_accepts_report_only(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -39,7 +39,7 @@ def test_paper_report_cli_accepts_report_only(monkeypatch: pytest.MonkeyPatch) -
 
     assert result.exit_code == 0, result.output
     assert '"format_status": "structure-valid"' in result.output
-    assert '"content_status": "complete"' in result.output
+    assert '"content_status": "unreviewed"' in result.output
 
 
 def test_removed_content_ledger_arguments_are_rejected(tmp_path: Path) -> None:

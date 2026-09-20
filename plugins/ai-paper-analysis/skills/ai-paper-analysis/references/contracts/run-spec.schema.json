@@ -28,6 +28,7 @@
     },
     "target_root": {"type": "string", "minLength": 1},
     "output_language": {"type": "string", "minLength": 2},
+    "execution_preferences": {"$ref": "#/$defs/execution_preferences"},
     "finder": {"$ref": "#/$defs/finder"},
     "interpreter": {"$ref": "#/$defs/interpreter"},
     "comparator": {"$ref": "#/$defs/comparator"},
@@ -51,6 +52,14 @@
     }
   ],
   "$defs": {
+    "execution_preferences": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "draft_model_policy": {"enum": ["fastest_suitable"], "default": "fastest_suitable"},
+        "evidence_cache": {"enum": ["project", "disabled"], "default": "project"}
+      }
+    },
     "bounds": {
       "type": "object",
       "additionalProperties": false,

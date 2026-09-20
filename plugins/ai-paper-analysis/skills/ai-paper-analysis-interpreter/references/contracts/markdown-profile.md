@@ -41,36 +41,27 @@ syntax requires.
 
 ## Mermaid
 
-Choose `flowchart TB` or `flowchart LR` by estimating both layouts before
-publication. Run `fix-mermaid-direction <candidate.md>` before the final audit;
-add `--dry-run` to inspect the estimates without writing. This command processes
-all supported flowcharts in the specified file and changes only their top-level
-direction tokens. It accepts TD as a TB alias and reports other diagram types
-or directions as skipped. A parse or estimation failure leaves the entire file
-unchanged. Use it on the candidate during the existing report revision workflow.
+After the complete report exists, run `prepare-report` with its report kind and
+intended publication path. It includes the shared direction fixer; the
+standalone `fix-mermaid-direction <candidate.md>` and its `--dry-run` remain
+available for a focused direction change. These commands prepare a candidate
+and do not bypass semantic review or publication approval.
 
-Prefer the layout whose horizontal side is the short side (width <= height).
-If both qualify, minimize width, then height. If neither qualifies, minimize
-width/height, then width. Preserve the current direction on an exact tie and
-for zero- or one-node graphs. Do not decide from node counts, chain length,
-cycles, or maximum degree.
+Use the official locked Mermaid parser and the shared deterministic TB/LR
+layout estimates. Prefer width <= height, then smaller width and height; if
+neither qualifies, prefer the smaller width/height ratio and then width. Keep
+the current direction on an exact tie or a zero-/one-node graph. Do not choose
+from node counts or graph topology. Estimates are not measured rendered SVG
+dimensions, and final browser rendering is still required.
 
-Dimensions are deterministic estimates from the locked Mermaid parser and
-Dagre layout engine, including disconnected nodes, labels, and subgraphs.
-Text uses an approximate half-em ordinary character width, one em for CJK and
-emoji, and a 1.5-em line height; combining marks have no advance. Node shapes,
-padding, Markdown-label wrapping, and spacing contribute to the bounds. These
-are estimates, not measured SVG dimensions. Unsupported layouts, shapes, or
-size-affecting CSS fail explicitly. Estimation needs Node.js but no browser;
-the final rendering gate still requires its browser.
-
-The read-only audit uses the same estimates and blocks a mismatched direction,
-reporting both sizes and the recommended replacement. Wrap paper modules in
-`subgraph`. Avoid raw HTML and formulas in labels.
-
-Every Mermaid block must pass the official locked `mermaid.parse()` syntax
-check. A reported syntax error blocks publication. An unavailable parser,
-renderer, or required browser also blocks publication.
+The read-only audit uses those same estimates and blocks a mismatched direction.
+Describe the flow using node or module names instead of fixed left/right or
+top/bottom positions: automatic preparation may change the orientation. Review
+any remaining spatial wording against the prepared graph before publication.
+Wrap paper modules in `subgraph`. Avoid raw HTML and formulas in labels.
+Every Mermaid block must pass the official locked `mermaid.parse()` check.
+Unsupported layout estimation or parser/rendering failure blocks publication;
+do not replace a missing required parser, renderer, or browser with a heuristic.
 
 ## Publication gate
 
@@ -79,3 +70,12 @@ Obsidian-profile checks, MkDocs strict build, MathJax, KaTeX, Mermaid rendering,
 relative-link checks, and browser console checks. A syntax or rendering failure
 blocks publication. A content-level `partial` report is not an exception to
 this gate.
+
+Run `audit-paper` or `audit-category-report` with a current `--content-review`
+receipt and the intended `--publication-path`. Link validity is judged at that
+publication location. The receipt binds an actual whole-report semantic review
+to the candidate and sources; command success cannot replace the review.
+Structure validity, complete/partial content, and eligibility for comparison
+are distinct. A visibly partial report can be published only within its approval
+and after all structural gates pass; only complete paper reports are eligible
+for category comparison.

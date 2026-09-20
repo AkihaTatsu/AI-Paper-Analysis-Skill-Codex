@@ -12,6 +12,20 @@ from ai_paper_analysis.markdown_audit import audit_markdown
 FIXTURES = Path(__file__).parent / "fixtures"
 
 
+@pytest.mark.parametrize("sections", [[1, 2, 2, 3], [2, 1, 3], [1, 2, 3, 4]])
+def test_category_sections_reject_duplicates_reordering_and_extras(
+    tmp_path: Path, sections: list[int]
+) -> None:
+    report = tmp_path / "sections.md"
+    report.write_text(
+        "# Category\n\n" + "\n\n".join(f"## {number}. Section\n\nText." for number in sections),
+        encoding="utf-8",
+    )
+    audit = audit_markdown(report, report_kind="category", full_render=False)
+    assert not audit.valid
+    assert any("exactly once" in error for error in audit.errors)
+
+
 def test_portable_paper_report_passes(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(markdown_audit, "_full_renderer_errors", lambda path: [])
     monkeypatch.setattr(markdown_audit, "_mermaid_syntax_audit", lambda blocks, **kwargs: ([], []))
@@ -47,12 +61,10 @@ def test_unbalanced_math_and_raw_html_fail(tmp_path: Path) -> None:
         "(N(0,1))",
     ],
 )
-def test_probable_lost_inline_math_delimiters_fail(
-    tmp_path: Path, fragment: str
-) -> None:
+def test_probable_lost_inline_math_delimiters_fail(tmp_path: Path, fragment: str) -> None:
     report = tmp_path / "bare-math.md"
     report.write_text(
-        "# Bare Math\n\n| Item | Value |\n| --- | --- |\n" f"| parameter | {fragment} |\n",
+        f"# Bare Math\n\n| Item | Value |\n| --- | --- |\n| parameter | {fragment} |\n",
         encoding="utf-8",
     )
 

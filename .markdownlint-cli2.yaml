@@ -10,6 +10,8 @@ globs:
 ignores:
   - "**/.venv/**"
   - "**/node_modules/**"
+  - "benchmark-results/**"
   - "plugins/ai-paper-analysis/skills/**"
   - "skills/*/references/contracts/**"
   - "skills/*/references/templates/**"
+  - "skills/*/references/roles/**"

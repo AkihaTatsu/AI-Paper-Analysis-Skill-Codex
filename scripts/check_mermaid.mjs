@@ -193,17 +193,21 @@ async function estimateLayout(code) {
   const diagram = await mermaid.mermaidAPI.getDiagramFromText(code);
   if (!diagram.type.startsWith("flowchart")) return { skipped: "Not a flowchart" };
   // Locate only the first statement after optional comments / Mermaid frontmatter.
-  const declaration = /^(?:\s|%%[^\n]*(?:\n|$))*(?:---\r?\n[\s\S]*?\r?\n---\s*)?(?:\s|%%[^\n]*(?:\n|$))*(?:flowchart|graph)[ \t]+(TB|TD|LR|BT|RL)\b/.exec(code);
-  if (!declaration) throw new Error("Cannot locate the top-level flowchart direction");
-  const original = declaration[1];
-  if (!["TB", "TD", "LR"].includes(original)) return { skipped: `Unsupported direction: ${original}` };
-  const offset = declaration[0].length - original.length;
+  const declaration = /^(?:\s|%%[^\n]*(?:\n|$))*(?:---\r?\n[\s\S]*?\r?\n---\s*)?(?:\s|%%[^\n]*(?:\n|$))*(?:flowchart|graph)(?:[ \t]+(TB|TD|LR|BT|RL)\b)?/.exec(code);
+  if (!declaration) throw new Error("Cannot locate the top-level flowchart declaration");
+  const original = declaration[1] ?? null;
+  if (original && !["TB", "TD", "LR"].includes(original)) {
+    return { skipped: `Unsupported direction: ${original}` };
+  }
+  const offset = original ? declaration[0].length - original.length : declaration[0].length;
   const current = original === "TD" ? "TB" : original;
   const sizes = {};
   let nodeCount = 0;
   let hasSubgraph = false;
   for (const direction of ["TB", "LR"]) {
-    const candidate = code.slice(0, offset) + direction + code.slice(offset + original.length);
+    const candidate = original
+      ? code.slice(0, offset) + direction + code.slice(offset + original.length)
+      : code.slice(0, offset) + ` ${direction}` + code.slice(offset);
     // Reset configuration between candidates and diagrams, including init directives.
     mermaid.initialize({ startOnLoad: false });
     const parsed = await mermaid.mermaidAPI.getDiagramFromText(candidate);
@@ -212,11 +216,11 @@ async function estimateLayout(code) {
     hasSubgraph = data.nodes.some((node) => node.isGroup);
     sizes[direction] = estimateData(data, direction);
   }
-  const recommended = nodeCount <= 1 ? current : chooseDirection(sizes, current);
+  const recommended = nodeCount <= 1 ? (current ?? "TB") : chooseDirection(sizes, current ?? "TB");
   return { estimated: true, current: original, recommended, sizes,
     node_count: nodeCount, has_subgraph: hasSubgraph, changed: current !== recommended,
     // JSON/JS offsets use UTF-16 code units; Python translates them before patching.
-    direction_offset: offset };
+    direction_offset: offset, direction_length: original?.length ?? 0 };
 }
 
 function compactMessage(error) {

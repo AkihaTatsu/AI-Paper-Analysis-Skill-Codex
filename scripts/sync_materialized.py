@@ -17,174 +17,12 @@ SKILLS = (
     "ai-paper-analysis-comparator",
 )
 VERSION = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
-RUNTIME_DEPENDENCIES = (
-    "httpx>=0.28,<1",
-    "jsonschema>=4.23,<5",
-    "markdown-it-py>=3.0,<5",
-    "mkdocs>=1.6,<2",
-    "mkdocs-material>=9.6,<10",
-    "pymupdf>=1.25,<2",
-    "pypdf>=5.1,<7",
-    "pymdown-extensions>=11.0.1",
-    "pyyaml>=6.0,<7",
-    "typer>=0.15,<1",
-)
-COMMON_MODULES = {
-    "__init__.py",
-    "cli.py",
-    "constants.py",
-    "contracts.py",
-    "tooling.py",
-}
-MODULES = {
-    "ai-paper-analysis": COMMON_MODULES
-    | {"artifacts.py", "cleanup.py", "run_spec.py", "temporary.py"},
-    "ai-paper-analysis-finder": COMMON_MODULES
-    | {
-        "artifacts.py",
-        "classification.py",
-        "cleanup.py",
-        "credentials.py",
-        "identifiers.py",
-        "pdf.py",
-        "providers.py",
-        "run_spec.py",
-        "temporary.py",
-    },
-    "ai-paper-analysis-interpreter": COMMON_MODULES
-    | {
-        "artifacts.py",
-        "cleanup.py",
-        "identifiers.py",
-        "markdown_audit.py",
-        "pdf.py",
-        "report_audit.py",
-        "run_spec.py",
-        "temporary.py",
-    },
-    "ai-paper-analysis-comparator": COMMON_MODULES
-    | {
-        "artifacts.py",
-        "classification.py",
-        "cleanup.py",
-        "identifiers.py",
-        "ledger.py",
-        "markdown_audit.py",
-        "pdf.py",
-        "report_audit.py",
-        "run_spec.py",
-        "temporary.py",
-    },
-}
+# Instruction packages select shared capabilities; executable code has one owner.
 CONTRACTS = {
-    "ai-paper-analysis": {
-        "artifact-state.schema.json",
-        "provider-registry.json",
-        "run-spec.schema.json",
-    },
-    "ai-paper-analysis-finder": {
-        "artifact-state.schema.json",
-        "classification-row.schema.json",
-        "provider-registry.json",
-        "run-spec.schema.json",
-        "taxonomy.schema.json",
-    },
-    "ai-paper-analysis-interpreter": {
-        "artifact-state.schema.json",
-        "markdown-profile.md",
-        "provider-registry.json",
-        "run-spec.schema.json",
-    },
-    "ai-paper-analysis-comparator": {
-        "artifact-state.schema.json",
-        "classification-row.schema.json",
-        "markdown-profile.md",
-        "provider-registry.json",
-        "relationship-record.schema.json",
-        "run-spec.schema.json",
-        "taxonomy.schema.json",
-    },
+    skill: {p.name for p in (ROOT / "contracts").glob("*") if p.is_file()} for skill in SKILLS
 }
-TEMPLATES = {
-    "ai-paper-analysis": set(),
-    "ai-paper-analysis-finder": set(),
-    "ai-paper-analysis-interpreter": {"paper-report.md"},
-    "ai-paper-analysis-comparator": {"category-report.md"},
-}
-RENDERER_SKILLS = {
-    "ai-paper-analysis-interpreter",
-    "ai-paper-analysis-comparator",
-}
-COMMANDS = {
-    "ai-paper-analysis": (
-        "validate-spec",
-        "init-run",
-        "create-temp",
-        "cleanup-temp",
-        "publish",
-        "promote-revision",
-        "record-state",
-        "cleanup-run",
-    ),
-    "ai-paper-analysis-finder": (
-        "providers",
-        "validate-spec",
-        "init-run",
-        "discover",
-        "create-temp",
-        "cleanup-temp",
-        "download-pdf",
-        "validate-pdf",
-        "artifact-name",
-        "publish",
-        "record-state",
-        "validate-classification",
-        "cleanup-run",
-    ),
-    "ai-paper-analysis-interpreter": (
-        "validate-spec",
-        "init-run",
-        "create-temp",
-        "cleanup-temp",
-        "validate-pdf",
-        "publish",
-        "promote-revision",
-        "record-state",
-        "fix-mermaid-direction",
-        "audit-markdown",
-        "audit-paper-report",
-        "cleanup-run",
-    ),
-    "ai-paper-analysis-comparator": (
-        "validate-spec",
-        "init-run",
-        "create-temp",
-        "cleanup-temp",
-        "publish",
-        "promote-revision",
-        "record-state",
-        "validate-classification",
-        "fix-mermaid-direction",
-        "audit-markdown",
-        "audit-category-report",
-        "cleanup-run",
-    ),
-}
-RENDERER_COMMANDS = {
-    "ai-paper-analysis": (),
-    "ai-paper-analysis-finder": (),
-    "ai-paper-analysis-interpreter": (
-        "fix-mermaid-direction",
-        "audit-markdown",
-        "audit-paper-report",
-    ),
-    "ai-paper-analysis-comparator": (
-        "validate-classification",
-        "fix-mermaid-direction",
-        "audit-markdown",
-        "audit-category-report",
-    ),
-}
+TEMPLATES = {skill: {"paper-report.md", "category-report.md"} for skill in SKILLS}
+
 IGNORED_TREE_PARTS = {".mypy_cache", ".pytest_cache", ".ruff_cache", ".venv", "__pycache__"}
 
 
@@ -250,80 +88,57 @@ def _copy_tree(source: Path, destination: Path, *, check: bool, errors: list[str
 
 
 def _skill_pyproject(skill: str) -> str:
-    dependencies = "\n".join(f'  "{dependency}",' for dependency in RUNTIME_DEPENDENCIES)
     return f'''[project]
 name = "{skill}"
 version = "{VERSION}"
-description = "Shared-cache runtime for the {skill} Codex Skill"
+description = "Instruction package using the shared AI Paper Analysis tools"
 requires-python = ">=3.11"
-dependencies = [
-{dependencies}
-]
-
-[project.optional-dependencies]
-ocr = ["ocrmypdf>=16.7,<18"]
+dependencies = []
 
 [tool.uv]
 package = false
 '''
 
 
-def _tuple_literal(values: tuple[str, ...]) -> str:
-    if not values:
-        return "()"
-    joined = "".join(f'    "{value}",\n' for value in values)
-    return f"(\n{joined})"
-
-
 def _launcher(skill: str) -> str:
-    commands = _tuple_literal(COMMANDS[skill])
-    renderer_commands = _tuple_literal(RENDERER_COMMANDS[skill])
     return f'''#!/usr/bin/env python3
-"""Generated capability-scoped entrypoint for {skill}."""
+"""Shared-tool launcher for {skill}; no sibling Skill is required."""
 
 from __future__ import annotations
 
+import json
 import os
 import sys
 from pathlib import Path
 
-SKILL_ROOT = Path(__file__).resolve().parents[1]
-ENTRYPOINT = Path(__file__).resolve()
-sys.path.insert(0, str(SKILL_ROOT / "scripts" / "_vendor"))
+skill_root = Path(__file__).resolve().parents[1]
+if configured := os.environ.get("APA_CACHE_DIR"):
+    cache = Path(configured).expanduser()
+elif os.name == "nt":
+    base = Path(os.environ.get("LOCALAPPDATA", Path.home() / "AppData" / "Local"))
+    cache = base / "ai-paper-analysis"
+elif sys.platform == "darwin":
+    cache = Path.home() / "Library" / "Caches" / "ai-paper-analysis"
+else:
+    cache = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache")) / "ai-paper-analysis"
+pointer = skill_root / ".apa-runtime.json"
+if not pointer.is_file():
+    pointer = cache / "active.json"
+try:
+    record = json.loads(pointer.read_text(encoding="utf-8"))
+    python, entrypoint = record["python"], record["entrypoint"]
+    if not Path(python).is_file() or not Path(entrypoint).is_file():
+        raise ValueError("Shared runtime is missing")
+except (OSError, ValueError, KeyError, TypeError):
+    print("Run the repository installer: python scripts/install.py"
+          " --skill {skill}", file=sys.stderr)
+    raise SystemExit(1) from None
 
-COMMANDS = {commands}
-RENDERER_COMMANDS = {renderer_commands}
-
-if os.environ.get("APA_BOOTSTRAPPED") != "1":
-    from ai_paper_analysis.tooling import reexecute_skill
-
-    reexecute_skill(
-        skill_root=SKILL_ROOT,
-        entrypoint=ENTRYPOINT,
-        skill_name="{skill}",
-        commands=COMMANDS,
-        renderer_commands=RENDERER_COMMANDS,
-    )
-
-os.environ.setdefault("APA_CONTRACTS_DIR", str(SKILL_ROOT / "references" / "contracts"))
-os.environ.setdefault("APA_SKILL_COMMANDS", ",".join(COMMANDS))
-os.environ.setdefault("APA_SKILL_NAME", "{skill}")
-
-from ai_paper_analysis.cli import app  # noqa: E402
-
-if __name__ == "__main__":
-    app()
+environment = os.environ.copy()
+environment.pop("APA_SKILL_COMMANDS", None)
+environment.update(record["environment"])
+os.execve(python, [python, entrypoint, *sys.argv[1:]], environment)
 '''
-
-
-def _renderer_files() -> set[str]:
-    return {
-        "package.json",
-        "package-lock.json",
-        ".markdownlint-cli2.yaml",
-        "scripts/check_mermaid.mjs",
-        "scripts/render_report.mjs",
-    }
 
 
 def _remove_one_off_skill_scripts(skill_root: Path, *, check: bool, errors: list[str]) -> None:
@@ -350,7 +165,7 @@ def synchronize(*, check: bool) -> list[str]:
         _sync_files(
             runtime_source,
             skill_root / "scripts" / "_vendor" / "ai_paper_analysis",
-            MODULES[skill],
+            set(),
             check=check,
             errors=errors,
         )
@@ -368,14 +183,9 @@ def synchronize(*, check: bool) -> list[str]:
             check=check,
             errors=errors,
         )
-        renderer_names = _renderer_files() if skill in RENDERER_SKILLS else set()
-        _sync_files(
-            ROOT,
-            skill_root / "references" / "renderer",
-            renderer_names,
-            check=check,
-            errors=errors,
-        )
+        # Remove obsolete per-Skill renderer copies; tools own these resources.
+        _sync_files(ROOT, skill_root / "references" / "renderer", set(), check=check, errors=errors)
+        _copy_tree(ROOT / "roles", skill_root / "references" / "roles", check=check, errors=errors)
         _write_if_changed(
             skill_root / "scripts" / "apa.py", _launcher(skill), check=check, errors=errors
         )

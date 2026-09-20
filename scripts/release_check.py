@@ -103,9 +103,22 @@ def _deterministic_steps(temporary: Path) -> list[Result]:
                 logs,
             ),
             _run("node install", [npm, "ci", "--ignore-scripts"], logs),
+            _run(
+                "Markdown math parity",
+                [
+                    uv,
+                    "run",
+                    "pytest",
+                    "tests/test_report_prepare.py",
+                    "-k",
+                    "both_real_markdown_math_paths",
+                ],
+                logs,
+            ),
             _run("markdownlint", [npm, "run", "lint:markdown"], logs),
             _run("Mermaid parser", [npm, "run", "test:mermaid-syntax"], logs),
             _run("Mermaid layout", [npm, "run", "test:mermaid-layout"], logs),
+            _run("renderer lifecycle", [node, "tests/test_report_renderer.mjs"], logs),
         )
     )
 
@@ -155,7 +168,7 @@ def _deterministic_steps(temporary: Path) -> list[Result]:
         isolated_python = _python_in(isolated)
         install = _run(
             "isolated wheel install",
-            [uv, "pip", "install", "--python", str(isolated_python), str(wheels[0])],
+            [uv, "pip", "install", "--python", str(isolated_python), f"{wheels[0]}[sources]"],
             logs,
         )
         results.append(install)

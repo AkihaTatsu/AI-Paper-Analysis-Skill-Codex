@@ -34,8 +34,9 @@ def _validate_versions(errors: list[str]) -> None:
     plugin = json.loads(
         (ROOT / "plugins/ai-paper-analysis/.codex-plugin/plugin.json").read_text(encoding="utf-8")
     )
-    if plugin.get("version") != version:
-        _error(errors, "Plugin version does not match VERSION")
+    plugin_version = plugin.get("version", "")
+    if not re.fullmatch(rf"{re.escape(version)}\+codex\.[a-z0-9.-]+", plugin_version):
+        _error(errors, "Plugin version must match VERSION with one Codex cachebuster")
     if plugin.get("author", {}).get("name") != "AkihaTatsu":
         _error(errors, "Plugin author must be AkihaTatsu")
     if "email" in plugin.get("author", {}):
@@ -98,8 +99,7 @@ def _validate_skill(skill: str, errors: list[str]) -> None:
     if not isinstance(description, str) or not description.strip():
         _error(errors, f"{skill} has no description")
     metadata = yaml.safe_load((root / "agents/openai.yaml").read_text(encoding="utf-8"))
-    expected_implicit = skill == "ai-paper-analysis"
-    if metadata.get("policy", {}).get("allow_implicit_invocation") is not expected_implicit:
+    if metadata.get("policy", {}).get("allow_implicit_invocation") is not False:
         _error(errors, f"{skill} invocation policy is incorrect")
     default_prompt = metadata.get("interface", {}).get("default_prompt", "")
     if f"${skill}" not in default_prompt:

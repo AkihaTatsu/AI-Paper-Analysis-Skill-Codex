@@ -12,15 +12,7 @@ license = "MIT"
 license-files = ["LICENSE"]
 authors = [{ name = "AkihaTatsu" }]
 dependencies = [
-  "httpx>=0.28,<1",
   "jsonschema>=4.23,<5",
-  "markdown-it-py>=3.0,<5",
-  "mkdocs>=1.6,<2",
-  "mkdocs-material>=9.6,<10",
-  "pymupdf>=1.25,<2",
-  "pypdf>=5.1,<7",
-  "pymdown-extensions>=11.0.1",
-  "pyyaml>=6.0,<7",
   "typer>=0.15,<1",
 ]
 
@@ -30,8 +22,25 @@ Repository = "https://github.com/AkihaTatsu/AI-Paper-Analysis-Skill-Codex"
 Issues = "https://github.com/AkihaTatsu/AI-Paper-Analysis-Skill-Codex/issues"
 
 [project.optional-dependencies]
+sources = ["httpx>=0.28,<1", "pyyaml>=6.0,<7"]
+pdf = ["httpx>=0.28,<1", "pymupdf>=1.25,<2", "pypdf>=5.1,<7"]
+reports = [
+  "markdown-it-py>=3.0,<5",
+  "mkdocs>=1.6,<2",
+  "mkdocs-material>=9.6,<10",
+  "pymdown-extensions>=11.0.1",
+  "pyyaml>=6.0,<7",
+]
 ocr = ["ocrmypdf>=16.7,<18"]
 dev = [
+  "httpx>=0.28,<1",
+  "markdown-it-py>=3.0,<5",
+  "mkdocs>=1.6,<2",
+  "mkdocs-material>=9.6,<10",
+  "pymupdf>=1.25,<2",
+  "pypdf>=5.1,<7",
+  "pymdown-extensions>=11.0.1",
+  "pyyaml>=6.0,<7",
   "mypy>=1.14,<2",
   "pytest>=8.3,<10",
   "ruff>=0.9,<1",
@@ -52,6 +61,7 @@ packages = ["src/ai_paper_analysis"]
 [tool.hatch.build.targets.wheel.force-include]
 "contracts" = "ai_paper_analysis/_data/contracts"
 "templates" = "ai_paper_analysis/_data/templates"
+"roles" = "ai_paper_analysis/_data/roles"
 "scripts/check_mermaid.mjs" = "ai_paper_analysis/_data/renderer/scripts/check_mermaid.mjs"
 "scripts/render_report.mjs" = "ai_paper_analysis/_data/renderer/scripts/render_report.mjs"
 "package.json" = "ai_paper_analysis/_data/renderer/package.json"
@@ -63,6 +73,7 @@ include = [
   "/src",
   "/contracts",
   "/templates",
+  "/roles",
   "/scripts/check_mermaid.mjs",
   "/scripts/render_report.mjs",
   "/.markdownlint-cli2.yaml",
@@ -78,7 +89,10 @@ include = [
 [tool.pytest.ini_options]
 addopts = "-q --strict-markers"
 testpaths = ["tests"]
-markers = ["live: requires network access and explicit credentials"]
+markers = [
+  "live: requires network access and explicit credentials",
+  "installation: installs locked tools in an isolated temporary directory",
+]
 
 [tool.ruff]
 line-length = 100

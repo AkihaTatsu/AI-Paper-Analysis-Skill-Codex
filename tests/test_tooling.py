@@ -27,6 +27,7 @@ def test_child_then_router_reuses_compatible_runtime(
 ) -> None:
     calls: list[list[str]] = []
     monkeypatch.setattr(tooling, "cache_root", lambda: tmp_path / "cache")
+    monkeypatch.setattr(tooling, "_require_node", lambda: "/fixture/node")
     monkeypatch.setattr(tooling.shutil, "which", lambda name: f"/fixture/{name}")
     monkeypatch.setattr(tooling, "_run", _fake_runtime_run(calls))
 
@@ -68,13 +69,15 @@ def test_renderer_is_separate_lazy_layer(tmp_path: Path, monkeypatch: pytest.Mon
 
     commands: list[list[str]] = []
     monkeypatch.setattr(tooling, "cache_root", lambda: tmp_path / "cache")
+    monkeypatch.setattr(tooling, "_require_node", lambda: "/fixture/node")
     monkeypatch.setattr(tooling.shutil, "which", lambda name: f"/fixture/{name}")
     monkeypatch.setattr(tooling, "_system_browser", lambda: "/fixture/chromium")
-    monkeypatch.setattr(
-        tooling,
-        "_run",
-        lambda command, *, environment: commands.append(command),
-    )
+
+    def run(command, *, environment):
+        commands.append(command)
+        (Path(command[-1]) / "node_modules").mkdir()
+
+    monkeypatch.setattr(tooling, "_run", run)
 
     first = tooling.prepare_renderer(source)
     (source / "scripts" / "render_report.mjs").write_text(
@@ -82,7 +85,7 @@ def test_renderer_is_separate_lazy_layer(tmp_path: Path, monkeypatch: pytest.Mon
     )
     second = tooling.prepare_renderer(source)
 
-    assert first == second
+    assert first["APA_RENDERER_ROOT"] != second["APA_RENDERER_ROOT"]
     assert first["PUPPETEER_EXECUTABLE_PATH"] == "/fixture/chromium"
     assert len(commands) == 1
     assert commands[0][1:3] == ["ci", "--ignore-scripts"]
@@ -90,6 +93,9 @@ def test_renderer_is_separate_lazy_layer(tmp_path: Path, monkeypatch: pytest.Mon
     assert (renderer_root / "scripts" / "render_report.mjs").read_text(
         encoding="utf-8"
     ) == "// compatible update\n"
+    assert (Path(first["APA_RENDERER_ROOT"]) / "scripts" / "render_report.mjs").read_text(
+        encoding="utf-8"
+    ) == "// fixture\n"
 
 
 def test_cache_keeps_current_and_one_previous_api(
@@ -123,9 +129,25 @@ def test_node_only_bootstrap_defers_browser(
         (source / "scripts" / name).write_text("// fixture\n")
     commands: list[list[str]] = []
     monkeypatch.setattr(tooling, "cache_root", lambda: tmp_path / "cache")
+    monkeypatch.setattr(tooling, "_require_node", lambda: "/fixture/node")
     monkeypatch.setattr(tooling, "_system_browser", lambda: None)
     monkeypatch.setattr(tooling.shutil, "which", lambda name: f"/fixture/{name}")
-    monkeypatch.setattr(tooling, "_run", lambda command, **kwargs: commands.append(command))
+    browser = tmp_path / "browser"
+
+    def run(command, **kwargs):
+        commands.append(command)
+        if "browsers" in command:
+            browser.write_text("fixture")
+        else:
+            (Path(command[-1]) / "node_modules").mkdir()
+
+    def executable(*args):
+        if not browser.is_file():
+            raise tooling.ToolBootstrapError("Browser is absent")
+        return str(browser)
+
+    monkeypatch.setattr(tooling, "_run", run)
+    monkeypatch.setattr(tooling, "_browser_executable", executable)
     tooling.prepare_renderer(source, require_browser=False)
     tooling.prepare_renderer(source, require_browser=False)
     assert len(commands) == 1
@@ -134,3 +156,10 @@ def test_node_only_bootstrap_defers_browser(
     tooling.prepare_renderer(source)
     assert len(commands) == 2
     assert "browsers" in commands[1]
+
+
+def test_old_node_version_is_rejected(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(tooling.shutil, "which", lambda name: "/fixture/node")
+    monkeypatch.setattr(tooling, "_capture", lambda *args, **kwargs: "v22.11.0")
+    with pytest.raises(tooling.ToolBootstrapError, match=r">=22.12"):
+        tooling._require_node()

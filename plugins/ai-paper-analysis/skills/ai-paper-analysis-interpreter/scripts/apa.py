@@ -1,52 +1,37 @@
 #!/usr/bin/env python3
-"""Generated capability-scoped entrypoint for ai-paper-analysis-interpreter."""
+"""Shared-tool launcher for ai-paper-analysis-interpreter; no sibling Skill is required."""
 
 from __future__ import annotations
 
+import json
 import os
 import sys
 from pathlib import Path
 
-SKILL_ROOT = Path(__file__).resolve().parents[1]
-ENTRYPOINT = Path(__file__).resolve()
-sys.path.insert(0, str(SKILL_ROOT / "scripts" / "_vendor"))
+skill_root = Path(__file__).resolve().parents[1]
+if configured := os.environ.get("APA_CACHE_DIR"):
+    cache = Path(configured).expanduser()
+elif os.name == "nt":
+    base = Path(os.environ.get("LOCALAPPDATA", Path.home() / "AppData" / "Local"))
+    cache = base / "ai-paper-analysis"
+elif sys.platform == "darwin":
+    cache = Path.home() / "Library" / "Caches" / "ai-paper-analysis"
+else:
+    cache = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache")) / "ai-paper-analysis"
+pointer = skill_root / ".apa-runtime.json"
+if not pointer.is_file():
+    pointer = cache / "active.json"
+try:
+    record = json.loads(pointer.read_text(encoding="utf-8"))
+    python, entrypoint = record["python"], record["entrypoint"]
+    if not Path(python).is_file() or not Path(entrypoint).is_file():
+        raise ValueError("Shared runtime is missing")
+except (OSError, ValueError, KeyError, TypeError):
+    print("Run the repository installer: python scripts/install.py"
+          " --skill ai-paper-analysis-interpreter", file=sys.stderr)
+    raise SystemExit(1) from None
 
-COMMANDS = (
-    "validate-spec",
-    "init-run",
-    "create-temp",
-    "cleanup-temp",
-    "validate-pdf",
-    "publish",
-    "promote-revision",
-    "record-state",
-    "fix-mermaid-direction",
-    "audit-markdown",
-    "audit-paper-report",
-    "cleanup-run",
-)
-RENDERER_COMMANDS = (
-    "fix-mermaid-direction",
-    "audit-markdown",
-    "audit-paper-report",
-)
-
-if os.environ.get("APA_BOOTSTRAPPED") != "1":
-    from ai_paper_analysis.tooling import reexecute_skill
-
-    reexecute_skill(
-        skill_root=SKILL_ROOT,
-        entrypoint=ENTRYPOINT,
-        skill_name="ai-paper-analysis-interpreter",
-        commands=COMMANDS,
-        renderer_commands=RENDERER_COMMANDS,
-    )
-
-os.environ.setdefault("APA_CONTRACTS_DIR", str(SKILL_ROOT / "references" / "contracts"))
-os.environ.setdefault("APA_SKILL_COMMANDS", ",".join(COMMANDS))
-os.environ.setdefault("APA_SKILL_NAME", "ai-paper-analysis-interpreter")
-
-from ai_paper_analysis.cli import app  # noqa: E402
-
-if __name__ == "__main__":
-    app()
+environment = os.environ.copy()
+environment.pop("APA_SKILL_COMMANDS", None)
+environment.update(record["environment"])
+os.execve(python, [python, entrypoint, *sys.argv[1:]], environment)

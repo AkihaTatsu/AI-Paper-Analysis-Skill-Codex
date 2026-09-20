@@ -121,4 +121,8 @@ def load_confirmed_run_spec(path: Path) -> dict[str, Any]:
     if not validation.valid:
         joined = "\n".join(f"- {error}" for error in validation.errors)
         raise UnconfirmedRunSpecError(f"Run specification is not executable:\n{joined}")
+    preferences = spec.setdefault("execution_preferences", {})
+    if isinstance(preferences, dict):
+        preferences.setdefault("draft_model_policy", "fastest_suitable")
+        preferences.setdefault("evidence_cache", "project")
     return spec

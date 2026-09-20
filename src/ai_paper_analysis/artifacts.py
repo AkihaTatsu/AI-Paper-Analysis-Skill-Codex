@@ -2,13 +2,17 @@
 
 from __future__ import annotations
 
+import ctypes
+import errno
 import json
 import os
 import shutil
+import sys
 import tempfile
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 from uuid import uuid4
 
 ARTIFACT_KINDS = frozenset(
@@ -79,10 +83,18 @@ def atomic_publish(source: Path, destination: Path) -> PublishResult:
     if destination.exists():
         raise ArtifactConflictError(f"Destination already exists: {destination}")
 
-    return _atomic_replace(source, destination)
+    try:
+        return _atomic_replace(source, destination, replace_existing=False)
+    except FileExistsError as error:
+        raise ArtifactConflictError(f"Destination already exists: {destination}") from error
 
 
-def _atomic_replace(source: Path, destination: Path) -> PublishResult:
+def _atomic_replace(
+    source: Path,
+    destination: Path,
+    *,
+    replace_existing: bool = True,
+) -> PublishResult:
     """Copy and atomically replace one destination on its own filesystem."""
 
     file_descriptor, temporary_name = tempfile.mkstemp(
@@ -94,17 +106,58 @@ def _atomic_replace(source: Path, destination: Path) -> PublishResult:
             shutil.copyfileobj(origin, target, length=1024 * 1024)
             target.flush()
             os.fsync(target.fileno())
-        os.replace(temporary, destination)
+        if replace_existing:
+            os.replace(temporary, destination)
+        else:
+            _rename_without_replacement(temporary, destination)
         directory_flag = getattr(os, "O_DIRECTORY", None)
         if directory_flag is not None:
             directory_descriptor = os.open(destination.parent, directory_flag)
             try:
-                os.fsync(directory_descriptor)
+                try:
+                    os.fsync(directory_descriptor)
+                except OSError as error:
+                    # Publication succeeded. Some filesystems cannot sync directories;
+                    # that is not a failed rename. Genuine I/O failures still propagate.
+                    if error.errno not in {errno.EINVAL, errno.ENOTSUP, errno.ENOSYS}:
+                        raise
             finally:
                 os.close(directory_descriptor)
     finally:
         temporary.unlink(missing_ok=True)
     return PublishResult(destination=destination)
+
+
+def _rename_without_replacement(source: Path, destination: Path) -> None:
+    """Claim a complete file atomically, including filesystems without hard links."""
+    if os.name == "nt":
+        os.rename(source, destination)
+        return
+    library = ctypes.CDLL(None, use_errno=True)
+    operation = None
+    if sys.platform.startswith("linux") and hasattr(library, "renameat2"):
+        operation = library.renameat2
+        operation.argtypes = [
+            ctypes.c_int,
+            ctypes.c_char_p,
+            ctypes.c_int,
+            ctypes.c_char_p,
+            ctypes.c_uint,
+        ]
+        arguments = (-100, os.fsencode(source), -100, os.fsencode(destination), 1)
+    elif sys.platform == "darwin" and hasattr(library, "renamex_np"):
+        operation = library.renamex_np
+        operation.argtypes = [ctypes.c_char_p, ctypes.c_char_p, ctypes.c_uint]
+        arguments = (os.fsencode(source), os.fsencode(destination), 4)
+    if operation is not None:
+        operation.restype = ctypes.c_int
+        if operation(*arguments) == 0:
+            return
+        code = ctypes.get_errno()
+        if code not in {errno.ENOSYS, errno.EINVAL, errno.ENOTSUP}:
+            raise OSError(code, os.strerror(code), str(destination))
+    # Legacy platforms may provide atomic linking; never fall back to racy replace.
+    os.link(source, destination)
 
 
 def archive_and_promote(
@@ -155,6 +208,7 @@ def record_artifact_state(
     run_id: str,
     sources: tuple[Path, ...] = (),
     now: datetime | None = None,
+    content_review: dict[str, Any] | None = None,
 ) -> Path:
     """Write one compact state record for a published formal artifact."""
 
@@ -165,13 +219,31 @@ def record_artifact_state(
 
     root = target_root.resolve()
     artifact_path, artifact_relative = _relative_existing_file(root, artifact, label="artifact")
+    if content_review is None and artifact_kind in {"paper-report", "category-report"}:
+        from .content_review import load_artifact_review, validate_content_review
+
+        kind = "paper" if artifact_kind == "paper-report" else "category"
+        prior = load_artifact_review(root, artifact_path, report_kind=kind)
+        if prior is not None:
+            status, _ = validate_content_review(artifact_path, prior, report_kind=kind)
+            if status != "unreviewed":
+                content_review = prior
+    if content_review is not None:
+        from .content_review import validate_content_review
+
+        kind = "paper" if artifact_kind == "paper-report" else "category"
+        if artifact_kind not in {"paper-report", "category-report"}:
+            raise ValueError("content review is only valid for report artifacts")
+        _, review_errors = validate_content_review(artifact_path, content_review, report_kind=kind)
+        if review_errors:
+            raise ValueError("; ".join(review_errors))
     source_records: set[str] = set()
     for source in sources:
         _, source_relative = _relative_existing_file(root, source, label="source")
         source_records.add(source_relative)
 
     payload = {
-        "schema_version": "1.0.0",
+        "schema_version": "2.0.0",
         "artifact": {
             "kind": artifact_kind,
             "path": artifact_relative,
@@ -181,6 +253,8 @@ def record_artifact_state(
         "status": "published",
         "updated_at": (now or datetime.now(UTC)).isoformat().replace("+00:00", "Z"),
     }
+    if content_review is not None:
+        payload["content_review"] = content_review
     state_name = f"{artifact_path.stem}.{artifact_kind}.json"
     state_path = root / ".ai-paper-analysis" / "state" / state_name
     write_json_atomic(state_path, payload)
