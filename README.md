@@ -78,16 +78,16 @@ sops <target-root>/.ai-paper-analysis/credentials.sops.yaml
 
 Keep age private keys outside the project. If encrypted configuration is selected but either `sops` or `age` is missing, that credential source stops with a concise setup error. Decrypted values are kept in memory and are never written to run specifications or logs.
 
-## Development and release checks
+## Development checks
 
-Install locked dependencies and run the single local gate:
+Run static checks with `python scripts/sync_materialized.py --check`,
+`uv run --extra dev python scripts/validate_repository.py`, `uv run ruff check .`,
+`uv run mypy src`, and `npm run lint:markdown`.
 
-```bash
-uv sync --extra dev --frozen
-uv run python scripts/release_check.py
-```
-
-The default gate is deterministic and offline except for dependency installation. Add `--live` to run opt-in provider checks; temporary provider failures are reported separately from deterministic failures. CI covers Python 3.11 through 3.14 on Linux, baseline Linux, macOS, and Windows compatibility, and real independent installation, incremental tool preparation and full report rendering on Windows, macOS and Linux. It does not publish or release artifacts.
+Create development test scripts, fixtures, logs, and results only in an allowed
+system temporary directory, then remove them when finished. Do not commit test
+suites or artifacts. The runtime report audit and rendering tools remain part
+of the Skill and validate actual outputs during use.
 
 ## Safety, support, and access
 

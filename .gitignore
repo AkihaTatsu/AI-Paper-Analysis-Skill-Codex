@@ -29,4 +29,3 @@ credentials*.sops.yml
 *.age
 
 # Optional local renderer output.
-tests/rendered/

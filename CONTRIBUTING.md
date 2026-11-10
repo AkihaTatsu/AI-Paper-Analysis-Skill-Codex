@@ -1,11 +1,12 @@
 # Contributing
 
 Use English for maintained repository content. Keep generated contracts and
-plugin copies synchronized with their canonical sources.
+plugin copies synchronized with their canonical sources. Run the static
+checks listed in README.md before publishing changes.
 
-Before opening a change, run `uv run python scripts/release_check.py`. Use
-`--live` only when the change needs real provider verification and suitable
-credentials are already configured.
+Create all development tests, fixtures, logs, and results in an allowed system
+temporary directory and clean them up after use. Do not add permanent test
+suites or artifacts to the repository. Use synthetic data; never include real
+credentials, copyrighted paper corpora, or private laboratory artifacts.
 
-Do not add real credentials, copyrighted paper corpora, or private laboratory
-artifacts to tests. Use synthetic fixtures.
+Keep runtime checks of actual report outputs in the Skill.

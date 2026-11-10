@@ -42,7 +42,6 @@ dev = [
   "pymdown-extensions>=11.0.1",
   "pyyaml>=6.0,<7",
   "mypy>=1.14,<2",
-  "pytest>=8.3,<10",
   "ruff>=0.9,<1",
   "types-jsonschema>=4.23,<5",
   "types-pyyaml>=6.0,<7",
@@ -84,14 +83,6 @@ include = [
   "/README.md",
   "/LICENSE",
   "/VERSION",
-]
-
-[tool.pytest.ini_options]
-addopts = "-q --strict-markers"
-testpaths = ["tests"]
-markers = [
-  "live: requires network access and explicit credentials",
-  "installation: installs locked tools in an isolated temporary directory",
 ]
 
 [tool.ruff]

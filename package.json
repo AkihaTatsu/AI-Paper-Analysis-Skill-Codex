@@ -8,10 +8,7 @@
   },
   "scripts": {
     "install:browser": "puppeteer browsers install chrome-headless-shell",
-    "lint:markdown": "markdownlint-cli2",
-    "test:mermaid-syntax": "node tests/test_mermaid_syntax.mjs",
-    "test:mermaid-layout": "node tests/test_mermaid_layout.mjs",
-    "test:render": "node scripts/render_markdown.mjs"
+    "lint:markdown": "markdownlint-cli2"
   },
   "devDependencies": {
     "@mathjax/src": "^4.1.3",
