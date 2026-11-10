@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/AkihaTatsu/AI-Paper-Analysis-Skill-Codex/contracts/relationship-record.schema.json",
+  "title": "Paper Relationship Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "subject_paper_id", "relation", "object_paper_id", "source_kind", "locator"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "subject_paper_id": {"type": "string", "minLength": 1},
+    "relation": {
+      "enum": ["depends_on", "extends", "improves_on", "generalizes", "specializes", "adapts_to", "combines_with", "simplifies", "evaluates", "reproduces", "contrasts_with", "surveys"]
+    },
+    "object_paper_id": {"type": "string", "minLength": 1},
+    "source_kind": {"enum": ["paper", "supplement", "official_code", "external_paper"]},
+    "locator": {"type": "string", "minLength": 1},
+    "note": {"type": "string"}
+  }
+}

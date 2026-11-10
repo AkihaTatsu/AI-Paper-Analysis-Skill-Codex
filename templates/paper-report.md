@@ -90,15 +90,7 @@ Pending.
 | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending |
 
-Pending.
-
-Pending.
-
-**Overall meaning and role.** Pending.
-
-**Shared-scenario explanation.** Pending.
-
-**Technical boundary of the mapping.** Pending.
+Pending: explain the equation's meaning, mechanism, module role, shared-scenario analogy, and technical mapping limits in connected prose. Reuse earlier definitions briefly and retain the source locator.
 
 ## 6. Experiments and Results
 

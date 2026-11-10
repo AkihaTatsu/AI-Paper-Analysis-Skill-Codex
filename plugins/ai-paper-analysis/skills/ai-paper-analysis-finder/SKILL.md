@@ -9,18 +9,16 @@ Use explicitly or when selected for the requested paper workflow. This Skill
 is self-contained: obtain missing materials through its bundled shared roles
 and `scripts/apa.py`, without requiring a sibling Skill.
 
-Read [references/roles/intake.md](references/roles/intake.md) for fact-first
-questions, acquisition/full-execution approval, final confirmation, and per-run
-subagent authorization. Read
-[references/roles/orchestration.md](references/roles/orchestration.md) for bounded
-assignments and minimal contexts. Only the coordinator asks the user. Plan Mode
-is read-only; execute only after approval and Plan Mode exit. Return to Plan
-Mode on material ambiguity; stop if `request_user_input` is unavailable.
+Read [references/roles/intake.md](references/roles/intake.md) for focused
+questions, two-stage approval, scope changes, and per-run subagent authorization.
+Follow [references/roles/orchestration.md](references/roles/orchestration.md)
+for bounded assignments and minimal contexts. The coordinator owns questions
+and scope; workers load only their assigned references. Execute after approval
+and Plan Mode exit.
 
-Read [references/contracts/execution-plan.md](references/contracts/execution-plan.md)
-and create or resume the task's one visible `update_plan` checklist. If the tool
-is unavailable, explain and maintain the specified text table while continuing
-authorized work.
+Maintain one visible checklist under
+[references/contracts/execution-plan.md](references/contracts/execution-plan.md),
+using its text-table fallback when the native plan tool is unavailable.
 
 ## Discovery and publication
 

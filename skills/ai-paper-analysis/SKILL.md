@@ -13,25 +13,19 @@ The named Finder, Interpreter, and Comparator Skills are alternative user
 entrypoints. Use the shared roles and bundled CLI directly; no workflow
 requires another Skill to be installed or invoked.
 
-Read [references/roles/intake.md](references/roles/intake.md) for fact-first,
-focused clarification and two-stage approval. Read
-[references/roles/orchestration.md](references/roles/orchestration.md) to dispatch
-only the needed roles. Do not preload their content rules. The coordinator
-asks all questions, holds the approved scope, and integrates role results.
+Read [references/roles/intake.md](references/roles/intake.md) for focused
+questions, two-stage approval, scope changes, and per-run subagent authorization.
+Follow [references/roles/orchestration.md](references/roles/orchestration.md)
+for bounded assignments and minimal contexts. The coordinator owns questions
+and scope; workers load only their assigned references. Execute after approval
+and Plan Mode exit.
+
+Maintain one visible checklist under
+[references/contracts/execution-plan.md](references/contracts/execution-plan.md),
+using its text-table fallback when the native plan tool is unavailable.
 
 ## Plan and execute
 
-Remain read-only in Plan Mode. Confirm target acquisition first, inspect the
-approved sources after Plan Mode exit when execution is needed, then return
-with exact source sets and remaining choices for full-execution approval and
-final confirmation. Execute only after the user exits Plan Mode. A new material
-ambiguity requires returning to Plan Mode; stop if `request_user_input` is
-unavailable. Ask for subagent authorization once per run; after authorization
-recommend bounded parallel evidence work and use fresh minimal worker contexts.
-
-Read [references/contracts/execution-plan.md](references/contracts/execution-plan.md)
-and maintain one visible `update_plan` checklist for the task; when unavailable,
-explain and maintain the specified text table while continuing authorized work.
 Use this Skill's `scripts/apa.py` for shared tools, verified source acquisition,
 PDF reading/rendering, temporary work, validation, and atomic publication.
 Discover capabilities with `tools list`, `tools doctor`, and command `--help`.

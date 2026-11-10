@@ -38,7 +38,7 @@ The wheel also exposes `ai-paper-analysis-runtime`. All Skills forward to this s
 
 The coordinator inspects facts and asks dependent questions in focused rounds, including per-run subagent authorization. Acquisition and full execution retain their separate approvals. Plan Mode is read-only; approved execution begins after leaving it. Each authorized worker receives its own task, role references and relevant source paths without the parent conversation. One writer owns each complete report.
 
-Prepare all required evidence and original-page formula checks, then write the complete draft before repair or review. Reports teach a reader without professional background through concrete objects, prerequisites, examples and connected paragraph groups. There is no report word cap. Complete terminology, equations, experiment details and source requirements remain mandatory.
+Prepare all required evidence and original-page formula checks, then write the complete draft before repair or review. Reports explain the research in plain language for readers without prior field knowledge. The shared [report style](roles/report-style.md) removes filler and repeated explanations while retaining necessary reasoning, complete terminology, equations, experiments, and evidence. Length follows the content; there is no word cap.
 
 ```text
 ai-paper-analysis-runtime tools list
@@ -54,7 +54,7 @@ Completed concise source coverage can be reused from the project-local `.ai-pape
 
 One semantic review task covers the complete draft's accuracy and readability. Exact patches apply automatically. Only patch-null or failed residuals go once to a fresh central reviser with their affected evidence; it does not inherit the writer's source corpus or create a disposition artifact. The original reviewer then inspects the complete diff and cross-section dependencies once. Use temporary baselines, diffs, coverage matrices, and issue records instead of repeated corpus handoffs. Bind the final assessment with `record-content-review`, then run `audit-paper-report` or `audit-category-report` with `--content-review` and the eventual `--publication-path`. See command `--help` and the report contracts; a receipt attests to actual review, not programmatic proof of correctness.
 
-Structure and content status are separate. An unreviewed legacy report is checked when needed; it is not silently deemed complete. Only currently reviewed complete reports qualify for comparison. A genuinely partial report may be published within its approval after every structural gate passes, with visible limitations. `record-state --content-review` retains the compact bound review for later reuse; changes to the report, reviewed sources or policy invalidate it. Detailed issues and evidence packets remain temporary. Candidate promotion still requires explicit approval.
+Structure and content status are separate. An unreviewed legacy report is checked when needed; it is not silently deemed complete. Only currently reviewed complete reports qualify for comparison. A genuinely partial report may be published within its approval after every structural gate passes, with visible limitations. `record-state --content-review` retains the compact bound review for later reuse; changes to the report, reviewed sources or policy invalidate it. Reviews made before the concise-writing policy must be renewed when the report is next used. Detailed issues and evidence packets remain temporary. Candidate promotion still requires explicit approval.
 
 ## Repository layout
 

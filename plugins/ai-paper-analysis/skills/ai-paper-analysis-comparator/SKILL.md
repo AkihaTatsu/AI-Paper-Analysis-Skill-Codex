@@ -10,17 +10,16 @@ is self-contained: acquire missing originals through the shared source role and
 prepare missing reports through the shared whole-paper writer and bundled CLI.
 Do not install or invoke Finder or Interpreter as a prerequisite.
 
-Read [references/roles/intake.md](references/roles/intake.md) for fact-first,
-focused clarification, two-stage approval, final confirmation, and per-run
-subagent authorization. Read
-[references/roles/orchestration.md](references/roles/orchestration.md) for bounded
-role dispatch. Only the coordinator asks users. Plan Mode is read-only;
-execution requires approval and Plan Mode exit. Return to Plan Mode on material
-ambiguity; stop if `request_user_input` is unavailable.
+Read [references/roles/intake.md](references/roles/intake.md) for focused
+questions, two-stage approval, scope changes, and per-run subagent authorization.
+Follow [references/roles/orchestration.md](references/roles/orchestration.md)
+for bounded assignments and minimal contexts. The coordinator owns questions
+and scope; workers load only their assigned references. Execute after approval
+and Plan Mode exit.
 
-Read [references/contracts/execution-plan.md](references/contracts/execution-plan.md)
-and create or resume the one visible `update_plan` checklist. If unavailable,
-explain and maintain its specified text table while continuing authorized work.
+Maintain one visible checklist under
+[references/contracts/execution-plan.md](references/contracts/execution-plan.md),
+using its text-table fallback when the native plan tool is unavailable.
 
 ## Prepare eligible inputs and compare
 

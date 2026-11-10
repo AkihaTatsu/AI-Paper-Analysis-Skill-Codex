@@ -34,7 +34,7 @@ flowchart TB
 
 #### Shared everyday scenario
 
-Pending.
+Pending: explain the concrete scenario once, then describe each paper's addition in the comparison table using the same terms.
 
 #### Paper comparison
 

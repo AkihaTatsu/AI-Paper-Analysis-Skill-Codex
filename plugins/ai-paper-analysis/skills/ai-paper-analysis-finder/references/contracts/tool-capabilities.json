@@ -1,0 +1,191 @@
+{
+  "schema_version": "1.0.0",
+  "api_version": "2",
+  "capabilities": {
+    "core": {
+      "requires": [],
+      "extras": [],
+      "imports": [
+        "typer",
+        "jsonschema",
+        "ai_paper_analysis.contracts",
+        "ai_paper_analysis.artifacts",
+        "ai_paper_analysis.evidence_cache"
+      ],
+      "description": "Run contracts, temporary workspaces, artifact publication and state."
+    },
+    "sources": {
+      "requires": [
+        "core"
+      ],
+      "extras": [
+        "sources"
+      ],
+      "imports": [
+        "httpx",
+        "yaml",
+        "ai_paper_analysis.providers",
+        "ai_paper_analysis.credentials"
+      ],
+      "description": "Source discovery, identifiers, metadata and credential resolution."
+    },
+    "pdf": {
+      "requires": [
+        "core"
+      ],
+      "extras": [
+        "pdf"
+      ],
+      "imports": [
+        "pymupdf",
+        "pypdf",
+        "ai_paper_analysis.pdf",
+        "ai_paper_analysis.pdf_read"
+      ],
+      "description": "PDF acquisition, identity validation and source inspection."
+    },
+    "classification": {
+      "requires": [
+        "core"
+      ],
+      "extras": [],
+      "imports": [
+        "ai_paper_analysis.classification",
+        "ai_paper_analysis.ledger"
+      ],
+      "description": "Classification, taxonomy and relationship record validation."
+    },
+    "reports": {
+      "requires": [
+        "core"
+      ],
+      "extras": [
+        "reports"
+      ],
+      "imports": [
+        "markdown_it",
+        "mkdocs",
+        "yaml",
+        "ai_paper_analysis.report_audit",
+        "ai_paper_analysis.report_prepare"
+      ],
+      "renderer": true,
+      "description": "Markdown, Mermaid, single-paper and category report audits and rendering."
+    }
+  },
+  "skills": {
+    "ai-paper-analysis": [
+      "core",
+      "sources",
+      "pdf",
+      "classification",
+      "reports"
+    ],
+    "ai-paper-analysis-finder": [
+      "core",
+      "sources",
+      "pdf",
+      "classification"
+    ],
+    "ai-paper-analysis-interpreter": [
+      "core",
+      "sources",
+      "pdf",
+      "reports"
+    ],
+    "ai-paper-analysis-comparator": [
+      "core",
+      "sources",
+      "pdf",
+      "classification",
+      "reports"
+    ]
+  },
+  "conditional_requirements": {
+    "validate-classification --comparison-ready": [
+      "classification",
+      "pdf",
+      "reports"
+    ],
+    "audit-category-report --classification": [
+      "classification",
+      "pdf",
+      "reports"
+    ]
+  },
+  "roles": {
+    "paper-writer": [
+      "core",
+      "sources",
+      "pdf",
+      "reports"
+    ],
+    "category-writer": [
+      "core",
+      "sources",
+      "pdf",
+      "classification",
+      "reports"
+    ],
+    "sources": [
+      "core",
+      "sources",
+      "pdf"
+    ],
+    "evidence-reader": [
+      "core",
+      "pdf"
+    ],
+    "formula-verifier": [
+      "core",
+      "pdf"
+    ],
+    "semantic-review": [
+      "core",
+      "pdf",
+      "reports"
+    ],
+    "report-reviser": [
+      "core",
+      "pdf",
+      "reports"
+    ],
+    "classification": [
+      "core",
+      "classification"
+    ]
+  },
+  "skill_roles": {
+    "ai-paper-analysis": [
+      "paper-writer",
+      "category-writer",
+      "sources",
+      "evidence-reader",
+      "formula-verifier",
+      "semantic-review",
+      "report-reviser",
+      "classification"
+    ],
+    "ai-paper-analysis-finder": [
+      "sources",
+      "classification"
+    ],
+    "ai-paper-analysis-interpreter": [
+      "paper-writer",
+      "evidence-reader",
+      "formula-verifier",
+      "semantic-review",
+      "report-reviser"
+    ],
+    "ai-paper-analysis-comparator": [
+      "paper-writer",
+      "category-writer",
+      "sources",
+      "evidence-reader",
+      "formula-verifier",
+      "semantic-review",
+      "report-reviser",
+      "classification"
+    ]
+  }
+}

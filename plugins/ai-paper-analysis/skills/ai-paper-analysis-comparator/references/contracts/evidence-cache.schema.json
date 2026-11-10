@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/AkihaTatsu/AI-Paper-Analysis-Skill-Codex/contracts/evidence-cache.schema.json",
+  "title": "AI Paper Analysis Evidence Cache Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "cache_key",
+    "source",
+    "source_class",
+    "evidence_policy_sha256",
+    "coverage_fingerprint",
+    "coverage",
+    "locators",
+    "facts",
+    "formulas",
+    "limitations"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "cache_key": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "label"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300,
+          "pattern": "^[^\\r\\n\\[\\]]+$"
+        }
+      }
+    },
+    "source_class": {
+      "enum": ["paper", "supplement", "external_paper"]
+    },
+    "evidence_policy_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "coverage_fingerprint": {"type": "string", "minLength": 1, "maxLength": 300},
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["complete", "page_count", "page_ranges", "unreadable_pages"],
+      "properties": {
+        "complete": {"const": true},
+        "page_count": {"type": "integer", "minimum": 1},
+        "page_ranges": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "array",
+            "prefixItems": [
+              {"type": "integer", "minimum": 1},
+              {"type": "integer", "minimum": 1}
+            ],
+            "items": false,
+            "minItems": 2,
+            "maxItems": 2
+          }
+        },
+        "unreadable_pages": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "integer", "minimum": 1}
+        }
+      }
+    },
+    "locators": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "locator", "page"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^apa-[a-z0-9][a-z0-9-]*$"},
+          "locator": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500,
+            "pattern": "^[^\\r\\n]+$"
+          },
+          "page": {"type": "integer", "minimum": 1}
+        }
+      }
+    },
+    "facts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "summary", "locator_ids"],
+        "properties": {
+          "kind": {"type": "string", "minLength": 1, "maxLength": 80},
+          "summary": {"type": "string", "minLength": 1, "maxLength": 1200},
+          "locator_ids": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"type": "string", "pattern": "^apa-[a-z0-9][a-z0-9-]*$"}
+          }
+        }
+      }
+    },
+    "formulas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "locator_id", "visual_verified"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1, "maxLength": 120},
+          "locator_id": {"type": "string", "pattern": "^apa-[a-z0-9][a-z0-9-]*$"},
+          "visual_verified": {"const": true},
+          "tex_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+        }
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1, "maxLength": 600}
+    }
+  }
+}

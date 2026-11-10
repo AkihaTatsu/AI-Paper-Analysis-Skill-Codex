@@ -87,6 +87,7 @@ def _deterministic_steps(temporary: Path) -> list[Result]:
             logs,
         )
     )
+    results.append(_run("node install", [npm, "ci", "--ignore-scripts"], logs))
     results.extend(
         (
             _run(
@@ -102,7 +103,6 @@ def _deterministic_steps(temporary: Path) -> list[Result]:
                 [uv, "run", "python", "scripts/validate_repository.py"],
                 logs,
             ),
-            _run("node install", [npm, "ci", "--ignore-scripts"], logs),
             _run(
                 "Markdown math parity",
                 [
