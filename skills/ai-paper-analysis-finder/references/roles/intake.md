@@ -1,110 +1,83 @@
-# Shared Intake and Approval
+# Plan Once, Then Execute
 
-The coordinator owns all user questions, scope decisions, and approvals. A
-worker returns an unresolved decision to the coordinator; it never starts a
-separate questionnaire or changes the approved scope.
+The coordinator owns planning, user questions, scope, and publication. Workers
+return unresolved decisions to it without starting their own questionnaires.
 
-## Establish facts before asking
+## Start or resume
 
-Inspect the request, relevant existing formal artifacts, and directly relevant
-source identities first. Separate established facts, unresolved decisions, and
-blocked evidence. Do not ask the user to supply an answer available through
-authorized read-only inspection. Do not recursively read hidden run history.
+For a new task without an accepted plan, check the conversation's current mode.
+If it is not Plan Mode, remind the user in their language to enter Plan Mode
+and complete the task plan before execution. Do not start downloads, report
+writing, or publication yet. The Skill cannot switch the host's mode.
 
-In Plan Mode, inspection is read-only: do not create run directories, download
-files, write extracted text, render pages to disk, or mutate formal artifacts.
-If resolving a fact requires acquisition or another write, propose that work in
-the acquisition stage and execute it only after its approval and Plan Mode exit.
+If an accepted plan already exists, resume it when execution is permitted.
+Do not restart planning or repeat approval merely because a task resumed or
+reached another workflow step.
 
-Ask with `request_user_input` in focused rounds of at most three questions.
-Choose the next question from the current decision frontier: resolve the
-decision that unlocks the most relevant inspection or downstream choices.
-Challenge conflicting requirements, explain the concrete tradeoff, and
-recommend an option. Reuse established answers; do not present the full
-checklist below as one questionnaire. Resolve every material omission and
-consequential default before its dependent work. If the question tool is
-unavailable, stop; do not substitute plain-text questions or assumptions.
+## Gather facts and settle decisions
 
-## Stage 1: target acquisition
+Inspect the request, existing artifacts, and relevant source identities before
+asking. Reuse established answers. Ask only about applicable decisions that
+cannot be resolved from evidence and materially affect the work. Prefer an
+available question tool; its absence does not block planning or require a new
+approval procedure.
 
-Confirm the requested workflows, create versus revise, input files/URLs/IDs,
-search bounds when relevant, target root, and source acquisition needed to
-identify and inspect the exact target papers. Confirm whether this run may use
-subagents; authorization is per run. Recommend bounded parallel evidence work
-when authorized, and sequential work otherwise. Do not ask again within the
-same run unless the requested delegation exceeds its approved scope.
+When the host permits planning writes, use one system-temporary workspace for
+bounded source downloads, extraction, page renders, and planning notes. Keep
+formal outputs unchanged. If the host prohibits those writes, plan the needed
+preparation and perform it at the start of execution without another planning
+round. Reuse existing originals and prepared files.
 
-Present a consolidated acquisition specification with
-`approval_stage=target_acquisition`, ask for confirmation, and present its final
-plan while still in Plan Mode. Execution starts only after the user exits Plan
-Mode. This stage authorizes only target acquisition and source inspection; it
-does not authorize drafting, classification publication, or category reports.
-When the targets already exist, inspect them read-only rather than acquiring
-duplicate copies.
+Resolve the following as relevant to the request:
 
-## Stage 2: complete execution
+- Workflows, known inputs or discovery criteria, output language and destination,
+  and new reports versus revisions. For revisions, settle candidate-only
+  delivery or promotion of named reports with the existing archive procedure.
+- Search providers, inclusion/exclusion criteria, dates, access permissions,
+  stopping bounds, and allowed query expansion. Set future-work search bounds
+  separately from mandatory novelty and Benchmark sources, within this plan.
+- How to handle unavailable originals, whether OCR may be used if needed, and
+  whether temporary material should be retained at a specified destination.
+- Classification scope, taxonomy or its derivation criteria, selected categories,
+  and permission to prepare missing originals or reports. Resolve known
+  assignment ambiguities during planning.
+- One concrete analogy scenario, preferably the paper's own. If inspection must
+  wait until execution, agree on the basis for choosing it rather than inventing
+  a paper-specific mapping. Settle subagent authorization here if delegation
+  will be useful; otherwise use the roles sequentially.
 
-Return to Plan Mode with the discovered identities, actual source coverage,
-and remaining decisions. Resolve the applicable requirements below. Each
-entrypoint independently arranges missing materials through its bundled shared
-roles and CLI; the user need not install or invoke a sibling Skill.
+Use existing defaults unless the user chooses otherwise: per-host concurrency
+2, timeout 60 seconds, three retries, a 200 MiB PDF limit,
+`draft_model_policy=fastest_suitable`, and `evidence_cache=project`. Do not ask
+separate questions about these defaults.
 
-For discovery/acquisition, confirm:
+## One accepted plan
 
-- Research question, literal queries, inclusion/exclusion criteria, dates,
-  languages, paper types, finite provider set, and every query expansion.
-- Public-only access or explicitly authorized commercial/browser access.
-- A target accepted count plus candidate cap, or exhaustive paging within
-  explicit bounds. Batch-review borderline candidates.
-- Classification choice. If requested, confirm mutually exclusive definitions,
-  then review ambiguous assignments and confirm the complete assignment table.
-- Temporary staging by default. Confirm an absolute visible destination outside
-  `.ai-paper-analysis` only when retained staging was requested.
-- OCR only when a preflight establishes that it is needed; confirm it separately.
+Present one complete plan covering preparation, evidence, report writing,
+review, delivery, and cleanup. Make consequential choices and any deferred
+source-dependent decisions visible. If task-specific constraints need more
+space, link the temporary `instructions.md` described in
+[../contracts/execution-plan.md](../contracts/execution-plan.md).
 
-For every paper report, confirm:
+The user's explicit acceptance of the plan, including an instruction to
+implement it, supplies confirmation. Record `plan_confirmed=true` and the
+actual `approved_at` time in the version 2 run specification; no particular
+question tool or second approval is required. A draft uses
+`plan_confirmed=false` and may omit `approved_at`. Execute only when the host
+allows execution.
 
-- Exact target PDF, supplements, existing report, verified official-code
-  identity when available, language when ambiguous, and new versus revision.
-- The finite novelty-comparison set derived from the target's substantive
-  novelty argument; every named original in a grouped comparison is included.
-- The finite defining-original set for Benchmarks, datasets, and environments.
-  A result-table method name alone does not add a source. A Benchmark fully
-  introduced by the target needs no duplicate external original.
-- Verified local-PDF coverage of both sets and exact missing originals. These
-  mandatory sets are independent of the future-work budget.
-- Separate future-work date/source bounds, target papers per direction, and
-  candidate cap per direction.
-- Whether a mandatory original that remains legally inaccessible after the
-  confirmed search may be represented solely by the target paper's visibly
-  labeled characterization, without independent full-text comparison.
-- One everyday analogy scenario. Prefer the paper's own scenario; otherwise
-  offer two or three concrete, jargon-free choices and confirm one.
+## Continue within the plan
 
-For category comparison, confirm:
+Resolve source identities, complete mandatory source inventories, and review
+classification assignments within the accepted criteria. Fill in these facts
+as they become known; they do not constitute a new authorization stage. Before
+a dependent report or comparison, require its actual verified inputs and the
+existing evidence and eligibility checks.
 
-- Classification CSV, taxonomy, selected categories, corpus, and language when
-  ambiguous; inspect actual input eligibility before proposing work.
-- Missing PDFs or complete reports to prepare within this run. Report creation
-  uses the shared whole-paper writer and the paper-report decisions above.
-- Proposed taxonomy/subcategory changes, the complete assignment preview, and
-  one category-wide everyday scenario.
-
-## Final confirmation and later changes
-
-Present one consolidated `approval_stage=full_execution` specification:
-workflow order; exact inputs and outputs; mandatory source sets and local
-coverage; separate future-work budgets; provider/credential choices; taxonomy;
-scenario; language; OCR; staging; revision and publication boundaries;
-subagent authorization and proposed concurrency. Include low-risk network
-defaults unless changed: per-host concurrency 2, timeout 60 seconds, three
-retries, and a 200 MiB PDF limit. Include execution preferences; default to
-`draft_model_policy=fastest_suitable` and `evidence_cache=project` unless the
-user has chosen otherwise. These defaults do not require a separate question.
-
-Ask for final confirmation with `request_user_input`, then present the final
-plan while still in Plan Mode. Execute only after the user exits Plan Mode.
-Never edit an approved specification in place. A new material ambiguity,
-changed source set, or consequential scope change during execution pauses the
-dependent work and requires a return to Plan Mode and a replacement approval.
-Existing access, evidence, no-overwrite, and publication gates remain in force.
+Continue through writing, review, revision, and authorized publication without
+asking the user to start the next step. Ask only when a necessary decision
+cannot be resolved within the accepted plan or would exceed its authorization;
+continue unaffected work. A missing source follows the agreed limitation
+policy. An unresolved correctness failure remains visible and blocks the
+affected output, not unrelated work. Do not require a return to Plan Mode for
+routine findings or changes to derived source lists.

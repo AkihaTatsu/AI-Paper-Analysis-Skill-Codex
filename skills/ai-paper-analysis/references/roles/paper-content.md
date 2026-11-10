@@ -174,7 +174,7 @@ Separate:
 - Future directions stated by the paper.
 - Independently verified related papers for each direction.
 
-Related papers require a separately approved search budget and original full
+Related papers require a separate search budget in the initial plan and original full
 text. Explain similarities, differences, and relationship to the target paper
 using a clearly labeled external evidence channel. Put each local external PDF
 link only in the corresponding footnote definition, using the portable relative

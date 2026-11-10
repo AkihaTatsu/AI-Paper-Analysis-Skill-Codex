@@ -9,12 +9,16 @@ Use explicitly or when selected for the requested paper workflow. This Skill
 is self-contained: obtain missing materials through its bundled shared roles
 and `scripts/apa.py`, without requiring a sibling Skill.
 
-Read [references/roles/intake.md](references/roles/intake.md) for focused
-questions, two-stage approval, scope changes, and per-run subagent authorization.
+For a new task without an accepted plan, if the current mode is not Plan Mode,
+remind the user to enter Plan Mode and finish planning before execution. Start
+no downloads, report writing, or publication until then. With an accepted plan,
+continue or resume execution when the host permits it; do not ask to plan again.
+
+Read [references/roles/intake.md](references/roles/intake.md) to settle decisions
+in one complete plan, then execute continuously within its accepted scope.
 Follow [references/roles/orchestration.md](references/roles/orchestration.md)
 for bounded assignments and minimal contexts. The coordinator owns questions
-and scope; workers load only their assigned references. Execute after approval
-and Plan Mode exit.
+and scope; workers load only their assigned references and task instructions.
 
 Maintain one visible checklist under
 [references/contracts/execution-plan.md](references/contracts/execution-plan.md),
@@ -32,10 +36,10 @@ identities or provider batches may run concurrently within the shared limits.
 
 The coordinator publishes validated originals atomically under their stable
 PDF stems, retains compact state, and cleans temporary artifacts. A readable
-PDF with inconclusive identity is a candidate requiring confirmation, never a
-verified input. Never overwrite an ambiguous identity/version, bypass an access
-control, or use unconfirmed OCR. Confirm the complete exclusive assignment
-preview before publishing classification or taxonomy.
+PDF with inconclusive identity remains a candidate until resolved from evidence.
+Never overwrite an ambiguous identity/version or bypass an access control.
+Use the planned OCR policy and publish classification or taxonomy after review
+within the accepted scope, without another stage confirmation.
 
 Use this Skill's shared `tools list`, `tools doctor`, `tools ensure`, `read-pdf`,
 `render-pdf-pages`, and other CLI operations as needed; inspect command `--help`

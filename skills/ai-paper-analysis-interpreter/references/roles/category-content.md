@@ -12,8 +12,8 @@ audit is `structure-valid` with a valid content review and
 source versions through an active receipt or the report's compact artifact
 state. A legacy report without either must be reviewed when it is needed,
 not silently treated as complete. The coordinator
-can arrange missing paper reports with the shared whole-paper writer after
-scope approval. Do not silently repair an excluded input or infer permission
+can arrange missing paper reports with the shared whole-paper writer when
+included in the accepted plan. Do not silently repair an excluded input or infer permission
 to create its replacement. Excluded IDs and reasons go in the completion
 summary; retain a detailed exclusion artifact only if explicitly requested.
 

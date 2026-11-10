@@ -38,9 +38,10 @@ not become a report source.
 
 ## Build mandatory external sets
 
-Derive both sets after complete target reading and have the user confirm them
-before dependent drafting. They are independent of the optional future-work
-budget.
+Derive both sets after complete target reading under the accepted plan's source
+criteria. Record their actual members before dependent drafting; filling these
+inventories does not require another user confirmation. They are independent
+of the optional future-work budget.
 
 For the **novelty-comparison set**, include every cited work that the target
 uses for a substantive baseline claim about setting, assumptions, method,
@@ -63,16 +64,14 @@ can apply the source-limitation wording in [evidence-policy.md](evidence-policy.
 
 ## Future-work sources and file placement
 
-Future-work papers require separately confirmed date/source bounds, target
-count per direction, and candidate cap. Acquire, verify, and read their original
-full text under the same rules.
+Set future-work date/source bounds, target count per direction, and candidate
+cap in the initial plan. Acquire, verify, and read originals within that budget.
 
 For target `papers/<target-stem>.pdf`, publish external PDFs under
 `papers/<target-stem>_references/<external-paper-stem>.pdf`; keep only PDFs in
 that directory. When the same original supports multiple targets, publish a
 verified copy in each directory. During revision, validate an atomically copied
-file before updating the candidate link and retain the old file until separately
-approved cleanup.
+file before updating the candidate link and retain the old file until cleanup authorized by the plan.
 
 The coordinator need not reread originals solely to transfer them. Writers and
 reviewers use verified coverage packets, reopen exact claim locators, and expand

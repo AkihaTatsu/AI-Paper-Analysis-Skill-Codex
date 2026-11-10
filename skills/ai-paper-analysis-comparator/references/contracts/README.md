@@ -3,7 +3,14 @@
 These files are the canonical, versioned interfaces shared by all four Skills.
 Generated copies under each Skill must match them byte for byte.
 
-- `run-spec.schema.json` defines the confirmed execution specification.
+- `run-spec.schema.json` version 2 defines one accepted plan. `plan_confirmed`
+  records user acceptance independently of the question tool; confirmed plans
+  require `approved_at`. Drafts can be checked with
+  `validate-spec --no-require-confirmation`. Recreate old temporary specifications
+  in version 2; there is no stage or legacy-format migration.
+- Source inventories and classification assignments may be filled as execution
+  resolves them. Interpreter targets may be deferred only with an upstream
+  Finder. Missing inventories never establish report completeness.
 - `evidence-cache.schema.json` defines concise project-local coverage and locator records.
 - `coverage-matrix.schema.json` binds each temporary checklist row to one exact
   report passage, numbered section, and evidence set.
@@ -17,7 +24,7 @@ Generated copies under each Skill must match them byte for byte.
 - `relationship-record.schema.json` defines paper relationship edges.
 - `provider-registry.json` defines built-in discovery and retrieval sources.
 - `execution-plan.md` defines the shared execution checklist, native plan-tool
-  usage, progress updates, and text-table fallback.
+  usage, temporary instructions, cleanup, and text-table fallback.
 
 Schema identifiers are stable. Breaking changes require a schema-version and
 plugin-version update.

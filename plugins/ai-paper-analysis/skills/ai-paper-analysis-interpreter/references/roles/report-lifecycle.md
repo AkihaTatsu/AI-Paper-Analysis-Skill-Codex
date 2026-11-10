@@ -9,9 +9,12 @@ separately written chapters.
 
 Use the calling Skill's `scripts/apa.py`. Run `tools list` and `tools doctor`,
 then `tools ensure` only for missing approved capabilities. Validate the run
-specification and call `init-run` only after Plan Mode ends. Keep extraction,
-renders, evidence packets, coverage matrices, review issues, baselines, and
-diffs in the run's temporary workspace.
+specification and call `init-run` during authorized execution. Reuse the
+planning workspace and any prepared sources, following
+[../contracts/execution-plan.md](../contracts/execution-plan.md) for temporary
+instructions and cleanup. Keep extraction, renders, evidence packets, coverage
+matrices, review issues, baselines, and diffs there. Complete source-dependent
+input inventories before assigning their dependent writing or review work.
 
 ## 1. Reuse or prepare evidence
 
@@ -84,11 +87,12 @@ Then run `audit-paper-report` or `audit-category-report` with the receipt and
 eventual publication path. This is the workflow's single complete browser
 render and the final technical gate.
 
-Publish only within approved scope. A revision remains a candidate until the
-user approves promotion. Preserve compact content-bound state, and clean the
-temporary workspace after dependents finish. A visible partial report may be
-published when approved and structurally valid, but only a complete paper
-report may enter category comparison.
+Publish according to the accepted plan. If promotion of the named report was
+authorized there, archive and promote the audited candidate without another
+confirmation. Otherwise deliver the candidate. Preserve compact content-bound
+state and clean the task workspace after dependents finish. A visible partial
+report may be published under the agreed limitation policy after structural
+checks pass; only a complete paper report may enter category comparison.
 
 The coordinator records role dispatch and completion times. Benchmark runs also
 record tool-stage durations; workers do not create separate timing artifacts.

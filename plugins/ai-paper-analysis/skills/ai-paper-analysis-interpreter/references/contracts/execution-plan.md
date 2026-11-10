@@ -1,57 +1,41 @@
-# Execution Plan and Progress
+# Execution Plan and Temporary Instructions
 
-After the current work's scope is confirmed and execution is permitted by the
-active collaboration mode, create a visible plan before its first execution
-action. Use Codex's native `update_plan` tool when it is available. This is an
-execution checklist, separate from the proposal discussed in Plan Mode; it
-does not switch modes or grant permission to acquire sources or publish files.
+The coordinator maintains one plan from planning through delivery and cleanup.
+Follow [../roles/intake.md](../roles/intake.md) for startup, confirmation, and
+scope decisions. A plan does not switch the host's collaboration mode.
 
-## Create and share one plan
+## Progress
 
-- Write short, verifiable stages in the user's requested language. Usually
-  three to six stages suffice; adapt to the actual task rather than padding
-  small tasks or listing every command. Include required verification,
-  delivery, and cleanup within the authorized scope.
-- With two-stage authorization, the first plan covers only approved target
-  acquisition and source inspection. After full-execution approval, extend
-  that same plan with the approved downstream work and retain completed steps.
-- The calling Skill's coordinator owns one plan across all shared roles and
-  prerequisites. Workers return progress to that coordinator rather than
-  creating separate checklists. A directly invoked entrypoint creates the plan
-  when this task has none. On resumption, continue the existing plan and preserve
-  verified progress. The coordinator need not read every role's instructions
-  or source corpus to maintain the plan.
+Use `update_plan` when available, with short verifiable steps and the statuses
+`pending`, `in_progress`, and `completed`; at most one step is in progress.
+Otherwise maintain a concise Step/Status table in the conversation. Resume the
+existing checklist rather than creating one for each role or workflow stage.
 
-## Maintain accurate status
+Update progress at meaningful transitions and before handing back. Complete a
+step only when its output and required checks pass. Explain genuine blockers,
+continue independent work, and leave unfinished steps pending. A checklist
+update is not a request for the user to authorize the next step.
 
-Call `update_plan` with the full current `plan` list, using `step` and `status`
-for each item and an optional `explanation` for changes. Use only `pending`,
-`in_progress`, and `completed`; at most one item may be `in_progress`. Mark
-the first stage in progress only when starting it and leave later stages
-pending.
+## One temporary workspace
 
-Update the plan at meaningful stage transitions, after a necessary revision
-to the remaining work, and before the final response. Mark a stage completed
-only when its outcome and required checks are satisfied. Do not mark a failed
-audit, unfinished report, or publication awaiting approval as completed.
+Use `create-temp` for one workspace under an allowed system temporary directory.
+Planning downloads, extraction, renders, and notes are permitted only when the
+host's mode and filesystem rules allow them. Otherwise defer their creation to
+execution. Keep the workspace across planning and execution and reuse its files.
+Create formal project run state with `init-run` only during authorized execution.
 
-When waiting for clarification, approval, or an external prerequisite, explain
-the dependency and leave unfinished stages pending. Resume the relevant stage
-when work restarts. For a changed scope, obtain any confirmation required by
-the existing workflow before adding execution work; explain removed or
-cancelled steps instead of labeling them completed. Before handing back,
-reconcile the checklist with actual outcomes and state any unfinished work.
+When needed, write `instructions.md` in that workspace for task-specific
+constraints and decisions that would crowd the visible plan. Link its absolute
+path from the plan and pass it to relevant workers. Keep it consistent with the
+accepted scope; it neither adds authorization nor replaces the shared content
+rules. Do not create it for a task whose plan already contains everything needed.
 
-## Tool unavailable
-
-If `update_plan` is not exposed or cannot be used in the current session,
-briefly say so, then display and maintain a Markdown table with Step and Status
-columns, localized to the user's language. Apply the same timing, ownership,
-and status rules. Continue authorized work without asking for an extra
-confirmation solely because the plan tool is missing. Never claim that a
-text table was created through the native tool or invoke an invented tool.
-
-The checklist remains in the conversation. Do not create a permanent plan
-file, add a CLI command, install a tool provider, or change the approved
-run specification to supply it. Existing confirmation, source, publication,
-and cleanup gates remain in force.
+Publish requested originals and final outputs at their intended destinations,
+using stable source paths for report links and content reviews. After all
+consumers finish, use `cleanup-temp` to remove this task's entire workspace,
+including notes, downloads, extraction, renders, and review intermediates. Also
+remove completed hidden run state with `cleanup-run`. Apply the same cleanup
+when the task is explicitly abandoned; keep files needed by an ongoing task.
+Preserve formal outputs, existing user files, approved retained material, and
+the existing reusable evidence cache. Never clean a whole temporary root or
+another task's workspace.

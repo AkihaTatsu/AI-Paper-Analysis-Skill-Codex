@@ -9,12 +9,16 @@ Use explicitly or when selected for the requested paper workflow. This Skill
 independently acquires missing originals and prepares reports using its bundled
 shared roles and `scripts/apa.py`; do not require Finder or another sibling Skill.
 
-Read [references/roles/intake.md](references/roles/intake.md) for focused
-questions, two-stage approval, scope changes, and per-run subagent authorization.
+For a new task without an accepted plan, if the current mode is not Plan Mode,
+remind the user to enter Plan Mode and finish planning before execution. Start
+no downloads, report writing, or publication until then. With an accepted plan,
+continue or resume execution when the host permits it; do not ask to plan again.
+
+Read [references/roles/intake.md](references/roles/intake.md) to settle decisions
+in one complete plan, then execute continuously within its accepted scope.
 Follow [references/roles/orchestration.md](references/roles/orchestration.md)
 for bounded assignments and minimal contexts. The coordinator owns questions
-and scope; workers load only their assigned references. Execute after approval
-and Plan Mode exit.
+and scope; workers load only their assigned references and task instructions.
 
 Maintain one visible checklist under
 [references/contracts/execution-plan.md](references/contracts/execution-plan.md),
@@ -39,6 +43,6 @@ split chapters among writers or make the coordinator copy all writing rules.
 
 The lifecycle defines automatic checks, one semantic review, automatic exact
 patches, residual revision when needed, scoped continuation, final audit, and approved
-publication. Partial reports cannot enter category comparison. A revision
-remains a candidate until the user approves promotion; only the coordinator
-publishes and maintains state under that contract.
+publication. Partial reports cannot enter category comparison. The coordinator
+publishes and maintains state, promoting revisions only when the initial plan
+authorizes it and otherwise delivering the candidate.

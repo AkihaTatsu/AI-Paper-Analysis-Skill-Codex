@@ -7,7 +7,7 @@ questions, confirmed atomic replacements, and formal publication.
 Classification is optional. Do not create taxonomy or classification artifacts
 when the user did not request them.
 
-## Taxonomy approval
+## Taxonomy
 
 If the user does not provide a complete taxonomy, propose one with:
 
@@ -16,27 +16,31 @@ If the user does not provide a complete taxonomy, propose one with:
 - Positive inclusion tests and explicit exclusion boundaries.
 - Mutually exclusive distinctions that cover the accepted corpus.
 
-The coordinator asks the user to confirm the taxonomy through the question tool before assigning
-papers. Save the definitions and confirmation metadata only at
+Settle the taxonomy or its derivation criteria in the initial plan. The
+coordinator reviews derived definitions against those criteria before use;
+ask again only when a necessary change exceeds that scope. Save the definitions
+and confirmation metadata only at
 `<target-root>/taxonomy.json`; save assignments only at
 `<target-root>/classification.csv`.
 
-## Assignment approval
+## Assignment review
 
 Assign each paper to exactly one category and exactly one subcategory. Provide
-the proposed category, subcategory, short reason, and a paper locator. Batch
-review ambiguous assignments, then show the complete table for final
-confirmation.
+the category, subcategory, short reason, and a paper locator. Review the complete
+table against the accepted taxonomy. Resolve ambiguities from evidence and
+the planned criteria; ask only about essential decisions those cannot settle.
 
 Use the fixed 25-column CSV contract from [../contracts/classification-row.schema.json](../contracts/classification-row.schema.json). Encode
 authors as a JSON array string and write RFC 4180 UTF-8 CSV. The CSV is
 authoritative for assignments; `taxonomy.json` is authoritative for category
 definitions.
 
-Set `review_status=confirmed` only after complete-table confirmation. Set
-`verification_status=verified` only when identity, classification evidence,
+Set `review_status=confirmed` only after the coordinator has reviewed the
+complete table within the accepted plan. Record the plan and actual review
+basis in confirmation summaries; do not imply the user inspected derived rows.
+Set `verification_status=verified` only when identity, classification evidence,
 and required local files pass. Leave report fields empty until a verified
-report exists; update them only through an audited, confirmed atomic CSV
+report exists; update them only through an audited, authorized atomic CSV
 replacement.
 
 Before category comparison, require nonempty PDF/report paths, existing files, a

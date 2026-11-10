@@ -45,7 +45,7 @@ external original. When its defining original remains unavailable, use only the
 target and label the affected subsection exactly `target paper's
 characterization only; Benchmark source not independently verified`.
 
-Future-work papers require their separately approved search budget and verified
+Future-work papers require the initial plan's separate search budget and verified
 full text. Keep all external claims visibly external. State missing, unreadable,
 conflicting, or weak evidence as a limitation instead of completing a claim from
 memory.

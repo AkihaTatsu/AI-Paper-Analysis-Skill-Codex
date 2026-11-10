@@ -39,8 +39,6 @@ def validate_run_spec(
         ]
         if workflows != expected_order:
             errors.append("workflows must follow finder, interpreter, comparator order")
-        if spec.get("approval_stage") == "target_acquisition" and workflows != ["finder"]:
-            errors.append("target_acquisition approval may execute only the finder workflow")
 
     registry_payload = load_json("provider-registry.json")
     registry = {provider["id"] for provider in registry_payload["providers"]}
@@ -65,6 +63,13 @@ def validate_run_spec(
 
     interpreter = spec.get("interpreter")
     if isinstance(interpreter, dict):
+        if (
+            isinstance(workflows, list)
+            and "interpreter" in workflows
+            and "finder" not in workflows
+            and not interpreter.get("input_refs")
+        ):
+            errors.append("interpreter.input_refs are required without an upstream finder")
         budget = interpreter.get("future_work_budget")
         if isinstance(budget, dict) and budget.get("mode") == "search":
             for provider in budget.get("providers", []):
@@ -106,8 +111,8 @@ def validate_run_spec(
             resolved_staging = staging.resolve()
             if resolved_staging == hidden or resolved_staging.is_relative_to(hidden):
                 errors.append("staging_output_dir must be outside .ai-paper-analysis")
-    if require_confirmation and spec.get("question_tool_confirmed") is not True:
-        errors.append("question_tool_confirmed must be true before execution")
+    if require_confirmation and spec.get("plan_confirmed") is not True:
+        errors.append("plan_confirmed must be true before execution")
     return RunSpecValidation(not errors, tuple(errors))
 
 

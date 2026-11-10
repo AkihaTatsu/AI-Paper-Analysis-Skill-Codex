@@ -27,8 +27,8 @@ acquisition, and relationship pairs remain suitable bounded work.
 
 ## Authorization, model choice, and worker brief
 
-Ask once per run before using subagents. After authorization, run independent
-evidence work concurrently within available slots and shared provider limits.
+Settle subagent authorization in the initial plan. After authorization, run
+independent evidence work concurrently within available slots and shared provider limits.
 No authorization means the same roles execute sequentially.
 
 For the first paper draft, follow `execution_preferences.draft_model_policy`.
@@ -47,8 +47,9 @@ Spawn fresh workers with `fork_turns="none"`. Give each worker only:
 - required return fields and a ban on further delegation, user questions,
   publication, or scope expansion.
 
-Pass file paths instead of full papers, report bodies, role bundles, or chat
-history. Shared filesystem access is not a sandbox, so boundaries remain explicit.
+Include the task's temporary `instructions.md` path when relevant; workers read
+its task constraints alongside their role. Pass file paths instead of full
+papers, report bodies, role bundles, or chat history. Shared filesystem access is not a sandbox, so boundaries remain explicit.
 Return artifact path/version, coverage outcome, counts, and blockers. Reference
 existing records rather than restating them in conversation. In an evidence
 assignment, state that a successful `record-evidence-cache` result is the final

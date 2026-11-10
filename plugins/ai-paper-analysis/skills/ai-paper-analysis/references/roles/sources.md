@@ -21,12 +21,13 @@ by [evidence-reader.md](evidence-reader.md) when substantive claims require it.
 
 ## 1. Build the approved run
 
-The coordinator validates the confirmed run specification before any external
-call and creates minimal hidden run state only after Plan Mode ends. Create one randomly named
-system temporary directory for discovery records, downloads, detailed audits,
-and any one-off scripts with the runtime's `create-temp` command. Do not copy
-this operational workspace into `.ai-paper-analysis`, and run `cleanup-temp`
-when its dependent work ends.
+During planning, inspect only sources relevant to the request within the
+host's permissions and the settled access and search bounds. Use temporary
+files only when the host permits planning writes. During execution, validate
+the accepted run specification before starting its source work. Reuse the one
+workspace described in [../contracts/execution-plan.md](../contracts/execution-plan.md)
+for discovery records, downloads, and audits. The coordinator creates formal run
+state during execution and cleans this workspace after its consumers finish.
 
 ## 2. Discover and normalize
 
@@ -43,8 +44,9 @@ run's decisions, but do not retain them as hidden run history by default.
 
 Apply hard inclusion/exclusion rules first. Use title, abstract, and metadata
 for early triage, but validate accepted candidates against available full text.
-Automatically accept or reject only clear cases. Put all borderline cases in a
-question-tool review batch.
+Accept or reject cases supported by full-text evidence and the planned criteria.
+Return unresolved borderline cases to the coordinator; it asks only when a
+necessary inclusion decision cannot be resolved within the plan.
 
 ## 3. Resolve the primary PDF
 
@@ -88,12 +90,13 @@ Validate:
 
 If the PDF is readable but none of the available signals can establish its
 bibliographic identity, retain it only as a candidate with
-`identity_status=inconclusive`. Return the identity to the coordinator for user confirmation before
-marking it verified or using it for any comparison. Readability alone is never
-identity evidence.
+`identity_status=inconclusive`. Return it to the coordinator for resolution;
+never mark it verified or use it for comparison without identity evidence.
+Apply the agreed exclusion or source-limitation policy when it remains unresolved.
 
-If text is sparse, return an OCR decision to the coordinator before OCR. OCR a temporary copy for text recovery and
-retain the original PDF as the formal artifact. Formula verification always
+If text is sparse, follow the planned OCR policy. Use already authorized OCR
+on a temporary copy for text recovery and retain the original PDF as the formal
+artifact. Ask only if needed OCR was not authorized. Formula verification always
 uses rendered original pages.
 
 ## 5. Return validated files for coordinator publication
@@ -112,8 +115,9 @@ independent verified copy for every target paper it supports.
 
 Reuse an existing file only when its bibliographic identity, version, and PDF
 structure match the confirmed work. If the same stable destination has
-ambiguous identity or version evidence, pause for a Plan Mode decision. Never
-add an automatic `-v2` suffix and never overwrite.
+ambiguous identity or version evidence, resolve it from evidence or return
+that specific conflict to the coordinator. Never overwrite the ambiguous file
+or invent an automatic `-v2` suffix; continue independent work.
 
 After atomic publication, use `record-state` to keep only stable path, run ID,
 and publication status. At run completion, delete rejected files with
@@ -148,8 +152,8 @@ metadata do not by themselves prove that a linked PDF is the required paper.
   a valid existing browser session or documented API. Never capture passwords
   in prompts or logs.
 - Browser-only sources: use the available authorized browser capability. If no
-  browser capability exists, mark the source unavailable and return to Plan
-  Mode if its omission changes the approved coverage.
+  browser capability exists, mark the source unavailable and apply the planned
+  limitation policy. Ask only if the missing coverage requires a new decision.
 
 ### Credentials
 

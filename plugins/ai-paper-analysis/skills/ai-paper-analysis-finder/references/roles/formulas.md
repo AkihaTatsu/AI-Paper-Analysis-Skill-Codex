@@ -83,8 +83,9 @@ or to a supported non-core omission reason.
 
 ## Shared-scenario map
 
-Prefer a scenario explicitly used by the paper. Otherwise present two or three
-ordinary scenarios to the user in Plan Mode and confirm one.
+Settle the scenario in the initial plan, preferring one used by the paper.
+When source inspection is deferred, follow the planned selection criteria and
+keep one concrete scenario consistent throughout the report.
 
 Maintain a consistent working map for every concept, assumption, module,
 benchmark, core equation, symbol, and important composite term. Fully explain
