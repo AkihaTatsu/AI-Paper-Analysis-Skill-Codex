@@ -34,7 +34,8 @@ flowchart TB
 
 #### Shared everyday scenario
 
-Pending: explain the concrete scenario once, then describe each paper's addition in the comparison table using the same terms.
+Pending: explain the concrete scenario once, then describe each paper's addition in the comparison table using the same terms. Use local numerical examples when they make a difficult
+concept clearer.
 
 #### Paper comparison
 

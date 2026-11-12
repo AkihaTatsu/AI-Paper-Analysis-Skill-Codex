@@ -1,4 +1,4 @@
-# Clear, Concise Reports
+# Plain-Language Research Reports
 
 Apply these rules while drafting and during the existing semantic review of
 paper and category reports. They adapt Humanizer 3.1.0's editing
@@ -7,33 +7,51 @@ intermediate drafts or editing notes.
 
 ## Meaning and reader
 
-Preserve required coverage, supported claims, numbers, units, uncertainty,
-conditions, equations, source attribution, and evidence locators. Keep factual
-statements distinct from interpretation. Simplification must not strengthen a
-claim or remove a limitation needed to understand it.
+Assume only basic calculus, linear algebra, probability, and mathematical
+statistics. Explain everything beyond that foundation through familiar actions
+and those mathematical operations. This applies to prose, headings, tables,
+diagram labels, and formula explanations in both paper and category reports.
 
-Write for a reader without prior field knowledge. Use concrete subjects and
-familiar verbs. Explain an unfamiliar term when it first carries the argument;
-use the same term thereafter. Recall an earlier definition briefly when needed
-instead of teaching it again. Keep prerequisites and intermediate reasoning
-that the reader needs to understand why a conclusion follows.
+At the first use of each necessary specialist term, give its plain meaning and
+a concrete analogy, small simulation, or worked numerical example. Explain the
+operation, not just a renamed object. Use the plain name consistently afterward;
+briefly recall an earlier explanation only when needed. An acronym expansion or
+a definition made of other unexplained terms is insufficient. Avoid introducing
+terms that the explanation does not need.
+
+Preserve method and experiment coverage, equations, numbers, units, conditions,
+source attribution, and evidence locators. Retain the intermediate steps needed
+to follow a conclusion. Introduce illustrative numbers as an example, keeping
+them distinct from experimental measurements. Explain a paper's specific
+contribution through supported differences, without inventing uniqueness or
+turning a proposed application into a demonstrated result.
 
 ## Information and structure
 
 State the subject or finding directly. Each sentence must add information or a
 necessary explanation. Remove staged introductions, inflated significance,
 imagined objections, repeated conclusions, chat wrappers, and narration of how
-the report was assembled. Keep a contrast when both sides carry information or
-it corrects a specific misconception. Keep genuine uncertainty and source gaps.
+the report was assembled or checked. Remove defensive tails such as "this does
+not mean", "cannot establish", and "does not prove" that rebut an unasked
+objection. Express the actual condition or finding directly. Keep an informative
+comparison when both sides add facts.
+
+Report a defect only when the paper explicitly identifies it or it follows
+directly from the architecture. State the concrete cause and consequence; for
+an architectural deduction, show the short reasoning and cite its premises.
+Do not add hypothetical failure lists or general warnings. Preserve actual
+negative results, conflicting values, and missing measurements as direct facts
+at the relevant location. Attribute a target-only account to the target authors
+instead of appending a disclaimer.
 
 Organize paragraphs around ideas, with clear referents and connected reasoning.
 Merge fragments that merely label an input, operation, or result. Choose the
-length needed for the explanation; do not impose word, sentence, or paragraph
-quotas. Use examples and the approved scenario where they explain a difficult
-step, without repeating an unchanged mapping.
+length needed for the explanation. Keep requested one-sentence summaries to
+one sentence each. Use the agreed main scenario where it helps;
+switch locally to a clearer example or numerical calculation when needed.
 
-Give each representation a purpose: glossaries index concepts, diagrams show
-connections, tables present values or comparisons, and prose explains mechanisms
+Give each representation a purpose: optional short glossaries index concepts,
+diagrams show connections, tables present values or comparisons, and prose explains mechanisms
 and conclusions. Explain what a table or diagram means without reciting every
 cell or announcing a layout the reader can already see. Use brief cross-references
 when a definition or mechanism has already been explained.
@@ -47,7 +65,10 @@ in prose; preserve punctuation in quotations, titles, names, numerical ranges,
 mathematics, code, commands, paths, and link targets.
 
 Judge these patterns in context, not with a banned-word list or style score.
-Technical uses, informative comparisons, and necessary qualifications remain.
+Technical uses, informative comparisons, and factual conditions remain.
+Review every first-use explanation against the stated mathematical foundation
+and check that its example actually explains the operation. Check defensive
+wording semantically; deleting a negative word alone can change a true claim.
 Review terminology problems under `terminology`; review repetition, filler,
 unclear organization, and missing reasoning under `reasoning`. Give an exact
 passage and repair condition through the existing issue workflow. Check that

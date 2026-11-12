@@ -13,7 +13,7 @@ Before prose, write a temporary `coverage-matrix.schema.json` matrix covering
 every required term, paper, relationship, comparison, subcategory, and report
 output, with its numbered section, one exact heading or sentence fragment that
 will occur once in that passage, and its required evidence locators. Write the
-whole report in one pass using consistent localized terminology and parallel
+whole report in one pass using first-use plain explanations, consistent localized terminology, and parallel
 comparisons.
 
 After the complete candidate exists, run `prepare-report` once with the matrix,

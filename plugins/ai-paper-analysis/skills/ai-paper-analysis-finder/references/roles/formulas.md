@@ -60,58 +60,41 @@ value through every later scale, limit, clip, or storage operation. Give raw
 intermediates and stored outputs distinct symbols, verify the branch guard, and
 never assign a pre-transform distribution directly to a post-transform value.
 
-Immediately below, place a table with these semantic columns translated into
-the output language:
+Immediately below each displayed core equation, give a compact table of its
+symbols and meaningful composite terms, with localized columns:
 
-| Symbol | Meaning | Analogy | Role in the Formula |
-| --- | --- | --- | --- |
+| Symbol or important term | Plain meaning and role |
+| --- | --- |
 
-Include every symbol and meaningful composite term. Then explain the equation's
-overall meaning, mechanism, module role, shared-scenario analogy, and the
-technical limits of that mapping. Keep the technical limits clearly distinct
-from the everyday analogy, using sentences or paragraphs as needed. Follow
-[report-style.md](report-style.md); fixed labels and paragraph counts are not
-required. Use brief reminders or cross-references for unchanged definitions
-and mappings, while keeping every symbol and composite term in the card's table.
+Explain the calculation through basic calculus, linear algebra, probability,
+and statistics: what enters, what operations occur, what comes out, and why the
+module needs it. Give each new specialist concept a concrete analogy, small
+simulation, or numerical example. Explain introduced notation before using it
+to explain another concept. Preserve the original equation; simplicity belongs
+in its explanation, not an altered mathematical claim.
 
-Give each displayed core equation its own formula-card heading, table,
-explanation, and reusable source locator. Do
-not place two displayed equations above one shared table or combine several
-cards under one heading. Include a core-equation coverage table before the cards
-that maps each original page, equation, or theorem locator to exactly one card
-or to a supported non-core omission reason.
+Reuse established definitions with short reminders or cross-references in the
+table. Basic symbols need meanings, not a separate forced metaphor. A new
+example should explain an operation or relationship; do not merely rename
+symbols as objects. State illustrative values as examples, separate from paper
+measurements. Omit ritual warnings about what an analogy does not establish.
 
-## Shared-scenario map
+Give each displayed core equation its own heading, table, explanation, and
+source locator. Include a compact core-equation coverage table mapping each
+original locator to its card or a supported non-core omission reason. Keep
+coverage bookkeeping out of the explanatory prose.
 
-Settle the scenario in the initial plan, preferring one used by the paper.
-When source inspection is deferred, follow the planned selection criteria and
-keep one concrete scenario consistent throughout the report.
+## Connected examples
 
-Maintain a consistent working map for every concept, assumption, module,
-benchmark, core equation, symbol, and important composite term. Fully explain
-the mapping on first use. Later occurrences may use a brief reminder or
-cross-reference.
+Choose a main scenario during planning, preferably grounded in the paper's
+objects. Reuse its meanings consistently. Allow a local numerical example,
+small simulation, or different familiar scene when it makes a concept easier
+to understand. The existing scenario field records this main scenario and the
+agreed use of local examples.
 
-## Concrete-language gate
-
-Apply this gate to scenario names, analogy prose, and every analogy table cell.
-Use only familiar people, physical objects, visible actions, simple sensory
-qualities, and directly observable outcomes. Do not use abbreviations,
-mathematical symbols, method names, academic terms, or abstract substitute
-labels such as *model*, *system*, *mechanism*, *state*, *slot*, *coordinate*,
-*dimension*, *distribution*, *representation*, *network*, *parameter*, or
-*digital twin*. This list illustrates the semantic rule; it is not a token
-blacklist.
-
-An analogy must describe what a concrete person or object does and what someone
-can observe. It must not merely rename a technical object. If a word needs a
-special definition before a general reader can picture it, rewrite the analogy
-without that word. For example, reject "a residential digital twin has state
-slots." Prefer "a person writes whether the lamp is on, whether the curtain is
-closed, and how warm the room feels in three separate boxes on paper."
-
-Keep the analogy concise, vivid, and accurate. Put any mapping limitation in the
-technical explanation required above, where defined technical language
-may be used. Run a semantic concrete-language review rather than relying on a
-vocabulary heuristic; passing a token check does not prove that an analogy is
-ordinary, understandable, or accurate.
+Follow [report-style.md](report-style.md) for first-use explanations and review.
+An example must show an action or calculation and its observable result. A
+reader should understand it without learning another specialist vocabulary.
+Use basic mathematical language freely where it is clearer than a physical
+metaphor. Review the correspondence for accuracy within the existing semantic
+review, without requiring a separate boundary paragraph for each example.

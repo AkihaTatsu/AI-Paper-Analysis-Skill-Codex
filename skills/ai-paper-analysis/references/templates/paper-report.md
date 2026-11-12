@@ -31,23 +31,15 @@ Pending.
 
 Pending.
 
-### Complete glossary
-
-| Canonical term in the requested language | Paper meaning | Plain explanation | Shared-scenario analogy | Evidence |
-| --- | --- | --- | --- | --- |
-| Pending | Pending | Pending | Pending | Pending |
-
 ## 2. Core Content
 
-### One-sentence problem
+### One-sentence overview
 
-Pending.
+1. Pending: one sentence stating the problem solved.
+2. Pending: one sentence stating its distinctive difficulty and downstream use.
+3. Pending: one sentence stating the contribution relative to similar work.
 
-### Inputs and outputs
-
-Pending.
-
-### Innovations relative to referenced work
+### Differences from related work
 
 Pending.
 
@@ -56,6 +48,11 @@ Pending.
 Pending.
 
 ## 4. End-to-End Flow
+
+### Overall inputs and outputs
+
+Pending: concrete overall inputs and outputs, separating training and model use
+when applicable; place this before the graph and module table.
 
 ```mermaid
 flowchart TB
@@ -86,11 +83,13 @@ Pending.
 
 Pending.
 
-| Symbol or important term | Meaning | Everyday analogy | Role in the formula |
-| --- | --- | --- | --- |
-| Pending | Pending | Pending | Pending |
+| Symbol or important term | Plain meaning and role |
+| --- | --- |
+| Pending | Pending |
 
-Pending: explain the equation's meaning, mechanism, module role, shared-scenario analogy, and technical mapping limits in connected prose. Reuse earlier definitions briefly and retain the source locator.
+Pending: explain the calculation and its purpose using basic mathematics. Give
+each new specialist concept a concrete analogy or small worked example. Reuse
+earlier definitions briefly and retain the source locator.
 
 ## 6. Experiments and Results
 

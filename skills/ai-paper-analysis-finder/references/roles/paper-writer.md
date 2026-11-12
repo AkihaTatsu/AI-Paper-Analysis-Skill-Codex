@@ -9,7 +9,7 @@ acquisition, lifecycle, reviewer, reviser, sibling Skill, or run-history
 instructions.
 
 On a target cache miss, read the complete paper, appendix, and relevant
-supplement while building the term, module, experiment, comparison, and
+supplement while building the report-term, module, experiment, comparison, and
 core-equation inventories. On a validated complete target hit, reuse those
 inventories. In either case, visually verify report equations on their original
 pages and open only exact original context needed for a packet gap or conflict.
@@ -20,7 +20,9 @@ comparison, experiment, metric, and workflow output a unique row, its intended
 numbered report section, a short exact heading or sentence fragment that will
 occur once in that passage, and every evidence locator that passage must cite.
 
-Write the whole report in one pass using the approved language and scenario.
+Write the whole report in one pass using the approved language and main scenario,
+with clearer local examples where useful. Explain terms at first use; a source
+inventory does not require a glossary of every term in the source.
 Apply the linked content, formula, and evidence contracts while drafting; do not
 stop for paragraph review or chapter approval. Stable evidence markers belong
 on the factual sentence they support, and `prepare-report --evidence` owns their

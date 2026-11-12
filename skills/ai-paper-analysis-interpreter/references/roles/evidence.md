@@ -55,12 +55,13 @@ construction, native setting, or defining properties. Do not add a method paper
 solely because its name appears in a result table. A Benchmark introduced and
 fully defined by the target needs no duplicate source.
 
-For every member, use [sources.md](sources.md) to acquire and verify the exact
+Within the accepted source scope, use [sources.md](sources.md) to acquire and verify the exact
 legal original and supplement when needed, then assign complete relevant
 full-text reading to [evidence-reader.md](evidence-reader.md). Do not substitute
 a survey, nearby paper, abstract, metadata record, website, or code
-documentation. Record an exhausted legal-source search explicitly so the writer
-can apply the source-limitation wording in [evidence-policy.md](evidence-policy.md).
+documentation. Record sources excluded by the accepted scope and exhausted legal searches
+explicitly so the writer can use direct target attribution under
+[evidence-policy.md](evidence-policy.md).
 
 ## Future-work sources and file placement
 

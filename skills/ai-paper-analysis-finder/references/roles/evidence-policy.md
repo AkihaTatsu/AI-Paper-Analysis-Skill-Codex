@@ -32,20 +32,24 @@ The novelty-comparison set contains every named work the target uses to support
 a substantive claim about a baseline's setting, assumptions, method, guarantee,
 or difference, including every member of a grouped claim. Support the target
 authors' novelty framing with the target and each baseline's own facts with that
-baseline original; label a derived comparison and cite both sides. If a legal
-original remains unavailable, use only the target's account and label it exactly
-`target paper's characterization only; no independent full-text comparison`.
+baseline original; label a derived comparison and cite both sides. When the approved
+source scope excludes an original or it remains unavailable, follow the agreed
+target-only policy: attribute the account directly to the target authors in the
+output language and cite the target locator. Do not imply independent verification
+or append a fixed disclaimer. Record the source gap in the temporary evidence
+and review records.
 
 The Benchmark-source set contains each independently published original needed
 to explain a dataset, environment, or Benchmark's provenance, construction,
 native setting, or defining properties. Use the target/supplement for adopted
 settings, results, and author conclusions. A result-table method name alone does
 not add a source, and a Benchmark fully defined by the target needs no duplicate
-external original. When its defining original remains unavailable, use only the
-target and label the affected subsection exactly `target paper's
-characterization only; Benchmark source not independently verified`.
+external original. When its defining original is outside the approved scope or
+unavailable, use only the target with direct attribution under the same
+target-only policy.
 
 Future-work papers require the initial plan's separate search budget and verified
-full text. Keep all external claims visibly external. State missing, unreadable,
-conflicting, or weak evidence as a limitation instead of completing a claim from
-memory.
+full text. Keep all external claims visibly external. Record missing or
+unreadable evidence in the working review record; express
+conflicting values and missing measurements directly where needed in the report.
+Do not complete a claim from memory.

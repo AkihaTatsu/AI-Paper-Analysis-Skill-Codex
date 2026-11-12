@@ -28,8 +28,9 @@ a token counter or word blacklist as a substitute for judgment.
 
 Explain non-obvious conclusions in dependency order, retaining the starting
 conditions and intermediate steps needed to connect the evidence to the result.
-Use a small paper-supported case when counts, combinations, or negative
-conclusions would otherwise require the reader to supply a missing step.
+Use a small worked example when counts, combinations, or conclusions would
+otherwise require the reader to supply a missing step. Identify invented
+illustrative values as examples, separate from the paper's measurements.
 
 For equations, explain inputs, operations, intermediate quantities, outputs, and
 role. For theory, connect assumptions to the conclusion and the alternatives
@@ -48,35 +49,41 @@ Include:
   subcategory ID. These IDs enable cross-artifact semantic auditing.
 - Fields involved in the paper.
 - A reading guide that tells a general reader what to notice and in what order.
-- A complete glossary covering every named nontrivial concept, abbreviation,
-  method, module, dataset, metric, and task in the read main text and appendix.
+- First-use explanations for specialist terms actually used in the report.
 
-Use the canonical output-language term as each glossary entry. Include an
-original-language alias only when it meets the retention rule above or is
-needed to disambiguate a cited proper name. The glossary must cross-reference
-formula cards rather than duplicate every symbol. Keep entries brief and explain
-how a concept is used where it first carries the prose argument.
-A translation, acronym expansion, or definition using unexplained jargon is
-not a sufficient explanation.
+Explain terms in place, following the mathematical foundation and example rules
+in [report-style.md](report-style.md). A short index is optional when it improves
+navigation; do not reproduce the paper's vocabulary as a mandatory glossary.
 
 ## 2. Core Content
 
-Explain:
+Use exactly two level-three subsections, localized into the output language:
 
-- The solved problem in one sentence.
-- Complete input and output objects, how information moves between them, and
-  why those boundaries matter to the solved problem.
-- Innovations relative to every reference work the paper itself uses for its
-  novelty argument. For each comparison, connect the referenced baseline, the
-  paper's change, and the paper-stated consequence in cohesive prose.
-  Distinguish paper-stated differences from later external comparisons.
+### One-sentence overview
+
+Write three items, each exactly one sentence, answering respectively:
+
+1. What problem does the work solve?
+2. What makes that problem distinctive, and what downstream use does it serve?
+3. What specific contribution distinguishes this work from similar work?
+
+Use ordinary language here; develop mechanisms in the following sections.
+Ground applications and contributions in the sources, preserving whether an
+application is proposed or demonstrated.
+
+### Differences from related work
+
+Cover every reference work used in the paper's substantive novelty argument.
+Connect each baseline's approach, the paper's change, and its consequence in
+plain prose. Level-four headings may separate comparisons. Distinguish the
+paper's comparisons from verified later comparisons.
 
 Use the confirmed complete novelty-comparison set and verified originals under
 [evidence-policy.md](evidence-policy.md). Support baseline details with that baseline's own
 original, the target authors' novelty framing with the target paper, and any
-explicitly labeled cross-paper inference with both sides. Apply the required
-visible source-limitation wording when an original remains legally unavailable;
-never invent the missing baseline detail.
+explicitly labeled cross-paper inference with both sides. When an original is
+outside the approved source scope or unavailable, use the agreed target-only
+policy and direct attribution; never invent the missing baseline detail.
 
 ## 3. Environment and Assumptions
 
@@ -86,6 +93,11 @@ Do not invent necessity arguments. Mark a narrow contextual interpretation as
 interpretation.
 
 ## 4. End-to-End Flow
+
+Before the graph and module table, state the overall input and output whenever
+the work has them. Describe the actual objects and relevant shapes or units;
+separate training from model use when their inputs or outputs differ. Keep the
+whole-model boundary visible instead of leaving it scattered across module rows.
 
 Provide one complete Mermaid flow from input to output. Include state,
 iterations, branches, stopping conditions, and outputs where present. Wrap
@@ -159,8 +171,9 @@ paper also treats them as Benchmarks.
 Use the confirmed complete Benchmark-source set and source-channel rules in
 [evidence-policy.md](evidence-policy.md). Cite verified defining originals for native
 Benchmark properties and the target/supplement for adopted settings, values,
-and author conclusions. Apply the required visible limitation wording when a
-defining original is legally unavailable, adding no unverified native detail.
+and author conclusions. When a defining original is outside the approved scope
+or unavailable, attribute the description to the target paper and add no
+unverified native detail.
 
 Do not infer significance, causality, superiority, or generalization beyond the
 paper's evidence.
@@ -170,9 +183,14 @@ paper's evidence.
 Separate:
 
 - Limitations stated by the paper.
-- Limitations directly demonstrated by its assumptions or experiments.
+- Defects directly deducible from the architecture, with their reasoning and
+  source premises.
 - Future directions stated by the paper.
-- Independently verified related papers for each direction.
+- Independently verified related papers when future-work search is approved.
+
+State defects directly under the shared style rule. Do not fill the section
+with hypothetical objections. Report experimental failures in section 6 and
+avoid repeating their full explanation here.
 
 Related papers require a separate search budget in the initial plan and original full
 text. Explain similarities, differences, and relationship to the target paper

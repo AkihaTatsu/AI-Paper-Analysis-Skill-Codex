@@ -43,7 +43,8 @@ chronology alone is not relationship evidence.
 
 Every paper belongs to exactly one category and one most-relevant subcategory.
 Use the confirmed mutually exclusive definitions. Each subcategory contains
-its paper relationship graph, a complete refined everyday scenario, and a
+its paper relationship graph, a concrete main scenario with local examples
+when clearer, and a
 comparison table with parallel phrasing.
 
 The table contains the original title; official canonical page; legal PDF URL;

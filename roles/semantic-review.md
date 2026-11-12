@@ -22,16 +22,21 @@ Review every section, table, diagram, formula card, footnote, and required
 object once:
 
 - **Source fidelity and coverage:** trace claims to the correct source class and
-  precise locator; account for all terms, modules, equations, comparisons,
+  precise locator; account for report terms, modules, equations, comparisons,
   Benchmarks, category members, conflicts, and limitations.
 - **Terminology and reasoning:** first-use explanations let a reader without
-  field knowledge follow the setup, operation, intermediate steps, conclusion,
-  and boundary. Flag unexplained jargon, missing links, fragmented prose, and
-  repeated boilerplate. Apply the style contract's `terminology` and `reasoning`
-  criteria, preserving necessary definitions, qualifications, and evidence.
+  field knowledge and only basic calculus, linear algebra, probability, and
+  statistics follow the operation and its reasoning. Each new specialist term
+  has a plain explanation and a useful analogy, simulation, or numerical example.
+  Flag unexplained jargon, missing steps, defensive tails, repetition, and
+  hypothetical defects. Retain only paper-stated or directly derived architectural
+  defects, with evidence. Apply the shared `terminology` and `reasoning` criteria.
+- **Paper structure:** section 2 has the three one-sentence answers and concrete
+  related-work differences; section 4 states overall inputs and outputs before
+  the graph and module table when applicable.
 - **Formulas and analogy:** page verification, transcription, conditions,
-  symbols, composite expressions, whole-equation meaning, technical boundary,
-  and the one scenario are accurate and consistent.
+  symbols, composite expressions, whole-equation meaning, and examples are
+  accurate. Local examples may differ from the main scenario when clearer.
 - **Experiments and relationships:** original table values, precision,
   conditions, metrics, conclusions, Benchmark provenance, relationship enum and
   direction, reading order, assignments, and semantic IDs are supported.

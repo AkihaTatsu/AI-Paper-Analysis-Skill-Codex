@@ -28,7 +28,7 @@ using its text-table fallback when the native plan tool is unavailable.
 
 Follow [references/roles/report-lifecycle.md](references/roles/report-lifecycle.md).
 Start the whole-report writer as soon as the verified target and approved scope
-are available. It reads the full target/supplement, builds complete terminology,
+are available. It reads the full target/supplement, builds necessary report-term,
 module, experiment and equation coverage, verifies equations visually, and
 writes in one continuous context. Prepare confirmed finite novelty-comparison
 and Benchmark-source originals concurrently when authorized; the complete draft
@@ -38,7 +38,9 @@ search retains its separate confirmed budget.
 Assign [references/roles/paper-writer.md](references/roles/paper-writer.md) to one
 whole report. The writer alone reads its detailed content rules and produces
 all seven sections with connected explanations for readers without prior field
-knowledge, no word cap, and one approved concrete everyday scenario. Do not
+knowledge beyond basic calculus, linear algebra, probability, and statistics.
+Use first-use explanations with concrete examples, an agreed main scenario, and
+clearer local examples when useful. Keep complete coverage and concise prose. Do not
 split chapters among writers or make the coordinator copy all writing rules.
 
 The lifecycle defines automatic checks, one semantic review, automatic exact

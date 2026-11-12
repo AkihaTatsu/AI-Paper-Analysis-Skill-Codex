@@ -41,7 +41,8 @@ Resolve the following as relevant to the request:
 - Classification scope, taxonomy or its derivation criteria, selected categories,
   and permission to prepare missing originals or reports. Resolve known
   assignment ambiguities during planning.
-- One concrete analogy scenario, preferably the paper's own. If inspection must
+- A main explanatory scenario, with local analogies or numerical examples when
+  clearer, preferably grounded in the paper's own objects. If inspection must
   wait until execution, agree on the basis for choosing it rather than inventing
   a paper-specific mapping. Settle subagent authorization here if delegation
   will be useful; otherwise use the roles sequentially.
