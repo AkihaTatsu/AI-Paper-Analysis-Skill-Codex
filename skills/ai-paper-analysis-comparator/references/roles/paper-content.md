@@ -110,6 +110,21 @@ Follow the graph with a module table covering every module's role, input/output
 boundary, and downstream effect. Explain how modules interact in connected
 prose; reserve their internal mechanisms for section 5.
 
+Follow the module table with a concrete walkthrough using one small case from
+initial input through every applicable module to final output and its use.
+Show each operation and the intermediate output passed to the next module.
+When training and model use differ, give each its own walkthrough and heading.
+For loops or branches, trace a concrete iteration or path and explain continuation
+and stopping. Use explicit teaching values for complex module outputs when
+needed, then carry those values consistently through downstream calculations.
+Detailed calculations may refer to the matching section 5 example.
+
+For theoretical or other non-model papers, demonstrate the actual chain from
+premises, data, or observations to the resulting conclusion. Keep the existing
+paper-appropriate interpretation of modules. Register each applicable flow in
+the temporary matrix with `demonstration_kind: "flow"` and a unique section 4
+heading as `demonstration_target`; training and model use get separate rows.
+
 ## 5. Module Details
 
 Give every paper-appropriate module its own level-three subsection. For each:

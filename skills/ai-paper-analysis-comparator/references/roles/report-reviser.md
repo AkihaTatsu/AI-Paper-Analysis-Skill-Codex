@@ -14,6 +14,10 @@ Do not load the writer role,
 acquisition rules, lifecycle, full source corpus, coverage matrix, unaffected
 evidence, prior chat, or run history.
 
+Repair missing or incorrect demonstrations using concrete inputs, intermediate
+operations, and results; preserve connections to shared examples and adjacent
+modules. Return changed target locations for the reviewer to refresh bindings.
+
 Apply the remaining issues in one batch, including prose defects under the
 shared rule catalog. Do not replace a forbidden sentence with the same
 defensive claim in different words. Preserve correct material, edit the

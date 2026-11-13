@@ -84,17 +84,33 @@ source locator. Include a compact core-equation coverage table mapping each
 original locator to its card or a supported non-core omission reason. Keep
 coverage bookkeeping out of the explanatory prose.
 
-## Connected examples
+## Worked demonstrations
 
-Choose a main scenario during planning, preferably grounded in the paper's
-objects. Reuse its meanings consistently. Allow a local numerical example,
-small simulation, or different familiar scene when it makes a concept easier
-to understand. The existing scenario field records this main scenario and the
-agreed use of local examples.
+Every independent formula explained in the report needs a worked demonstration,
+including objectives, updates, constraints, estimators, and metrics. Apply this
+in Chinese and English. A symbol, unit, shape, repeated reference, or intermediate
+calculation inside an example belongs to its surrounding explanation.
 
-Follow [report-style.md](report-style.md) for first-use explanations and review.
-An example must show an action or calculation and its observable result. A
-reader should understand it without learning another specialist vocabulary.
-Use basic mathematical language freely where it is clearer than a physical
-metaphor. Review the correspondence for accuracy within the existing semantic
-review, without requiring a separate boundary paragraph for each example.
+Show concrete inputs, the formula's operations with necessary intermediate
+values, and the resulting output or conclusion. Prefer small numerical
+substitutions for calculations. For sets, conditions, and theoretical relations,
+use a small explicit case and walk through the construction or reasoning.
+Demonstrate the formula's actual operation: counting candidate combinations does
+not demonstrate a distance calculation. Explain how the result serves the module.
+
+Adjacent formulas may reuse the same values and scenario; show each formula's
+new operation and result. Give each independent formula its own card. Inline
+formulas that introduce a distinct calculation also need coverage; plain symbol
+mentions do not. Example arithmetic can stay inline or in a display block and
+belongs to that example, without recursively requiring another example.
+
+Use the planned main scenario where helpful and a simpler local example where
+clearer. Introduce invented teaching values once with "for example" or "take";
+keep them separate from experimental measurements. Preserve the original formula
+and use basic mathematical language. Omit ritual warnings and repeated closers.
+
+Register each formula in the temporary coverage matrix with
+`demonstration_kind: "formula"` and `demonstration_target` quoting its exact
+math including delimiters. Keep `report_anchor` as a unique nearby heading or
+sentence for the existing evidence check. The reviewer records the complete
+example passage and verifies both its arithmetic and explanatory correspondence.

@@ -19,6 +19,11 @@ Before prose, write one temporary matrix conforming to
 comparison, experiment, metric, and workflow output a unique row, its intended
 numbered report section, a short exact heading or sentence fragment that will
 occur once in that passage, and every evidence locator that passage must cite.
+Register each independently explained formula and each applicable end-to-end flow
+using the demonstration fields in the formula and paper-content contracts.
+The matrix is the expected demonstration inventory, including distinct training
+and model-use flows. Preserve it for final review binding; update target quotes
+only when the corresponding passage changes, retaining all required objects.
 
 Write the whole report in one pass using the approved language and main scenario,
 with clearer local examples where useful. Apply the shared bilingual prose

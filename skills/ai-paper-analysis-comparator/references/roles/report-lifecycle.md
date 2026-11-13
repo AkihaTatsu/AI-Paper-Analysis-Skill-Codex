@@ -52,7 +52,7 @@ blocker rather than hidden or retried indefinitely.
 
 ## 3. Review once and revise residuals once
 
-Give the prepared candidate, run specification, and verified packets to one
+Give the prepared candidate, coverage matrix, run specification, and verified packets to one
 [semantic-review.md](semantic-review.md) reviewer. The reviewer reads the whole
 candidate once and writes one issue file conforming to
 `review-issues.schema.json`. Prose candidates from `audit-report-style` are
@@ -102,3 +102,8 @@ The coordinator records role dispatch and completion times. Benchmark runs also
 record tool-stage durations; workers do not create separate timing artifacts.
 Use 75 minutes cold and 45 minutes warm as optimization references without
 skipping evidence or accepting unresolved defects.
+
+Final paper review binding requires the writer's temporary coverage matrix through
+`record-content-review --coverage-matrix`. Keep the matrix until the final report
+and its per-target demonstrations pass; the receipt retains the compact targets
+and example quotations, so later audits do not need the temporary file.

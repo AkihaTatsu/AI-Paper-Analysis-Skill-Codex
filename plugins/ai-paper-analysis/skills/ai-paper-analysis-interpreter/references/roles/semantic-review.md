@@ -43,7 +43,15 @@ object once:
   the graph and module table when applicable.
 - **Formulas and analogy:** page verification, transcription, conditions,
   symbols, composite expressions, whole-equation meaning, and examples are
-  accurate. Local examples may differ from the main scenario when clearer.
+  accurate. Use the temporary coverage matrix to check every formula and flow
+  demonstration. Verify concrete inputs, intermediate operations, and results;
+  recompute illustrative arithmetic. Check each formula's actual operation and
+  trace the same case through every applicable module. Review training and model
+  use separately. Register independently explained inline formulas too; inspect
+  the final report for formulas omitted from the matrix. Examples may share a
+  scenario, but every target needs its own demonstrated operation and outcome.
+  Missing or incorrect formula examples block `formulas_and_analogies`; broken
+  or missing end-to-end walkthroughs block `reasoning`.
 - **Experiments and relationships:** original table values, precision,
   conditions, metrics, conclusions, Benchmark provenance, relationship enum and
   direction, reading order, assignments, and semantic IDs are supported.
@@ -80,9 +88,19 @@ without hypothetical objections. Every remaining hit needs its own record; there
 is no rule-wide exemption. Keep these records out of the report prose. Removed
 or changed matches must not retain old exception entries.
 
+After repair, record each final demonstration in the assessment's
+`demonstrations` array as `{"target_id": "matrix-row-id", "example_quote": "exact complete example passage"}`.
+Quote the inputs, operations, and result together, within the target's numbered
+section. Shared example passages are allowed when they demonstrate each target.
+Keep these records outside the reader-facing report. The binding command copies
+expected targets from `--coverage-matrix`; never remove a required target to
+make validation pass. Refresh target quotes and example quotations after edits.
+The runtime checks exact visible passages, complete target coverage, and displayed
+formulas; judge correctness and independently explained inline formulas yourself.
+
 When all checks pass, create the assessment required by
 [../contracts/report-review.schema.json](../contracts/report-review.schema.json).
 Every numbered section must be covered. A genuine evidence gap uses visible
 `partial` status; only coverage may be relaxed, while other semantic checks must
-pass. `record-content-review` binds that assessment to final report bytes,
+pass. `record-content-review --coverage-matrix` binds that assessment to final report bytes,
 publication path, semantic policy, and stable originals.

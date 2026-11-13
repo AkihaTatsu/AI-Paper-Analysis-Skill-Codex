@@ -65,11 +65,21 @@ def create_content_review(
     *,
     report_kind: str = "paper",
     publication_path: Path | None = None,
+    coverage_matrix: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Bind a supplied, completed human/agent assessment to exact artifacts."""
+    from .demonstrations import targets_from_matrix
+
+    if report_kind == "paper" and coverage_matrix is None:
+        raise ValueError(
+            "paper content review requires a coverage matrix with demonstration targets"
+        )
+    targets = (
+        targets_from_matrix(coverage_matrix, report_kind) if coverage_matrix is not None else []
+    )
     destination = (publication_path or report).resolve()
     payload = {
-        "schema_version": "1.1.0",
+        "schema_version": "1.2.0",
         "report_kind": report_kind,
         "report_sha256": file_digest(report),
         "publication_path": str(destination),
@@ -85,6 +95,8 @@ def create_content_review(
         "content_status": assessment.get("content_status"),
         "limitations": assessment.get("limitations", []),
         "style_exceptions": assessment.get("style_exceptions", []),
+        "demonstration_targets": targets,
+        "demonstrations": assessment.get("demonstrations", []),
     }
     status, errors = validate_content_review(
         report, payload, publication_path=destination, report_kind=report_kind
@@ -101,6 +113,7 @@ def validate_content_review(
     publication_path: Path | None = None,
     report_kind: str = "paper",
 ) -> tuple[str, list[str]]:
+    from .demonstrations import demonstration_errors
     from .report_style import exception_errors
 
     if review is None:
@@ -109,6 +122,14 @@ def validate_content_review(
     if errors:
         return "unreviewed", [f"content review: {error}" for error in errors]
     errors.extend(exception_errors(report.read_text(encoding="utf-8"), review["style_exceptions"]))
+    errors.extend(
+        demonstration_errors(
+            report.read_text(encoding="utf-8"),
+            review["demonstration_targets"],
+            review["demonstrations"],
+            report_kind,
+        )
+    )
     required = set(range(1, 8 if report_kind == "paper" else 4))
     if set(review["reviewed_sections"]) != required:
         errors.append("content review must cover every numbered section exactly once")

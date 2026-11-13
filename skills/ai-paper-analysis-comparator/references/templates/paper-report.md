@@ -65,7 +65,12 @@ flowchart TB
 | --- | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending | Pending |
 
-Pending.
+### Worked end-to-end example
+
+Pending: use one concrete input and trace operations, intermediate outputs, and
+final output through the modules. Give training and model use separate headings
+and demonstrations when applicable. Show an iteration or branch when present.
+Reuse the case in formula demonstrations where useful.
 
 ## 5. Module Details
 
@@ -90,6 +95,11 @@ Pending.
 Pending: explain the calculation and its purpose using basic mathematics. Give
 each new specialist concept a concrete analogy or small worked example. Reuse
 earlier definitions briefly and retain the source locator.
+
+Pending: demonstrate this formula with concrete inputs, intermediate operations,
+and the result. Calculate a small numerical example or explicitly walk through
+a set, condition, or theoretical case. Reuse prior values while showing this
+formula's own operation and outcome.
 
 ## 6. Experiments and Results
 

@@ -1,7 +1,9 @@
 # Category Report Content
 
 Read [report-style.md](report-style.md). Explain shared concepts once and use
-consistent, compact comparisons to show each paper's contribution.
+consistent, compact comparisons to show each paper's contribution. When a
+comparison introduces an independent formula, apply [formulas.md](formulas.md)
+and register its demonstration in the temporary matrix for review binding.
 
 ## Eligible inputs
 

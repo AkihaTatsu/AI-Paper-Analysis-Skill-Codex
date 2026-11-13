@@ -116,3 +116,26 @@ The project never bypasses paywalls, CAPTCHAs, robots exclusions, rate limits, o
 ## License and acknowledgements
 
 Original code and documentation are licensed under the MIT License. The interaction design was informed by the public structure of [Matt Pocock's skills repository](https://github.com/mattpocock/skills), and the evidence workflow was informed by the public [Academic Research Skills](https://github.com/Imbad0202/academic-research-skills) and [ARS-Codex](https://github.com/Imbad0202/academic-research-skills-codex) repositories. No third-party Skill text, prompts, templates, paper reports, or code are copied into this repository. Local laboratory reports were consulted only as read-only design references; their text, private paths, and paper content are not included.
+
+### Formula and workflow demonstrations
+
+Chinese and English reports demonstrate every independently explained formula
+with concrete inputs, intermediate operations, and a result. Calculations use
+small numerical examples; sets, conditions, and theoretical relations use
+explicit cases. Each end-to-end flow traces one case through the modules,
+separating training and model use when applicable. Shared cases reduce repetition.
+
+The temporary coverage matrix marks expected formula and flow rows with
+`demonstration_kind` (`formula` or `flow`) and `demonstration_target` (exact math
+including delimiters, or the flow heading). Keep the existing `report_anchor`
+and evidence fields. The final assessment supplies `demonstrations`, each with
+`target_id` and the exact complete `example_quote` from the same numbered section.
+
+Pass `--coverage-matrix coverage.json` to `record-content-review`; it is required
+for paper reports and for category reports containing formula demonstrations.
+Review receipts use schema version 1.2.0 and retain `demonstration_targets` plus
+`demonstrations`. Validation rejects missing, duplicate, misplaced, or stale
+bindings and uncovered display formulas. The reviewer checks arithmetic,
+semantic correspondence, independently explained inline formulas, and complete
+flow coverage. Old receipts require a new review. Development tests and outputs
+remain temporary and are removed after use.

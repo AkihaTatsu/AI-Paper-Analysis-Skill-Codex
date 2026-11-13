@@ -48,3 +48,7 @@ separation, and accepted access and publication boundaries.
 
 Generated questions and reports use the selected Chinese or English language. Skill instructions,
 CLI text, schemas, and repository documentation remain English.
+
+Each independently explained formula and complete input/output flow requires a
+worked demonstration with concrete inputs, operations, and results. Use the
+shared content contracts and per-target review records in both supported languages.

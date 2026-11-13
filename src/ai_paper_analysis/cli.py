@@ -356,6 +356,7 @@ def record_content_review_command(
     source: Annotated[list[Path], typer.Option("--source")],
     report_kind: str = "paper",
     publication_path: Path | None = None,
+    coverage_matrix: Path | None = None,
 ) -> None:
     """Bind an already performed semantic assessment to the reviewed file version."""
     from .artifacts import write_json_atomic
@@ -368,6 +369,7 @@ def record_content_review_command(
             tuple(source),
             report_kind=report_kind,
             publication_path=publication_path,
+            coverage_matrix=_load_object(coverage_matrix) if coverage_matrix else None,
         )
         write_json_atomic(output, result)
         _emit({"output": str(output), "content_status": result["content_status"]})

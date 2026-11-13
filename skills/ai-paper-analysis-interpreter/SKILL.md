@@ -53,3 +53,7 @@ patches, residual revision when needed, scoped continuation, final audit, and ap
 publication. Partial reports cannot enter category comparison. The coordinator
 publishes and maintains state, promoting revisions only when the initial plan
 authorizes it and otherwise delivering the candidate.
+
+Each independently explained formula and complete input/output flow requires a
+worked demonstration with concrete inputs, operations, and results. Use the
+shared content contracts and per-target review records in both supported languages.

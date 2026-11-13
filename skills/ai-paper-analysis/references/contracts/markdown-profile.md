@@ -77,6 +77,11 @@ publication location. The receipt binds an actual whole-report semantic review
 to the candidate and sources; command success cannot replace the review.
 Final content validation rescans bilingual prose candidates and requires exact,
 individually justified retention records; unresolved candidates block publication.
+Final content validation also requires a demonstration for each planned formula
+and applicable end-to-end flow, with exact target and example passages in the
+final report. Display formulas must have a target or belong to a worked example.
+The reviewer checks the operations, results, inline-formula inventory, and flow
+connections before binding the receipt with the temporary coverage matrix.
 Structure validity, complete/partial content, and eligibility for comparison
 are distinct. A visibly partial report can be published only within its approval
 and after all structural gates pass; only complete paper reports are eligible

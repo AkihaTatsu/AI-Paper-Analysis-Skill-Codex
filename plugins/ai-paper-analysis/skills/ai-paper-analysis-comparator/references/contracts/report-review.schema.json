@@ -6,7 +6,7 @@
   "additionalProperties": false,
   "properties": {
     "schema_version": {
-      "const": "1.1.0"
+      "const": "1.2.0"
     },
     "report_kind": {
       "enum": [
@@ -146,6 +146,65 @@
           }
         }
       }
+    },
+    "demonstration_targets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "kind",
+          "report_section",
+          "target_quote"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "kind": {
+            "enum": [
+              "formula",
+              "flow"
+            ]
+          },
+          "report_section": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 7
+          },
+          "target_quote": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          }
+        }
+      }
+    },
+    "demonstrations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "target_id",
+          "example_quote"
+        ],
+        "properties": {
+          "target_id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "example_quote": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          }
+        }
+      }
     }
   },
   "required": [
@@ -161,6 +220,8 @@
     "checks",
     "content_status",
     "limitations",
-    "style_exceptions"
+    "style_exceptions",
+    "demonstration_targets",
+    "demonstrations"
   ]
 }

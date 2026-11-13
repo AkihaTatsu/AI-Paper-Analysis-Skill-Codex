@@ -15,7 +15,10 @@ diagram labels, and formula explanations in both paper and category reports.
 At the first use of each necessary specialist term, give its plain meaning and
 a concrete analogy, small simulation, or worked numerical example. Explain the
 operation, not just a renamed object. Use the plain name consistently afterward;
-briefly recall an earlier explanation only when needed. An acronym expansion or
+briefly recall an earlier explanation only when needed. Independently explained
+formulas and complete input/output flows also need worked demonstrations, even
+when their terms have already been introduced. Follow the formula and paper
+content contracts for their concrete inputs, operations, and results. An acronym expansion or
 a definition made of other unexplained terms is insufficient. Avoid introducing
 terms that the explanation does not need.
 
