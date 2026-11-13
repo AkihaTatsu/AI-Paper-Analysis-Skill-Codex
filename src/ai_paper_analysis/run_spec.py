@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -26,6 +27,11 @@ def validate_run_spec(
     """Validate schema and confirmation invariants."""
 
     errors = validate_instance(spec, "run-spec.schema.json")
+    if not re.fullmatch(r"(?:zh|en)(?:-[A-Za-z0-9]{2,8})*", str(spec.get("output_language", ""))):
+        errors.append(
+            "Output language must be Chinese (zh) or English (en), "
+            "optionally with locale/script subtags"
+        )
     target_root_value = spec.get("target_root")
     if isinstance(target_root_value, str):
         target_root = Path(target_root_value).expanduser()

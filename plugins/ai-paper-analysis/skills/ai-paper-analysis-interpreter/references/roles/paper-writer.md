@@ -21,7 +21,9 @@ numbered report section, a short exact heading or sentence fragment that will
 occur once in that passage, and every evidence locator that passage must cite.
 
 Write the whole report in one pass using the approved language and main scenario,
-with clearer local examples where useful. Explain terms at first use; a source
+with clearer local examples where useful. Apply the shared bilingual prose
+rules during drafting; factual conditions and results replace defensive tails.
+Explain terms at first use; a source
 inventory does not require a glossary of every term in the source.
 Apply the linked content, formula, and evidence contracts while drafting; do not
 stop for paragraph review or chapter approval. Stable evidence markers belong
@@ -31,7 +33,9 @@ definitions.
 Only after the complete candidate exists, run `prepare-report` once with the
 matrix, all evidence packets, report kind, and publication path, without
 `--render`. If it reports matrix omissions, fix only those listed passages in
-one batch and make one fast recheck. Do not start a manual row-by-row sweep,
+one batch and make one fast recheck. Pass prose-review warnings to the existing
+semantic reviewer; do not suppress them or treat technical success as prose
+approval. Do not start a manual row-by-row sweep,
 general polish pass, or revision of semantic-review issues.
 
 Return the candidate path and version, automatic gate status, object counts,

@@ -75,6 +75,8 @@ Run `audit-paper` or `audit-category-report` with a current `--content-review`
 receipt and the intended `--publication-path`. Link validity is judged at that
 publication location. The receipt binds an actual whole-report semantic review
 to the candidate and sources; command success cannot replace the review.
+Final content validation rescans bilingual prose candidates and requires exact,
+individually justified retention records; unresolved candidates block publication.
 Structure validity, complete/partial content, and eligibility for comparison
 are distinct. A visibly partial report can be published only within its approval
 and after all structural gates pass; only complete paper reports are eligible

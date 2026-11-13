@@ -28,6 +28,11 @@ Maintain one visible checklist under
 [references/contracts/execution-plan.md](references/contracts/execution-plan.md),
 using its text-table fallback when the native plan tool is unavailable.
 
+Generated reports and explanations support Chinese and English only, including
+Chinese script and English locale variants. Source-paper languages follow the
+approved research scope. Use the shared bilingual prose rules through the writer
+and semantic reviewer; update both languages when maintaining a rule.
+
 ## Plan and execute
 
 Use this Skill's `scripts/apa.py` for shared tools, verified source acquisition,
@@ -41,5 +46,5 @@ category use. Report workflows follow
 Preserve original-page formula checks, complete content coverage, source
 separation, and accepted access and publication boundaries.
 
-Generated questions and reports use the requested language. Skill instructions,
+Generated questions and reports use the selected Chinese or English language. Skill instructions,
 CLI text, schemas, and repository documentation remain English.

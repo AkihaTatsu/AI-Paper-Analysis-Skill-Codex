@@ -55,7 +55,9 @@ blocker rather than hidden or retried indefinitely.
 Give the prepared candidate, run specification, and verified packets to one
 [semantic-review.md](semantic-review.md) reviewer. The reviewer reads the whole
 candidate once and writes one issue file conforming to
-`review-issues.schema.json`. The coordinator does not repeat this review.
+`review-issues.schema.json`. Prose candidates from `audit-report-style` are
+handled in this same review, including local grammar and stock wording. The
+coordinator does not repeat this review.
 
 If issues exist, first run the command below. It applies the reviewer's exact,
 hash-guarded patches, performs safe deterministic repairs, and checks obsolete
@@ -82,7 +84,9 @@ confirmation only when the tool can make that repair safely.
 
 ## 4. Bind, render, and publish
 
-After semantic passage, use `record-content-review` with all stable originals.
+After semantic passage and a final prose scan, use `record-content-review` with
+all stable originals and exact justified `style_exceptions`. Missing or stale
+exceptions block recording and publication even if every boolean check is true.
 Then run `audit-paper-report` or `audit-category-report` with the receipt and
 eventual publication path. This is the workflow's single complete browser
 render and the final technical gate.

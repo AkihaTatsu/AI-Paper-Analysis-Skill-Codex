@@ -14,7 +14,9 @@ Do not load the writer role,
 acquisition rules, lifecycle, full source corpus, coverage matrix, unaffected
 evidence, prior chat, or run history.
 
-Apply the remaining issues in one batch. Preserve correct material, edit the
+Apply the remaining issues in one batch, including prose defects under the
+shared rule catalog. Do not replace a forbidden sentence with the same
+defensive claim in different words. Preserve correct material, edit the
 named passage and any directly affected dependency, and use the supplied exact
 evidence rather than memory. Do not reconstruct sections outside those issue
 locators. Open only an issue's named original pages when its packet cannot

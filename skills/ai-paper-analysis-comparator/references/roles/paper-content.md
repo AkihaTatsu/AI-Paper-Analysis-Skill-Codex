@@ -33,8 +33,8 @@ otherwise require the reader to supply a missing step. Identify invented
 illustrative values as examples, separate from the paper's measurements.
 
 For equations, explain inputs, operations, intermediate quantities, outputs, and
-role. For theory, connect assumptions to the conclusion and the alternatives
-they rule out. Define a metric's meaning, scoring, and preferred direction before
+role. For theory, connect assumptions to the actual conclusion; explain a necessary
+alternative only when it helps follow the argument. Define a metric's meaning, scoring, and preferred direction before
 interpreting its results. Reuse these explanations in later comparisons.
 Label supported explanatory inferences; never invent an intermediate fact.
 
@@ -90,7 +90,8 @@ policy and direct attribution; never invent the missing baseline detail.
 Explain each environment setting and assumption, where it appears, how it
 affects the method or claim, and why the paper says or structurally requires it.
 Do not invent necessity arguments. Mark a narrow contextual interpretation as
-interpretation.
+interpretation. State actual conditions directly, without appending denials of
+general guarantees or hypothetical reader interpretations.
 
 ## 4. End-to-End Flow
 
@@ -115,7 +116,8 @@ Give every paper-appropriate module its own level-three subsection. For each:
 
 - State its inputs and outputs.
 - Explain its central idea, mechanism, role, connection to adjacent modules,
-  and supported boundary conditions as a complete narrative.
+  and necessary operating conditions as a complete narrative, following the
+  shared prose rule rather than appending a scope disclaimer.
 - Include every module-core equation required to define the method, objective,
   update, constraint, or key conclusion.
 - Apply the formula-card protocol immediately after each equation.
@@ -188,6 +190,8 @@ Separate:
 - Future directions stated by the paper.
 - Independently verified related papers when future-work search is approved.
 
+State concrete causes and consequences under the shared style rule. A missing
+general guarantee or a restatement of method scope is not itself a defect.
 State defects directly under the shared style rule. Do not fill the section
 with hypothetical objections. Report experimental failures in section 6 and
 avoid repeating their full explanation here.

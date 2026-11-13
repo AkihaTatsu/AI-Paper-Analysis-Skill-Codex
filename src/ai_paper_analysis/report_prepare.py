@@ -1111,6 +1111,19 @@ def prepare_report(
     preparation = AuditStage(
         "prepare", "failed" if pipe_diagnostics else "passed", preparation_elapsed
     )
+    from .report_style import scan_prose
+
+    style_findings = scan_prose(text)
+    notes.extend(
+        Diagnostic(
+            "prose." + item["rule_id"],
+            item["id"] + ": " + item["quote"],
+            "prose-review",
+            severity="warning",
+            line=item["line"],
+        )
+        for item in style_findings
+    )
     updated = text.encode("utf-8")
     changed = updated != original
     with tempfile.TemporaryDirectory(prefix="ai-paper-analysis-prepare-") as workspace:

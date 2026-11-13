@@ -41,6 +41,7 @@ def policy_digest(report_kind: str = "paper") -> str:
         raise ValueError("report_kind must be paper or category")
     names = (*specific[report_kind], "evidence-policy.md", "report-style.md")
     files = [roles / name for name in sorted(names)]
+    files.append(contracts / "prose-rules.json")
     digest = hashlib.sha256()
     policy = load_json("semantic-policy.json", directory=contracts)
     digest.update(str(policy["semantic_version"]).encode("utf-8"))
@@ -68,7 +69,7 @@ def create_content_review(
     """Bind a supplied, completed human/agent assessment to exact artifacts."""
     destination = (publication_path or report).resolve()
     payload = {
-        "schema_version": "1.0.0",
+        "schema_version": "1.1.0",
         "report_kind": report_kind,
         "report_sha256": file_digest(report),
         "publication_path": str(destination),
@@ -83,6 +84,7 @@ def create_content_review(
         "checks": assessment.get("checks"),
         "content_status": assessment.get("content_status"),
         "limitations": assessment.get("limitations", []),
+        "style_exceptions": assessment.get("style_exceptions", []),
     }
     status, errors = validate_content_review(
         report, payload, publication_path=destination, report_kind=report_kind
@@ -99,11 +101,14 @@ def validate_content_review(
     publication_path: Path | None = None,
     report_kind: str = "paper",
 ) -> tuple[str, list[str]]:
+    from .report_style import exception_errors
+
     if review is None:
-        return "unreviewed", []
+        return "unreviewed", exception_errors(report.read_text(encoding="utf-8"), [])
     errors = validate_instance(review, "report-review.schema.json")
     if errors:
         return "unreviewed", [f"content review: {error}" for error in errors]
+    errors.extend(exception_errors(report.read_text(encoding="utf-8"), review["style_exceptions"]))
     required = set(range(1, 8 if report_kind == "paper" else 4))
     if set(review["reviewed_sections"]) != required:
         errors.append("content review must cover every numbered section exactly once")

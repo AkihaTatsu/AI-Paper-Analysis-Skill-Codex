@@ -73,10 +73,12 @@ def _require_command_capabilities(name: str, arguments: dict[str, Any]) -> None:
         "render-pdf-pages": ("pdf",),
         "validate-classification": ("classification",),
         "prepare-report": ("reports",),
+        "record-content-review": ("reports",),
         "lookup-evidence-cache": ("core",),
         "record-evidence-cache": ("core",),
         "fix-mermaid-direction": ("reports",),
         "audit-markdown": ("reports",),
+        "audit-report-style": ("reports",),
         "audit-paper-report": ("reports",),
         "audit-category-report": ("classification", "reports"),
     }
@@ -656,6 +658,17 @@ def audit_markdown_command(
         }
     )
     if not audit.valid:
+        raise typer.Exit(1)
+
+
+@_register("audit-report-style")
+def audit_report_style_command(report: Path) -> None:
+    """List bilingual prose candidates for the existing semantic review."""
+    from .report_style import audit_prose
+
+    result = audit_prose(report)
+    _emit(result)
+    if not result["valid"]:
         raise typer.Exit(1)
 
 

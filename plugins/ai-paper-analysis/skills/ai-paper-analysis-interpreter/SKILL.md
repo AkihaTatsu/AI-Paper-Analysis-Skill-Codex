@@ -24,6 +24,11 @@ Maintain one visible checklist under
 [references/contracts/execution-plan.md](references/contracts/execution-plan.md),
 using its text-table fallback when the native plan tool is unavailable.
 
+Generated reports and explanations support Chinese and English only, including
+Chinese script and English locale variants. Source-paper languages follow the
+approved research scope. Use the shared bilingual prose rules through the writer
+and semantic reviewer; update both languages when maintaining a rule.
+
 ## One complete report
 
 Follow [references/roles/report-lifecycle.md](references/roles/report-lifecycle.md).

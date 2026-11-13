@@ -155,6 +155,8 @@ def _validate_english_repository(errors: list[str]) -> None:
         for path in paths:
             if path.suffix not in {".md", ".py", ".json", ".yaml", ".toml"}:
                 continue
+            if path.name == "prose-rules.json" and path.parent.name == "contracts":
+                continue
             if cjk.search(path.read_text(encoding="utf-8")):
                 relative = path.relative_to(ROOT)
                 _error(errors, f"Maintained repository content is not English-only: {relative}")
@@ -167,6 +169,9 @@ def main() -> int:
     for skill in SKILLS:
         _validate_skill(skill, errors)
     _validate_schemas(errors)
+    from ai_paper_analysis.report_style import validate_rules
+
+    errors.extend(validate_rules(json.loads((ROOT / "contracts/prose-rules.json").read_text())))
     _validate_release_hygiene(errors)
     _validate_english_repository(errors)
     sync = subprocess.run(

@@ -1,6 +1,6 @@
 # AI Paper Analysis
 
-AI Paper Analysis is a complete Codex plugin suite for legal paper discovery, source-grounded paper interpretation, exclusive classification, and auditable category comparison. Finder can also be installed on its own for paper discovery and classification. Reports may use the language requested by the user; maintained Skill instructions, code, schemas, and repository documentation are English.
+AI Paper Analysis is a complete Codex plugin suite for legal paper discovery, source-grounded paper interpretation, exclusive classification, and auditable category comparison. Finder can also be installed on its own for paper discovery and classification. Generated reports and explanations support only Chinese (including simplified and traditional writing) and English; source-paper languages follow the approved research scope; maintained Skill instructions, code, schemas, and repository documentation are English.
 
 ## Included Skills
 
@@ -35,6 +35,26 @@ Small executable code has one versioned shared owner. Python dependency groups a
 The wheel also exposes `ai-paper-analysis-runtime`. All Skills forward to this shared CLI; an installed Skill's `scripts/apa.py` remains a compatible entrypoint.
 
 ## Report workflow
+
+Output language uses `zh` or `en`, with optional locale/script subtags such as
+`zh-CN`, `zh-Hant`, or `en-GB`. Request another output language only after choosing
+Chinese or English during planning; source-language search filters are independent.
+
+The shared [prose rules](contracts/prose-rules.json) are the sole maintained
+catalog for defensive wording, local grammar, and stock phrasing. Every rule
+contains Chinese and English implementations, or an explicit language-specific
+non-applicability reason. Update both entries together. The runtime reads this
+JSON; it does not maintain a second phrase list. Use `audit-report-style REPORT`
+to locate candidates. It returns a nonzero exit code when review is required,
+without changing the report. `prepare-report` includes candidate diagnostics as
+warnings so the existing semantic review can handle them in one batch.
+
+Final publication requires each remaining candidate to have an exact, justified
+`style_exceptions` entry in the version 1.1.0 content review. Entries contain
+`finding_id`, `quote`, `evidence`, and `reason`. The reviewer checks factual or
+grammatical necessity; a source citation alone does not justify filler. Final
+validation rescans the text and rejects uncovered or stale entries. Changes to
+rule data invalidate prior reviews through the semantic policy digest.
 
 For a new task without an accepted plan, the Skill first asks the user to enter Plan Mode if needed. Planning settles the applicable search, evidence, OCR, classification, revision, and publication decisions. Once the user accepts the complete plan and the host allows execution, the coordinator continues through delivery and cleanup without stage-by-stage confirmations. An existing accepted plan can be resumed directly. Only essential decisions outside that scope need further user input.
 

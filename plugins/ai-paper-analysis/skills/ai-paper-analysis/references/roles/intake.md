@@ -28,6 +28,11 @@ formal outputs unchanged. If the host prohibits those writes, plan the needed
 preparation and perform it at the start of execution without another planning
 round. Reuse existing originals and prepared files.
 
+Generated reports and explanations support Chinese and English only. Record
+`output_language` as `zh` or `en`, optionally with locale/script subtags. If another
+output language is requested, ask the user to choose Chinese or English before
+execution; do not silently substitute. Source-paper language filters are separate.
+
 Resolve the following as relevant to the request:
 
 - Workflows, known inputs or discovery criteria, output language and destination,

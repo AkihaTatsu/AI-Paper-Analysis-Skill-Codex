@@ -1,0 +1,353 @@
+{
+  "schema_version": "1.0.0",
+  "supported_languages": ["zh", "en"],
+  "sources": [
+    "https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing",
+    "https://community.languagetool.org/rule/list?lang=zh",
+    "https://docs.vale.sh/checks/repetition",
+    "https://docs.vale.sh/checks/existence"
+  ],
+  "rules": [
+    {
+      "id": "inference-negation",
+      "category": "defensive",
+      "check": "regex",
+      "message": "Check for an unnecessary denial of a conclusion the reader has not proposed.",
+      "repair": "State the useful fact directly; remove wording that adds no information.",
+      "keep_when": "Retain only a specific mathematical relation, measured result, or necessary condition with its evidence and an explanation of why the contrast is needed.",
+      "languages": {
+        "zh": {
+          "applicable": true,
+          "patterns": [
+            "(?:不|并不|並不|未必|并非|並非)(?:直接|必然|一定|自动|自動)?(?:代表|意味[着著]?|等[于於同]|足以)(?:[^。！？\\n]{0,90})",
+            "(?:不能|不可|无法|無法|不足以|难以|難以)(?:仅|僅|单|單)?(?:凭|憑|据此|據此|由此)?(?:[^。！？\\n]{0,22})(?:证明|證明|说明|說明|推[出断斷]|认定|認定|断言|斷言|保证|保證|确立|確立)[^。！？\\n]{0,70}",
+            "不(?:从|從|由)[^。！？\\n]{0,35}(?:推断|推斷|推导|推導|推出)[^。！？\\n]{0,60}"
+          ]
+        },
+        "en": {
+          "applicable": true,
+          "patterns": [
+            "\\b(?:do(?:es)?|did|can|could|would|should)\\s+not\\s+(?:(?:by\\s+itself|necessarily|automatically|alone|directly)\\s+)?(?:mean|imply|prove|establish|demonstrate|guarantee|justify|show)\\b[^.!?\\n]{0,140}",
+            "\\b(?:cannot|can[’\\x27]t|doesn[’\\x27]t|don[’\\x27]t|is\\s+not\\s+enough\\s+to|is\\s+insufficient\\s+to)\\s+(?:by\\s+itself\\s+)?(?:prove|establish|show|imply|guarantee|conclude|infer)\\b[^.!?\\n]{0,140}",
+            "\\b(?:is|are)\\s+not\\s+(?:equivalent\\s+to|proof\\s+of|evidence\\s+of)\\b[^.!?\\n]{0,140}",
+            "\\b(?:do(?:es)?\\s+not|cannot|can[’\\x27]t)\\s+(?:infer|derive|conclude)\\b[^.!?\\n]{0,100}"
+          ]
+        }
+      }
+    },
+    {
+      "id": "guarantee-disclaimer",
+      "category": "defensive",
+      "check": "regex",
+      "message": "Remove generic claims about guarantees; preserve a specific theorem condition or observed failure directly.",
+      "repair": "State the useful fact directly; remove wording that adds no information.",
+      "keep_when": "Retain only a specific mathematical relation, measured result, or necessary condition with its evidence and an explanation of why the contrast is needed.",
+      "languages": {
+        "zh": {
+          "applicable": true,
+          "patterns": [
+            "(?:不|未|没有|沒有)(?:声称|聲稱|宣称|宣稱|承诺|承諾|保证|保證)[^。！？\\n]{0,100}",
+            "(?:未|没有|沒有|并未|並未)[^。！？\\n]{0,35}(?:理论保证|理論保證|恢复保证|恢復保證|普遍保证|普遍保證|一般性保证|一般性保證|可识别性保证|可識別性保證)[^。！？\\n]{0,40}"
+          ]
+        },
+        "en": {
+          "applicable": true,
+          "patterns": [
+            "\\b(?:do(?:es)?|did|can)\\s+not\\s+(?:claim|promise|offer|provide)\\b[^.!?\\n]{0,140}",
+            "\\b(?:no|without|lack(?:s|ing)?)\\s+(?:(?:general|universal|theoretical|formal|identifiability)\\s+)*(?:guarantee|guarantees|proof)\\b[^.!?\\n]{0,100}"
+          ]
+        }
+      }
+    },
+    {
+      "id": "imagined-contrast",
+      "category": "defensive",
+      "check": "regex",
+      "message": "Check whether both sides supply necessary information, rather than refuting an imagined misconception.",
+      "repair": "State the useful fact directly; remove wording that adds no information.",
+      "keep_when": "Retain only a specific mathematical relation, measured result, or necessary condition with its evidence and an explanation of why the contrast is needed.",
+      "languages": {
+        "zh": {
+          "applicable": true,
+          "patterns": [
+            "(?:不是|并非|並非|不只是|不仅是|不僅是|不单是|不單是)[^。！？\\n]{0,100}(?:而是|而在于|而在於|更是|也是)[^。！？\\n]{0,60}",
+            "(?:而不是|而非|并非|並非|不是)[^。！？\\n]{1,100}",
+            "(?:与其说|與其說|看似|表面上|你以为|你以為)[^。！？\\n]{0,90}(?:不如说|不如說|实则|實則|实际上|實際上|其实|其實)[^。！？\\n]{0,60}"
+          ]
+        },
+        "en": {
+          "applicable": true,
+          "patterns": [
+            "\\bnot\\s+(?:(?:just|only|merely|simply)\\s+)?[^.!?\\n]{1,100}\\bbut\\s+(?:also\\s+)?[^.!?\\n]{1,80}",
+            "\\b(?:rather\\s+than|instead\\s+of)\\b[^.!?\\n]{1,100}",
+            "\\b(?:is|are)\\s+not\\b[^.!?\\n]{1,100}[.!?]\\s+(?:It|They|This|These)\\s+(?:is|are)\\b[^.!?\\n]{1,100}",
+            "(?:[,;]|\\u2014)\\s*not\\s+[^.!?\\n]{1,100}",
+            "\\b(?:isn[’\\x27]t|aren[’\\x27]t)\\b[^.!?\\n]{1,100}"
+          ]
+        }
+      }
+    },
+    {
+      "id": "example-disclaimer",
+      "category": "defensive",
+      "check": "regex",
+      "message": "Introduce an example plainly; remove a second disclaimer that repeats its illustrative status.",
+      "repair": "State the useful fact directly; remove wording that adds no information.",
+      "keep_when": "Retain only a specific mathematical relation, measured result, or necessary condition with its evidence and an explanation of why the contrast is needed.",
+      "languages": {
+        "zh": {
+          "applicable": true,
+          "patterns": [
+            "(?:仅供|僅供|只供|只是|仅仅是|僅僅是)[^。！？\\n]{0,35}(?:示意|说明|說明|例子|演示|理解)[^。！？\\n]{0,60}",
+            "(?:不应|不應|不能|不可)[^。！？\\n]{0,25}(?:当作|當作|视为|視為)[^。！？\\n]{0,50}(?:实验|實驗|测量|測量|真实|真實|证据|證據)[^。！？\\n]{0,40}"
+          ]
+        },
+        "en": {
+          "applicable": true,
+          "patterns": [
+            "\\b(?:only|merely|just)\\s+(?:an?\\s+)?(?:illustration|illustrative\\s+example|example\\s+for|demonstration)\\b[^.!?\\n]{0,100}",
+            "\\b(?:for\\s+illustrative\\s+purposes\\s+only|not\\s+(?:an?\\s+)?(?:actual|real|measured|experimental)\\s+(?:results?|data|samples?|measurements?))\\b[^.!?\\n]{0,100}"
+          ]
+        }
+      }
+    },
+    {
+      "id": "interpretation-warning",
+      "category": "defensive",
+      "check": "regex",
+      "message": "State the actual result and its conditions without instructing an imagined reader what not to conclude.",
+      "repair": "State the useful fact directly; remove wording that adds no information.",
+      "keep_when": "Retain only a specific mathematical relation, measured result, or necessary condition with its evidence and an explanation of why the contrast is needed.",
+      "languages": {
+        "zh": {
+          "applicable": true,
+          "patterns": [
+            "(?:不应|不應|切勿|不要|不能|不可)[^。！？\\n]{0,25}(?:解读|解讀|理解为|理解為|说成|說成|推广|推廣|泛化|混[为為]一谈|混[为為]一談)[^。！？\\n]{0,100}",
+            "(?:只能|仅能|僅能|至多)[^。！？\\n]{0,12}(?:说明|說明|表明|视为|視為)[^。！？\\n]{0,80}"
+          ]
+        },
+        "en": {
+          "applicable": true,
+          "patterns": [
+            "\\b(?:should|must|can)\\s+not\\s+be\\s+(?:interpreted|construed|treated|taken|generalized|generalised)\\b[^.!?\\n]{0,140}",
+            "\\b(?:do\\s+not|avoid|never)\\s+(?:confuse|conflate|interpret|generalize|generalise)\\b[^.!?\\n]{0,140}",
+            "\\b(?:only|merely|at\\s+most)\\s+(?:shows?|suggests?|indicates?)\\b[^.!?\\n]{0,100}"
+          ]
+        }
+      }
+    },
+    {
+      "id": "source-disclaimer",
+      "category": "defensive",
+      "check": "regex",
+      "message": "Attribute the concrete fact or record an actual missing item instead of appending a generic source disclaimer.",
+      "repair": "State the useful fact directly; remove wording that adds no information.",
+      "keep_when": "Retain only a specific mathematical relation, measured result, or necessary condition with its evidence and an explanation of why the contrast is needed.",
+      "languages": {
+        "zh": {
+          "applicable": true,
+          "patterns": [
+            "(?:根据|根據|基于|基於|就)[^。！？\\n]{0,15}(?:现有|現有|可用|提供的|有限)[^。！？\\n]{0,12}(?:资料|資料|来源|來源|信息|資訊|证据|證據)[^。！？\\n]{0,60}",
+            "(?:资料|資料|来源|來源|信息|資訊|证据|證據)(?:有限|不足|不详|不詳)[^。！？\\n]{0,60}"
+          ]
+        },
+        "en": {
+          "applicable": true,
+          "patterns": [
+            "\\b(?:based\\s+on|according\\s+to|in)\\s+(?:the\\s+)?(?:available|provided|limited)\\s+(?:sources|information|evidence|search\\s+results)\\b[^.!?\\n]{0,100}",
+            "\\b(?:while|although)\\s+(?:specific\\s+)?(?:details|information|sources)\\s+(?:are|is)\\s+(?:limited|scarce|unavailable)\\b[^.!?\\n]{0,100}"
+          ]
+        }
+      }
+    },
+    {
+      "id": "empty-signpost",
+      "category": "filler",
+      "check": "regex",
+      "message": "Remove announcement-only wording when the sentence can state its information directly.",
+      "repair": "State the useful fact directly; remove wording that adds no information.",
+      "keep_when": "Retain only correct usage, a necessary factual distinction, or an exact source quotation; identify the concrete grammatical or factual reason.",
+      "languages": {
+        "zh": {
+          "applicable": true,
+          "patterns": [
+            "(?:值得注意的是|值得一提的是|需要指出的是|需要强调的是|需要強調的是|重要的是要|不难看出|不難看出|显而易见|顯而易見|毋庸置疑|综上所述|綜上所述|总而言之|總而言之)",
+            "(?:核心在于|核心在於|关键在于|關鍵在於|一句话总结|一句話總結)[：:]"
+          ]
+        },
+        "en": {
+          "applicable": true,
+          "patterns": [
+            "\\b(?:it\\s+is\\s+(?:important|crucial|essential|worthwhile)\\s+to\\s+(?:note|remember|emphasize)|it\\s+is\\s+worth\\s+noting|needless\\s+to\\s+say|as\\s+we\\s+can\\s+clearly\\s+see|in\\s+conclusion|to\\s+sum\\s+up)\\b",
+            "\\b(?:the\\s+key\\s+point\\s+is|the\\s+bottom\\s+line\\s+is)\\s*:"
+          ]
+        }
+      }
+    },
+    {
+      "id": "document-narration",
+      "category": "filler",
+      "check": "regex",
+      "message": "Describe the subject instead of narrating how the report was written or arranged.",
+      "repair": "State the useful fact directly; remove wording that adds no information.",
+      "keep_when": "Retain only correct usage, a necessary factual distinction, or an exact source quotation; identify the concrete grammatical or factual reason.",
+      "languages": {
+        "zh": {
+          "applicable": true,
+          "patterns": [
+            "(?:本报告|本報告|本文档|本文檔|下文|下面|以下)(?:将|將|会|會|首先|接下来|接下來)[^。！？\\n]{0,50}(?:介绍|介紹|解释|解釋|展示|讨论|討論|说明|說明|梳理|分析)",
+            "(?:贯穿|貫穿)(?:本文|本报告|本報告)[^。！？\\n]{0,40}",
+            "(?:这里|這裡|因此这里|因此這裡)(?:不把|不将|不將)[^。！？\\n]{0,110}",
+            "(?:本报告|本報告|报告|報告|这里|這裡)[^。！？\\n]{0,70}(?:不把|不将|不將|不从|不從)[^。！？\\n]{0,90}"
+          ]
+        },
+        "en": {
+          "applicable": true,
+          "patterns": [
+            "\\b(?:this\\s+report|this\\s+document|the\\s+following\\s+section|below|we)\\s+(?:will|shall)\\s+(?:first\\s+)?(?:explain|discuss|present|describe|outline|explore)\\b[^.!?\\n]{0,80}",
+            "\\bthroughout\\s+(?:this|the)\\s+(?:report|document)\\b[^.!?\\n]{0,60}",
+            "\\b(?:this\\s+report|this\\s+document|we)\\b[^.!?\\n]{0,70}\\b(?:do(?:es)?\\s+not|avoid)\\s+(?:infer|treat|conflate|present|interpret)\\b[^.!?\\n]{0,100}"
+          ]
+        }
+      }
+    },
+    {
+      "id": "redundant-phrase",
+      "category": "grammar",
+      "check": "regex",
+      "message": "Check a fixed redundant construction and keep the simplest accurate wording.",
+      "repair": "State the useful fact directly; remove wording that adds no information.",
+      "keep_when": "Retain only correct usage, a necessary factual distinction, or an exact source quotation; identify the concrete grammatical or factual reason.",
+      "languages": {
+        "zh": {
+          "applicable": true,
+          "patterns": [
+            "(?:大约|大約|约|約|大概)[^。！？\\n]{0,20}(?:左右|上下)",
+            "(?:原因是因为|原因是因為|之所以[^。！？\\n]{0,40}的原因是|目的是为了|目的是為了|首先第一|最终最后|最終最後|提前预先|提前預先|基本上完全)"
+          ]
+        },
+        "en": {
+          "applicable": true,
+          "patterns": [
+            "\\b(?:approximately|about|roughly)\\s+[^.!?\\n]{0,30}\\s+or\\s+so\\b",
+            "\\b(?:the\\s+reason\\s+is\\s+because|in\\s+order\\s+to|for\\s+the\\s+purpose\\s+of|first\\s+and\\s+foremost|final\\s+outcome|end\\s+result|advance\\s+planning)\\b"
+          ]
+        }
+      }
+    },
+    {
+      "id": "repeated-word",
+      "category": "grammar",
+      "check": "regex",
+      "message": "Check adjacent repeated words; preserve grammatical repetition and proper names.",
+      "repair": "State the useful fact directly; remove wording that adds no information.",
+      "keep_when": "Retain only correct usage, a necessary factual distinction, or an exact source quotation; identify the concrete grammatical or factual reason.",
+      "languages": {
+        "zh": {
+          "applicable": true,
+          "patterns": [
+            "(的|地|得|了|和|与|與|而|在|将|將|把|被)\\s*\\1",
+            "(因此|所以|但是|然而|以及|通过|通過|进行|進行)\\s*\\1"
+          ]
+        },
+        "en": {
+          "applicable": true,
+          "patterns": ["\\b([A-Za-z]+)(?:\\s+)\\1\\b"]
+        }
+      }
+    },
+    {
+      "id": "repeated-punctuation",
+      "category": "grammar",
+      "check": "regex",
+      "message": "Check repeated punctuation; retain deliberate quoted punctuation or an actual ellipsis.",
+      "repair": "State the useful fact directly; remove wording that adds no information.",
+      "keep_when": "Retain only correct usage, a necessary factual distinction, or an exact source quotation; identify the concrete grammatical or factual reason.",
+      "languages": {
+        "zh": {
+          "applicable": true,
+          "patterns": ["[，。；：、]{2,}", "[！？]{2,}"]
+        },
+        "en": {
+          "applicable": true,
+          "patterns": ["[,;:]{2,}", "(?<!\\.)\\.{2}(?!\\.)", "[!?]{2,}"]
+        }
+      }
+    },
+    {
+      "id": "paired-punctuation",
+      "category": "grammar",
+      "check": "pairs",
+      "message": "Check unmatched punctuation in prose, preserving symbols and quoted notation.",
+      "repair": "State the useful fact directly; remove wording that adds no information.",
+      "keep_when": "Retain only correct usage, a necessary factual distinction, or an exact source quotation; identify the concrete grammatical or factual reason.",
+      "languages": {
+        "zh": {
+          "applicable": true,
+          "patterns": [],
+          "pairs": [
+            ["（", "）"],
+            ["【", "】"],
+            ["《", "》"],
+            ["「", "」"],
+            ["『", "』"],
+            ["“", "”"],
+            ["‘", "’"]
+          ]
+        },
+        "en": {
+          "applicable": true,
+          "patterns": [],
+          "pairs": [
+            ["(", ")"],
+            ["[", "]"],
+            ["\"", "\""]
+          ]
+        }
+      }
+    },
+    {
+      "id": "repeated-sentence",
+      "category": "filler",
+      "check": "repeated_sentence",
+      "message": "Remove an adjacent repeated sentence unless the repetition has a concrete purpose.",
+      "repair": "State the useful fact directly; remove wording that adds no information.",
+      "keep_when": "Retain only correct usage, a necessary factual distinction, or an exact source quotation; identify the concrete grammatical or factual reason.",
+      "languages": {
+        "zh": {
+          "applicable": true,
+          "patterns": [],
+          "minimum_length": 12
+        },
+        "en": {
+          "applicable": true,
+          "patterns": [],
+          "minimum_length": 12
+        }
+      }
+    },
+    {
+      "id": "heading-echo",
+      "category": "filler",
+      "check": "heading_echo",
+      "message": "Check whether the first sentence merely repeats its heading.",
+      "repair": "State the useful fact directly; remove wording that adds no information.",
+      "keep_when": "Retain only correct usage, a necessary factual distinction, or an exact source quotation; identify the concrete grammatical or factual reason.",
+      "languages": {
+        "zh": {
+          "applicable": true,
+          "patterns": []
+        },
+        "en": {
+          "applicable": true,
+          "patterns": []
+        }
+      }
+    }
+  ],
+  "scope": "visible_report_text",
+  "bibliography_fields": {
+    "zh": ["原题", "原題", "中文题名", "中文題名", "作者"],
+    "en": ["Original title", "Translated title", "Authors"]
+  }
+}

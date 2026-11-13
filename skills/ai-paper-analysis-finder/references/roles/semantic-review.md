@@ -18,6 +18,13 @@ boundaries, and any place where surrounding context could change the meaning.
 A packet, parser result, writer summary, or old receipt cannot by itself prove a
 claim.
 
+Run `audit-report-style` on the prepared candidate and keep its JSON in the
+system-temporary workspace. Its nonzero candidate status requests review, not
+an automatic rewrite. Review each hit using the rule's `keep_when` criterion and
+read surrounding text for unlisted variants. All actual prose defects belong in
+the existing issue file and block `reasoning`; do not start a separate review.
+Source support alone cannot justify an unnecessary denial, warning, or contrast.
+
 Review every section, table, diagram, formula card, footnote, and required
 object once:
 
@@ -63,6 +70,15 @@ passage and exact source locator satisfy its repair condition. If broad or
 repeated omissions remain, return one
 consolidated failed/partial result and stop this candidate's review loop. Any
 real unresolved defect remains blocking.
+
+After repairs, rescan the exact final candidate. In the assessment's
+`style_exceptions`, record each justified remaining hit with `finding_id`, exact
+`quote`, concrete `evidence`, and `reason`. Explain the necessary mathematical
+relation, result, condition, or valid grammatical use. Do not use generic reasons
+such as source-backed, logically true, or sounds natural. Retain factual negatives
+without hypothetical objections. Every remaining hit needs its own record; there
+is no rule-wide exemption. Keep these records out of the report prose. Removed
+or changed matches must not retain old exception entries.
 
 When all checks pass, create the assessment required by
 [../contracts/report-review.schema.json](../contracts/report-review.schema.json).

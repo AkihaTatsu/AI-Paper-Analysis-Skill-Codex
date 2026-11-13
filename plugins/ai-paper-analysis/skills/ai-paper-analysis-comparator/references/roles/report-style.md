@@ -26,6 +26,15 @@ them distinct from experimental measurements. Explain a paper's specific
 contribution through supported differences, without inventing uniqueness or
 turning a proposed application into a demonstrated result.
 
+## Bilingual checks
+
+Output supports Chinese and English only. The sole executable rule catalog is
+[prose-rules.json](../contracts/prose-rules.json). Maintain each problem category
+in both languages using natural constructions, not literal translations. A
+language-specific subrule must state why the other language is inapplicable.
+The scanner extracts candidates; the reviewer judges both matches and unlisted
+paraphrases. A clean scan does not replace reading the prose.
+
 ## Information and structure
 
 State the subject or finding directly. Each sentence must add information or a
@@ -34,11 +43,18 @@ imagined objections, repeated conclusions, chat wrappers, and narration of how
 the report was assembled or checked. Remove defensive tails such as "this does
 not mean", "cannot establish", and "does not prove" that rebut an unasked
 objection. Express the actual condition or finding directly. Keep an informative
-comparison when both sides add facts.
+comparison only when both sides supply facts needed to understand the method,
+result, or mathematical relation. Source support and logical validity alone do
+not make a sentence useful. Apply this equally to author-written caveats and
+writer-added deductions. Introduce an example once; do not add a second sentence
+defending its illustrative status.
 
 Report a defect only when the paper explicitly identifies it or it follows
 directly from the architecture. State the concrete cause and consequence; for
 an architectural deduction, show the short reasoning and cite its premises.
+A defect must identify a concrete mechanism, condition, and consequence. Merely
+not claiming a broader theorem or not checking a larger problem is not a defect
+to append. Do not turn a scope description into a denial of guarantees.
 Do not add hypothetical failure lists or general warnings. Preserve actual
 negative results, conflicting values, and missing measurements as direct facts
 at the relevant location. Attribute a target-only account to the target authors
@@ -64,12 +80,12 @@ closers, and dashes used to string clauses together. Prefer ordinary punctuation
 in prose; preserve punctuation in quotations, titles, names, numerical ranges,
 mathematics, code, commands, paths, and link targets.
 
-Judge these patterns in context, not with a banned-word list or style score.
+Judge scanner candidates in context; do not treat a match as an automatic deletion or a style score.
 Technical uses, informative comparisons, and factual conditions remain.
 Review every first-use explanation against the stated mathematical foundation
 and check that its example actually explains the operation. Check defensive
 wording semantically; deleting a negative word alone can change a true claim.
-Review terminology problems under `terminology`; review repetition, filler,
+Review terminology problems under `terminology`; review scanner candidates, repetition, filler,
 unclear organization, and missing reasoning under `reasoning`. Give an exact
 passage and repair condition through the existing issue workflow. Check that
 the repair preserves facts and evidence; no additional review round is needed.

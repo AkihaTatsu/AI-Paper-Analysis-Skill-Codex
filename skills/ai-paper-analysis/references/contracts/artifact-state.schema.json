@@ -144,7 +144,7 @@
           "additionalProperties": false,
           "properties": {
             "schema_version": {
-              "const": "1.0.0"
+              "const": "1.1.0"
             },
             "report_kind": {
               "enum": [
@@ -249,6 +249,41 @@
                 "type": "string",
                 "minLength": 1
               }
+            },
+            "style_exceptions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "finding_id",
+                  "quote",
+                  "evidence",
+                  "reason"
+                ],
+                "properties": {
+                  "finding_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "quote": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "evidence": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "reason": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  }
+                }
+              }
             }
           },
           "required": [
@@ -263,7 +298,8 @@
             "reviewed_sections",
             "checks",
             "content_status",
-            "limitations"
+            "limitations",
+            "style_exceptions"
           ]
         }
       }
