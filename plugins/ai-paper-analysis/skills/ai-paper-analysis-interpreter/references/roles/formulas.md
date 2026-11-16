@@ -60,8 +60,8 @@ value through every later scale, limit, clip, or storage operation. Give raw
 intermediates and stored outputs distinct symbols, verify the branch guard, and
 never assign a pre-transform distribution directly to a post-transform value.
 
-Immediately below each displayed core equation, give a compact table of its
-symbols and meaningful composite terms, with localized columns:
+Immediately below each displayed core equation, give a self-contained table of
+all its symbols and meaningful composite terms, with localized columns:
 
 | Symbol or important term | Plain meaning and role |
 | --- | --- |
@@ -75,9 +75,15 @@ simulation, or numerical example. Explain introduced notation before using it
 to explain another concept. Preserve the original equation; simplicity belongs
 in its explanation, not an altered mathematical claim.
 
-Reuse established definitions with short reminders or cross-references in the
-table. Define basic symbols plainly. Use examples to explain operations and
-relationships. State illustrative values as examples, separate from paper measurements.
+In Chinese and English, define every variable, parameter, function, set, index,
+and meaningful subscript or superscript in each card where it appears. Give each
+symbol its own row stating what it represents and does in this equation; explain
+composite terms' inputs, operations, and results. Define notation introduced by
+the explanations too. Repeat complete plain definitions locally, including
+symbols explained earlier. Links supplement these definitions with derivations
+or examples. Apply the same local completeness to independently explained inline
+formulas. Use examples to explain operations and relationships, keeping teaching
+values distinct from paper measurements.
 
 Give each displayed core equation its own heading, table, explanation, and
 source locator. Include a compact core-equation coverage table mapping each

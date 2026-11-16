@@ -100,9 +100,10 @@ Pending.
 | --- | --- |
 | Pending | Pending |
 
-Pending: explain the calculation and its purpose using basic mathematics. Give
-each new specialist concept a concrete analogy or small worked example. Reuse
-earlier definitions briefly and retain the source locator.
+Pending: complete this card's symbol table under the shared formula contract,
+including symbols defined earlier. Explain the calculation and its purpose using
+basic mathematics, give new specialist concepts a concrete example, and retain
+the source locator.
 
 Pending: demonstrate this formula with concrete inputs, intermediate operations,
 and the result. Calculate a small numerical example or explicitly walk through

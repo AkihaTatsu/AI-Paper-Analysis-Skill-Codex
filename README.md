@@ -120,6 +120,8 @@ Original code and documentation are licensed under the MIT License. The interact
 ### Formula and workflow demonstrations
 
 Chinese and English reports demonstrate every independently explained formula
+and explain all its symbols locally under the [formula-card contract](roles/formulas.md#formula-card),
+including symbols defined earlier. Each formula demonstration proceeds
 with concrete inputs, intermediate operations, and a result. Calculations use
 small numerical examples; sets, conditions, and theoretical relations use
 explicit cases. Each end-to-end flow traces one case through the modules,

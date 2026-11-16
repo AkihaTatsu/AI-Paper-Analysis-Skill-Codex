@@ -66,9 +66,11 @@ switch locally to a clearer example or numerical calculation when needed.
 Give each representation a purpose: diagrams show connections, tables present
 values or comparisons, and prose explains mechanisms and conclusions. In paper
 reports, research Q&A develops understanding under the paper-content contract,
-walkthroughs trace a case, and formula cards work through calculations. Use cross-references for repeated
-explanations while retaining each formula's demonstration and the flow's
-intermediate outputs. Avoid reciting table cells or announcing a visible layout.
+walkthroughs trace a case, and formula cards work through calculations. Keep each
+formula's local symbol definitions and demonstration complete under
+[formulas.md](formulas.md). Use cross-references for further derivations and
+module detail; retain the flow's intermediate outputs. Avoid reciting table
+cells or announcing a visible layout.
 
 ## Presentation and review
 

@@ -49,7 +49,11 @@ object once:
   properties from executed operations.
 - **Formulas and analogy:** page verification, transcription, conditions,
   symbols, composite expressions, whole-equation meaning, and examples are
-  accurate. Use the temporary coverage matrix to check every formula and flow
+  accurate. Compare each formula with its local explanations under formulas.md:
+  every symbol and meaningful composite must be fully explained there, including
+  notation inside composite terms and symbols defined earlier. Missing definitions
+  or definitions replaced by cross-references block `formulas_and_analogies`.
+  Use the temporary coverage matrix to check every formula and flow
   demonstration. Verify concrete inputs, intermediate operations, and results;
   recompute illustrative arithmetic. Check each formula's actual operation and
   trace the same case through every applicable module. Review training and model
