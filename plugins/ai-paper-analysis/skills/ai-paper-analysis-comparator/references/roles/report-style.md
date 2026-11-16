@@ -69,11 +69,12 @@ length needed for the explanation. Keep requested one-sentence summaries to
 one sentence each. Use the agreed main scenario where it helps;
 switch locally to a clearer example or numerical calculation when needed.
 
-Give each representation a purpose: optional short glossaries index concepts,
-diagrams show connections, tables present values or comparisons, and prose explains mechanisms
-and conclusions. Explain what a table or diagram means without reciting every
-cell or announcing a layout the reader can already see. Use brief cross-references
-when a definition or mechanism has already been explained.
+Give each representation a purpose: diagrams show connections, tables present
+values or comparisons, and prose explains mechanisms and conclusions. In paper
+reports, mechanism Q&A explains design choices, walkthroughs trace a case, and
+formula cards work through calculations. Use cross-references for repeated
+explanations while retaining each formula's demonstration and the flow's
+intermediate outputs. Avoid reciting table cells or announcing a visible layout.
 
 ## Presentation and review
 

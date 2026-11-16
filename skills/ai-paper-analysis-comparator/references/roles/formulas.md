@@ -68,7 +68,9 @@ symbols and meaningful composite terms, with localized columns:
 
 Explain the calculation through basic calculus, linear algebra, probability,
 and statistics: what enters, what operations occur, what comes out, and why the
-module needs it. Give each new specialist concept a concrete analogy, small
+module needs it. Distinguish desired properties, ideal definitions, and the
+computations or approximations actually used; place only executed operations
+in the algorithm flow. Give each new specialist concept a concrete analogy, small
 simulation, or numerical example. Explain introduced notation before using it
 to explain another concept. Preserve the original equation; simplicity belongs
 in its explanation, not an altered mathematical claim.

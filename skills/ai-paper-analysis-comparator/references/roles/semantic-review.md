@@ -38,9 +38,12 @@ object once:
   Flag unexplained jargon, missing steps, defensive tails, repetition, and
   hypothetical defects. Retain only paper-stated or directly derived architectural
   defects, with evidence. Apply the shared `terminology` and `reasoning` criteria.
-- **Paper structure:** section 2 has the three one-sentence answers and concrete
-  related-work differences; section 4 states overall inputs and outputs before
-  the graph and module table when applicable.
+- **Paper structure:** section 2 has the three one-sentence answers, focused
+  mechanism Q&A, and concrete related-work differences. Questions explain design
+  choices without duplicating full calculations. Section 4 states overall inputs
+  and outputs before the graph and module table. Check module names, boundaries,
+  data-flow order, and detail links across sections 4 and 5; distinguish defining
+  properties from executed operations.
 - **Formulas and analogy:** page verification, transcription, conditions,
   symbols, composite expressions, whole-equation meaning, and examples are
   accurate. Use the temporary coverage matrix to check every formula and flow

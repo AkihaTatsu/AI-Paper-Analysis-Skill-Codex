@@ -39,6 +39,13 @@ Pending.
 2. Pending: one sentence stating its distinctive difficulty and downstream use.
 3. Pending: one sentence stating the contribution relative to similar work.
 
+### Mechanism Q&A
+
+#### Pending: a question about a consequential design choice
+
+Pending: explain why it works and how it affects results, with a small case where
+useful. Select questions for this paper; link full calculations to module details.
+
 ### Differences from related work
 
 Pending.
@@ -61,7 +68,7 @@ flowchart TB
 
 ### Module roles
 
-| Module | Input | Output | Role and downstream effect | Everyday analogy |
+| Module | Input | Output and destination | Role and analogy | Formula and detail links |
 | --- | --- | --- | --- | --- |
 | Pending | Pending | Pending | Pending | Pending |
 
@@ -82,7 +89,8 @@ Reuse the case in formula demonstrations where useful.
 
 ### Module name
 
-Pending.
+Pending: use the same module name and boundary as the graph and module table,
+in data-flow order.
 
 #### Formula card: equation name or number
 

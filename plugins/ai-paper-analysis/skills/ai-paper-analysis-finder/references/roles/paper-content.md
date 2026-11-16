@@ -57,7 +57,7 @@ navigation; do not reproduce the paper's vocabulary as a mandatory glossary.
 
 ## 2. Core Content
 
-Use exactly two level-three subsections, localized into the output language:
+Use these three level-three subsections, localized into the output language:
 
 ### One-sentence overview
 
@@ -67,9 +67,17 @@ Write three items, each exactly one sentence, answering respectively:
 2. What makes that problem distinctive, and what downstream use does it serve?
 3. What specific contribution distinguishes this work from similar work?
 
-Use ordinary language here; develop mechanisms in the following sections.
+Use ordinary language here; develop mechanisms below.
 Ground applications and contributions in the sources, preserving whether an
 application is proposed or demonstrated.
+
+### Mechanism Q&A
+
+Select questions that explain the paper's consequential design choices and how
+they affect results; let the paper determine their number. Answer directly with
+the causal steps and a small case where useful. Link to module details for full
+calculations instead of repeating them. Apply the shared terminology and prose
+rules to questions and answers alike.
 
 ### Differences from related work
 
@@ -106,9 +114,10 @@ modules in `subgraph` blocks. Read the shared
 [Mermaid rules](../contracts/markdown-profile.md#mermaid) for simulated layout
 selection and explanations that remain correct after automatic orientation changes.
 
-Follow the graph with a module table covering every module's role, input/output
-boundary, and downstream effect. Explain how modules interact in connected
-prose; reserve their internal mechanisms for section 5.
+Use consistent module names, boundaries, and data-flow order in the graph,
+module table, and section 5. The table identifies each module's input, output
+and destination, role and analogy, and links to its details and formulas.
+Explain interactions in connected prose; reserve internal mechanisms for section 5.
 
 Follow the module table with a concrete walkthrough using one small case from
 initial input through every applicable module to final output and its use.
