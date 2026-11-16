@@ -61,8 +61,7 @@ coordinator does not repeat this review.
 
 If issues exist, first run the command below. It applies the reviewer's exact,
 hash-guarded patches, performs safe deterministic repairs, and checks obsolete
-text and section-bound evidence. This is the automatic repair attempt, not a
-new review.
+text and section-bound evidence.
 
 ```text
 prepare-report CANDIDATE --report-kind paper|category --publication-path FORMAL_REPORT --evidence PACKET --review-issues ISSUES
@@ -71,8 +70,8 @@ prepare-report CANDIDATE --report-kind paper|category --publication-path FORMAL_
 Only issues without an applicable exact patch go to one fresh
 [report-reviser.md](report-reviser.md) worker, together with their IDs, affected
 evidence, and relevant content contract. The reviser edits that residual set in
-one batch and returns immediately; there is no disposition artifact or second
-report sweep. Run the same command once more only after such manual residual
+one batch and returns the candidate path, version, and remaining issues. Run the
+same command once more only after such manual residual
 repairs.
 
 Continue the original reviewer once with the baseline, complete diff, issue
@@ -92,8 +91,8 @@ eventual publication path. This is the workflow's single complete browser
 render and the final technical gate.
 
 Publish according to the accepted plan. If promotion of the named report was
-authorized there, archive and promote the audited candidate without another
-confirmation. Otherwise deliver the candidate. Preserve compact content-bound
+authorized there, archive and promote the audited candidate. Otherwise deliver
+the candidate. Preserve compact content-bound
 state and clean the task workspace after dependents finish. A visible partial
 report may be published under the agreed limitation policy after structural
 checks pass; only a complete paper report may enter category comparison.
@@ -106,4 +105,4 @@ skipping evidence or accepting unresolved defects.
 Final paper review binding requires the writer's temporary coverage matrix through
 `record-content-review --coverage-matrix`. Keep the matrix until the final report
 and its per-target demonstrations pass; the receipt retains the compact targets
-and example quotations, so later audits do not need the temporary file.
+and example quotations for later audits.

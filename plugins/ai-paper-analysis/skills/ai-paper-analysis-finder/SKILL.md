@@ -7,12 +7,12 @@ description: Discover papers within confirmed search bounds, acquire and verify 
 
 Use explicitly or when selected for the requested paper workflow. This Skill
 is self-contained: obtain missing materials through its bundled shared roles
-and `scripts/apa.py`, without requiring a sibling Skill.
+and `scripts/apa.py`.
 
 For a new task without an accepted plan, if the current mode is not Plan Mode,
 remind the user to enter Plan Mode and finish planning before execution. Start
-no downloads, report writing, or publication until then. With an accepted plan,
-continue or resume execution when the host permits it; do not ask to plan again.
+downloads, report writing, and publication after plan acceptance and host permission
+to execute. Resume an accepted plan directly when execution is permitted.
 
 Read [references/roles/intake.md](references/roles/intake.md) to settle decisions
 in one complete plan, then execute continuously within its accepted scope.
@@ -44,9 +44,8 @@ PDF stems, retains compact state, and cleans temporary artifacts. A readable
 PDF with inconclusive identity remains a candidate until resolved from evidence.
 Never overwrite an ambiguous identity/version or bypass an access control.
 Use the planned OCR policy and publish classification or taxonomy after review
-within the accepted scope, without another stage confirmation.
+within the accepted scope.
 
 Use this Skill's shared `tools list`, `tools doctor`, `tools ensure`, `read-pdf`,
 `render-pdf-pages`, and other CLI operations as needed; inspect command `--help`
-for arguments. Missing compatible shared tools are resolved by capability,
-not by installing another paper-analysis Skill.
+for arguments. Resolve missing compatible shared tools by capability.

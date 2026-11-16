@@ -7,12 +7,12 @@ description: Create or non-destructively revise complete, source-grounded paper 
 
 Use explicitly or when selected for the requested paper workflow. This Skill
 independently acquires missing originals and prepares reports using its bundled
-shared roles and `scripts/apa.py`; do not require Finder or another sibling Skill.
+shared roles and `scripts/apa.py`.
 
 For a new task without an accepted plan, if the current mode is not Plan Mode,
 remind the user to enter Plan Mode and finish planning before execution. Start
-no downloads, report writing, or publication until then. With an accepted plan,
-continue or resume execution when the host permits it; do not ask to plan again.
+downloads, report writing, and publication after plan acceptance and host permission
+to execute. Resume an accepted plan directly when execution is permitted.
 
 Read [references/roles/intake.md](references/roles/intake.md) to settle decisions
 in one complete plan, then execute continuously within its accepted scope.

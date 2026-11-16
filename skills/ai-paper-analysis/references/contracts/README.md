@@ -7,7 +7,7 @@ Generated copies under each Skill must match them byte for byte.
   records user acceptance independently of the question tool; confirmed plans
   require `approved_at`. Drafts can be checked with
   `validate-spec --no-require-confirmation`. Recreate old temporary specifications
-  in version 2; there is no stage or legacy-format migration.
+  in version 2.
 - Source inventories and classification assignments may be filled as execution
   resolves them. Interpreter targets may be deferred only with an upstream
   Finder. Missing inventories never establish report completeness.

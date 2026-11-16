@@ -39,12 +39,12 @@ Pending.
 2. Pending: one sentence stating its distinctive difficulty and downstream use.
 3. Pending: one sentence stating the contribution relative to similar work.
 
-### Mechanism Q&A
+### Research Q&A
 
-#### Pending: a question about a consequential design choice
+#### Pending: a substantive question about this paper
 
-Pending: explain why it works and how it affects results, with a small case where
-useful. Select questions for this paper; link full calculations to module details.
+Pending: develop the background, reasoning, and concrete example needed to answer
+the question. Build the question set using the Research Q&A coverage in paper-content.md.
 
 ### Differences from related work
 

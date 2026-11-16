@@ -63,7 +63,7 @@
       "id": "imagined-contrast",
       "category": "defensive",
       "check": "regex",
-      "message": "Check whether both sides supply necessary information, rather than refuting an imagined misconception.",
+      "message": "Keep comparisons whose two sides supply information needed to understand the finding.",
       "repair": "State the useful fact directly; remove wording that adds no information.",
       "keep_when": "Retain only a specific mathematical relation, measured result, or necessary condition with its evidence and an explanation of why the contrast is needed.",
       "languages": {
@@ -140,7 +140,7 @@
       "id": "source-disclaimer",
       "category": "defensive",
       "check": "regex",
-      "message": "Attribute the concrete fact or record an actual missing item instead of appending a generic source disclaimer.",
+      "message": "Attribute the concrete fact and record actual missing evidence.",
       "repair": "State the useful fact directly; remove wording that adds no information.",
       "keep_when": "Retain only a specific mathematical relation, measured result, or necessary condition with its evidence and an explanation of why the contrast is needed.",
       "languages": {
@@ -188,7 +188,7 @@
       "id": "document-narration",
       "category": "filler",
       "check": "regex",
-      "message": "Describe the subject instead of narrating how the report was written or arranged.",
+      "message": "Describe the subject directly.",
       "repair": "State the useful fact directly; remove wording that adds no information.",
       "keep_when": "Retain only correct usage, a necessary factual distinction, or an exact source quotation; identify the concrete grammatical or factual reason.",
       "languages": {

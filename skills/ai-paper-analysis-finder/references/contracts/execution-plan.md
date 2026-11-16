@@ -2,7 +2,7 @@
 
 The coordinator maintains one plan from planning through delivery and cleanup.
 Follow [../roles/intake.md](../roles/intake.md) for startup, confirmation, and
-scope decisions. A plan does not switch the host's collaboration mode.
+scope decisions. Execute in a host-permitted execution mode.
 
 ## Progress
 
@@ -13,8 +13,8 @@ existing checklist rather than creating one for each role or workflow stage.
 
 Update progress at meaningful transitions and before handing back. Complete a
 step only when its output and required checks pass. Explain genuine blockers,
-continue independent work, and leave unfinished steps pending. A checklist
-update is not a request for the user to authorize the next step.
+continue independent work, and leave unfinished steps pending. Advance through
+the accepted plan after each completed step.
 
 ## One temporary workspace
 
@@ -27,8 +27,8 @@ Create formal project run state with `init-run` only during authorized execution
 When needed, write `instructions.md` in that workspace for task-specific
 constraints and decisions that would crowd the visible plan. Link its absolute
 path from the plan and pass it to relevant workers. Keep it consistent with the
-accepted scope; it neither adds authorization nor replaces the shared content
-rules. Do not create it for a task whose plan already contains everything needed.
+accepted scope and shared content rules. Create it when task constraints need
+space beyond the visible plan.
 
 Publish requested originals and final outputs at their intended destinations,
 using stable source paths for report links and content reviews. After all

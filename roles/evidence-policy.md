@@ -35,16 +35,15 @@ authors' novelty framing with the target and each baseline's own facts with that
 baseline original; label a derived comparison and cite both sides. When the approved
 source scope excludes an original or it remains unavailable, follow the agreed
 target-only policy: attribute the account directly to the target authors in the
-output language and cite the target locator. Do not imply independent verification
-or append a fixed disclaimer. Record the source gap in the temporary evidence
+output language and cite the target locator. Record the source gap in the temporary evidence
 and review records.
 
 The Benchmark-source set contains each independently published original needed
 to explain a dataset, environment, or Benchmark's provenance, construction,
 native setting, or defining properties. Use the target/supplement for adopted
-settings, results, and author conclusions. A result-table method name alone does
-not add a source, and a Benchmark fully defined by the target needs no duplicate
-external original. When its defining original is outside the approved scope or
+settings, results, and author conclusions. Select external originals for the
+defining properties used in the report; use the target for a Benchmark it fully
+defines. When its defining original is outside the approved scope or
 unavailable, use only the target with direct attribution under the same
 target-only policy.
 

@@ -8,12 +8,11 @@ description: Prepare evidence-backed category reports with exclusive assignments
 Use explicitly or when selected for the requested paper workflow. This Skill
 is self-contained: acquire missing originals through the shared source role and
 prepare missing reports through the shared whole-paper writer and bundled CLI.
-Do not install or invoke Finder or Interpreter as a prerequisite.
 
 For a new task without an accepted plan, if the current mode is not Plan Mode,
 remind the user to enter Plan Mode and finish planning before execution. Start
-no downloads, report writing, or publication until then. With an accepted plan,
-continue or resume execution when the host permits it; do not ask to plan again.
+downloads, report writing, and publication after plan acceptance and host permission
+to execute. Resume an accepted plan directly when execution is permitted.
 
 Read [references/roles/intake.md](references/roles/intake.md) to settle decisions
 in one complete plan, then execute continuously within its accepted scope.

@@ -76,10 +76,8 @@ to explain another concept. Preserve the original equation; simplicity belongs
 in its explanation, not an altered mathematical claim.
 
 Reuse established definitions with short reminders or cross-references in the
-table. Basic symbols need meanings, not a separate forced metaphor. A new
-example should explain an operation or relationship; do not merely rename
-symbols as objects. State illustrative values as examples, separate from paper
-measurements. Omit ritual warnings about what an analogy does not establish.
+table. Define basic symbols plainly. Use examples to explain operations and
+relationships. State illustrative values as examples, separate from paper measurements.
 
 Give each displayed core equation its own heading, table, explanation, and
 source locator. Include a compact core-equation coverage table mapping each
@@ -97,14 +95,14 @@ Show concrete inputs, the formula's operations with necessary intermediate
 values, and the resulting output or conclusion. Prefer small numerical
 substitutions for calculations. For sets, conditions, and theoretical relations,
 use a small explicit case and walk through the construction or reasoning.
-Demonstrate the formula's actual operation: counting candidate combinations does
-not demonstrate a distance calculation. Explain how the result serves the module.
+Demonstrate the formula's actual operation: a distance example calculates the
+distance between concrete inputs. Explain how the result serves the module.
 
 Adjacent formulas may reuse the same values and scenario; show each formula's
 new operation and result. Give each independent formula its own card. Inline
-formulas that introduce a distinct calculation also need coverage; plain symbol
-mentions do not. Example arithmetic can stay inline or in a display block and
-belongs to that example, without recursively requiring another example.
+formulas that introduce a distinct calculation also need coverage. Keep symbol
+mentions and example arithmetic with their surrounding explanation; write example
+arithmetic inline or in a display block.
 
 Use the planned main scenario where helpful and a simpler local example where
 clearer. Introduce invented teaching values once with "for example" or "take";

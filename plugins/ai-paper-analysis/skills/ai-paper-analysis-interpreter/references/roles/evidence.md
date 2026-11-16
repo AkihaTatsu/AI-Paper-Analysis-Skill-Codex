@@ -39,9 +39,8 @@ not become a report source.
 ## Build mandatory external sets
 
 Derive both sets after complete target reading under the accepted plan's source
-criteria. Record their actual members before dependent drafting; filling these
-inventories does not require another user confirmation. They are independent
-of the optional future-work budget.
+criteria. Record their actual members before dependent drafting within that
+approved scope. Apply the future-work budget separately.
 
 For the **novelty-comparison set**, include every cited work that the target
 uses for a substantive baseline claim about setting, assumptions, method,
@@ -52,8 +51,8 @@ report makes a substantive method comparison.
 For the **Benchmark-source set**, include every independently published
 original needed to support a dataset, environment, or Benchmark's provenance,
 construction, native setting, or defining properties. Do not add a method paper
-solely because its name appears in a result table. A Benchmark introduced and
-fully defined by the target needs no duplicate source.
+solely because its name appears in a result table. Use the target as the defining
+source for a Benchmark it introduces and fully describes.
 
 Within the accepted source scope, use [sources.md](sources.md) to acquire and verify the exact
 legal original and supplement when needed, then assign complete relevant
@@ -74,7 +73,6 @@ that directory. When the same original supports multiple targets, publish a
 verified copy in each directory. During revision, validate an atomically copied
 file before updating the candidate link and retain the old file until cleanup authorized by the plan.
 
-The coordinator need not reread originals solely to transfer them. Writers and
-reviewers use verified coverage packets, reopen exact claim locators, and expand
-context when needed. Keep external claims visibly separate from statements
-attributed to the target paper.
+The coordinator passes verified coverage packets and original paths. Writers
+and reviewers reopen exact claim locators and expand context when needed. Keep
+external claims visibly separate from statements attributed to the target paper.

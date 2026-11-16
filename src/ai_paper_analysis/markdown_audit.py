@@ -223,11 +223,21 @@ def _bare_math_error(line: str, number: int) -> str | None:
 
 
 def _math_errors(lines: list[str]) -> tuple[list[str], int]:
+    environment: dict[str, Any] = {}
+    MarkdownIt("commonmark").parse("\n".join(lines), environment)
+    reference_lines = {
+        line
+        for label, reference in environment.get("references", {}).items()
+        if not label.startswith("^")
+        for line in range(*reference["map"])
+    }
     errors: list[str] = []
     display_open_at: int | None = None
     display_content = False
     display_count = 0
     for number, raw in enumerate(lines, start=1):
+        if number - 1 in reference_lines:
+            continue
         line = _strip_inline_code(raw)
         if "\\(" in line or "\\)" in line or re.search(r"(?<!\\)\\[\[\]]", line):
             errors.append(f"line {number}: only $ and $$ mathematical delimiters are allowed")

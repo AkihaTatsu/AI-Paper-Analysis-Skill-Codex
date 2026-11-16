@@ -38,9 +38,12 @@ object once:
   Flag unexplained jargon, missing steps, defensive tails, repetition, and
   hypothetical defects. Retain only paper-stated or directly derived architectural
   defects, with evidence. Apply the shared `terminology` and `reasoning` criteria.
-- **Paper structure:** section 2 has the three one-sentence answers, focused
-  mechanism Q&A, and concrete related-work differences. Questions explain design
-  choices without duplicating full calculations. Section 4 states overall inputs
+- **Paper structure:** section 2 has the three one-sentence answers, research
+  Q&A, and concrete related-work differences. Check Q&A against paper-content.md:
+  every required aspect and key module has a substantive answer whose background,
+  intermediate reasoning, and examples make the explanation understandable on its
+  own. Record missing coverage under `coverage` and shallow or skipped explanations
+  under `reasoning`. Section 4 states overall inputs
   and outputs before the graph and module table. Check module names, boundaries,
   data-flow order, and detail links across sections 4 and 5; distinguish defining
   properties from executed operations.

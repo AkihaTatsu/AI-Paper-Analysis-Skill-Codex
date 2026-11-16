@@ -96,7 +96,20 @@ def demonstration_errors(
         offset = start + passage.index(quote)
         span = (offset, offset + len(quote))
         target_span = target_spans.get(identifier)
-        if target_span and span[0] < target_span[1] and target_span[0] < span[1]:
+        inline_walkthrough = (
+            by_id[identifier]["kind"] == "formula"
+            and re.fullmatch(r"\$[^$\n]+\$", by_id[identifier]["target_quote"])
+            and target_span is not None
+            and span[0] <= target_span[0]
+            and target_span[1] <= span[1]
+            and quote.replace(by_id[identifier]["target_quote"], "", 1).strip()
+        )
+        if (
+            target_span
+            and span[0] < target_span[1]
+            and target_span[0] < span[1]
+            and not inline_walkthrough
+        ):
             errors.append(f"demonstration: {identifier} example overlaps its target")
         example_spans.append(span)
     for identifier in by_id.keys() - seen:

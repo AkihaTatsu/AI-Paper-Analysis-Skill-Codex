@@ -1,7 +1,7 @@
 # Source Acquisition and Validation Role
 
 Read only the confirmed identity/provider batch and this role. Use the calling
-Skill's shared CLI; a missing original never requires a sibling Skill. Ask no
+Skill's shared CLI to acquire missing originals. Ask no
 user questions: return ambiguity, OCR needs, access problems, and scope changes
 to the coordinator. The coordinator holds the global accepted-count/candidate
 budget, per-host concurrency, and publication authority. Workers cannot expand

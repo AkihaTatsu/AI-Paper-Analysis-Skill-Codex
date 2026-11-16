@@ -7,26 +7,24 @@ return unresolved decisions to it without starting their own questionnaires.
 
 For a new task without an accepted plan, check the conversation's current mode.
 If it is not Plan Mode, remind the user in their language to enter Plan Mode
-and complete the task plan before execution. Do not start downloads, report
-writing, or publication yet. The Skill cannot switch the host's mode.
+and complete the task plan before execution. Start downloads, report writing,
+and publication after plan acceptance and host permission to execute.
 
-If an accepted plan already exists, resume it when execution is permitted.
-Do not restart planning or repeat approval merely because a task resumed or
-reached another workflow step.
+If an accepted plan already exists, resume it when execution is permitted and
+continue through its remaining steps.
 
 ## Gather facts and settle decisions
 
 Inspect the request, existing artifacts, and relevant source identities before
 asking. Reuse established answers. Ask only about applicable decisions that
 cannot be resolved from evidence and materially affect the work. Prefer an
-available question tool; its absence does not block planning or require a new
-approval procedure.
+available question tool, or ask directly in the conversation.
 
 When the host permits planning writes, use one system-temporary workspace for
 bounded source downloads, extraction, page renders, and planning notes. Keep
 formal outputs unchanged. If the host prohibits those writes, plan the needed
-preparation and perform it at the start of execution without another planning
-round. Reuse existing originals and prepared files.
+preparation and perform it at the start of execution. Reuse existing originals
+and prepared files.
 
 Generated reports and explanations support Chinese and English only. Record
 `output_language` as `zh` or `en`, optionally with locale/script subtags. If another
@@ -67,8 +65,7 @@ space, link the temporary `instructions.md` described in
 
 The user's explicit acceptance of the plan, including an instruction to
 implement it, supplies confirmation. Record `plan_confirmed=true` and the
-actual `approved_at` time in the version 2 run specification; no particular
-question tool or second approval is required. A draft uses
+actual `approved_at` time in the version 2 run specification. A draft uses
 `plan_confirmed=false` and may omit `approved_at`. Execute only when the host
 allows execution.
 
@@ -76,14 +73,14 @@ allows execution.
 
 Resolve source identities, complete mandatory source inventories, and review
 classification assignments within the accepted criteria. Fill in these facts
-as they become known; they do not constitute a new authorization stage. Before
+as they become known within that scope. Before
 a dependent report or comparison, require its actual verified inputs and the
 existing evidence and eligibility checks.
 
-Continue through writing, review, revision, and authorized publication without
-asking the user to start the next step. Ask only when a necessary decision
+Continue directly through writing, review, revision, and authorized publication.
+Ask only when a necessary decision
 cannot be resolved within the accepted plan or would exceed its authorization;
 continue unaffected work. A missing source follows the agreed limitation
 policy. An unresolved correctness failure remains visible and blocks the
-affected output, not unrelated work. Do not require a return to Plan Mode for
-routine findings or changes to derived source lists.
+affected output; continue independent work and incorporate routine findings into
+the current plan.

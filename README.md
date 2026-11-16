@@ -13,7 +13,7 @@ All four Skills are explicit-only: invoke `$ai-paper-analysis`, `$ai-paper-analy
 
 ## Installation
 
-Use Python 3.11 or newer and uv. Report capabilities also require Node.js 22.12 or newer and npm. Windows, macOS and Linux use the same Python installer; Bash is not required. Optional OCR, SOPS/age and access credentials retain their explicit setup and authorization boundaries.
+Use Python 3.11 or newer and uv. Report capabilities also require Node.js 22.12 or newer and npm. Windows, macOS and Linux use the same Python installer. Optional OCR, SOPS/age and access credentials retain their explicit setup and authorization boundaries.
 
 From this checked-out repository, install one or more independent Skills:
 
@@ -44,7 +44,7 @@ The shared [prose rules](contracts/prose-rules.json) are the sole maintained
 catalog for defensive wording, local grammar, and stock phrasing. Every rule
 contains Chinese and English implementations, or an explicit language-specific
 non-applicability reason. Update both entries together. The runtime reads this
-JSON; it does not maintain a second phrase list. Use `audit-report-style REPORT`
+JSON. Use `audit-report-style REPORT`
 to locate candidates. It returns a nonzero exit code when review is required,
 without changing the report. `prepare-report` includes candidate diagnostics as
 warnings so the existing semantic review can handle them in one batch.
@@ -56,11 +56,11 @@ grammatical necessity; a source citation alone does not justify filler. Final
 validation rescans the text and rejects uncovered or stale entries. Changes to
 rule data invalidate prior reviews through the semantic policy digest.
 
-For a new task without an accepted plan, the Skill first asks the user to enter Plan Mode if needed. Planning settles the applicable search, evidence, OCR, classification, revision, and publication decisions. Once the user accepts the complete plan and the host allows execution, the coordinator continues through delivery and cleanup without stage-by-stage confirmations. An existing accepted plan can be resumed directly. Only essential decisions outside that scope need further user input.
+For a new task without an accepted plan, the Skill first asks the user to enter Plan Mode if needed. Planning settles the applicable search, evidence, OCR, classification, revision, and publication decisions. Once the user accepts the complete plan and the host allows execution, the coordinator continues directly through delivery and cleanup. An existing accepted plan can be resumed directly. Only essential decisions outside that scope need further user input.
 
-Where the host permits planning writes, source downloads, extraction, page renders, and optional task-specific `instructions.md` notes share one system-temporary workspace. Otherwise preparation starts during execution without another planning round. The plan links any instruction file, relevant workers read it, and execution reuses prepared files. Publish retained sources and outputs before cleaning the workspace and completed run state. One writer owns each complete report.
+Where the host permits planning writes, source downloads, extraction, page renders, and optional task-specific `instructions.md` notes share one system-temporary workspace. Otherwise preparation starts during execution. The plan links any instruction file, relevant workers read it, and execution reuses prepared files. Publish retained sources and outputs before cleaning the workspace and completed run state. One writer owns each complete report.
 
-Prepare all required evidence and original-page formula checks, then write the complete draft before repair or review. Reports assume only basic calculus, linear algebra, probability, and statistics. Specialist terms receive a plain explanation and a concrete analogy or small worked example on first use. The shared [report style](roles/report-style.md) removes filler and repeated explanations while retaining necessary reasoning, method coverage, equations, experiments, and evidence. Core content contains three one-sentence answers, selected mechanism Q&A, and related-work differences. Questions explain design choices and link to full calculations. Overall inputs and outputs precede the flow graph and module table; module names, boundaries, and data-flow order match the detailed explanations. Length follows the content; there is no word cap.
+Prepare all required evidence and original-page formula checks, then write the complete draft before repair or review. Reports assume only basic calculus, linear algebra, probability, and statistics. Specialist terms receive a plain explanation and a concrete analogy or small worked example on first use. The shared [report style](roles/report-style.md) removes filler and repeated explanations while retaining necessary reasoning, method coverage, equations, experiments, and evidence. Core content contains three one-sentence answers, research Q&A, and related-work differences. The [Q&A contract](roles/paper-content.md#research-qa) covers foundations, the research problem, innovations, key modules, evidence, distinctive value, and applications. Each answer develops its background and reasoning with concrete examples; question count follows coverage. Overall inputs and outputs precede the flow graph and module table; module names, boundaries, and data-flow order match the detailed explanations. Length follows the explanation needed.
 
 ```text
 ai-paper-analysis-runtime tools list
@@ -74,9 +74,9 @@ ai-paper-analysis-runtime prepare-report candidate.md --report-kind paper --publ
 
 Completed concise source coverage can be reused from the project-local `.ai-paper-analysis/evidence-cache/` through `lookup-evidence-cache` and `record-evidence-cache`. Cache identity includes source bytes, evidence policy, source class, and coverage scope; original files, extracted/full text, and report prose are never copied into it.
 
-One semantic review task covers the complete draft's accuracy and readability. Exact patches apply automatically. Only patch-null or failed residuals go once to a fresh central reviser with their affected evidence; it does not inherit the writer's source corpus or create a disposition artifact. The original reviewer then inspects the complete diff and cross-section dependencies once. Use temporary baselines, diffs, coverage matrices, and issue records instead of repeated corpus handoffs. Bind the final assessment with `record-content-review`, then run `audit-paper-report` or `audit-category-report` with `--content-review` and the eventual `--publication-path`. See command `--help` and the report contracts; a receipt attests to actual review, not programmatic proof of correctness.
+One semantic review task covers the complete draft's accuracy and readability. Exact patches apply automatically. Only patch-null or failed residuals go once to a fresh central reviser with their affected evidence; it does not inherit the writer's source corpus or create a disposition artifact. The original reviewer then inspects the complete diff and cross-section dependencies once. Use temporary baselines, diffs, coverage matrices, and issue records instead of repeated corpus handoffs. Bind the final assessment with `record-content-review`, then run `audit-paper-report` or `audit-category-report` with `--content-review` and the eventual `--publication-path`. See command `--help` and the report contracts for review binding and validation.
 
-Structure and content status are separate. An unreviewed legacy report is checked when needed; it is not silently deemed complete. Only currently reviewed complete reports qualify for comparison. A genuinely partial report may be published within its approval after every structural gate passes, with visible limitations. `record-state --content-review` retains the compact bound review for later reuse; changes to the report, reviewed sources or policy invalidate it. Reviews made before the current plain-language policy must be renewed when the report is next used. Detailed issues and evidence packets remain temporary. Revision promotion follows the initial plan's explicit authorization; otherwise the candidate is delivered.
+Structure and content status are separate. Review an unreviewed legacy report when it is needed. Only currently reviewed complete reports qualify for comparison. A genuinely partial report may be published within its approval after every structural gate passes, with visible limitations. `record-state --content-review` retains the compact bound review for later reuse; changes to the report, reviewed sources or policy invalidate it. Reviews made before the current plain-language policy must be renewed when the report is next used. Detailed issues and evidence packets remain temporary. Revision promotion follows the initial plan's explicit authorization; otherwise the candidate is delivered.
 
 ## Repository layout
 

@@ -12,8 +12,7 @@ whose PDF/report files exist, semantic identifiers agree, and paper report
 audit is `structure-valid` with a valid content review and
 `content_status=complete`. Accept a current review bound to the artifact and
 source versions through an active receipt or the report's compact artifact
-state. A legacy report without either must be reviewed when it is needed,
-not silently treated as complete. The coordinator
+state. Review a legacy report with missing review state when it is needed. The coordinator
 can arrange missing paper reports with the shared whole-paper writer when
 included in the accepted plan. Do not silently repair an excluded input or infer permission
 to create its replacement. Excluded IDs and reasons go in the completion

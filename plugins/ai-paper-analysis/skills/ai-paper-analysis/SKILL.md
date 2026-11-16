@@ -10,13 +10,12 @@ Use only when explicitly invoked as `$ai-paper-analysis`.
 Identify the smallest necessary workflow: discovery/acquisition, paper
 interpretation/revision, category comparison, or their approved combination.
 The named Finder, Interpreter, and Comparator Skills are alternative user
-entrypoints. Use the shared roles and bundled CLI directly; no workflow
-requires another Skill to be installed or invoked.
+entrypoints. Each workflow uses its bundled shared roles and CLI directly.
 
 For a new task without an accepted plan, if the current mode is not Plan Mode,
 remind the user to enter Plan Mode and finish planning before execution. Start
-no downloads, report writing, or publication until then. With an accepted plan,
-continue or resume execution when the host permits it; do not ask to plan again.
+downloads, report writing, and publication after plan acceptance and host permission
+to execute. Resume an accepted plan directly when execution is permitted.
 
 Read [references/roles/intake.md](references/roles/intake.md) to settle decisions
 in one complete plan, then execute continuously within its accepted scope.

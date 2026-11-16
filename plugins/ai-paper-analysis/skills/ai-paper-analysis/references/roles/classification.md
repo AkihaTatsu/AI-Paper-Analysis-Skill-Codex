@@ -4,8 +4,7 @@ The coordinator reads this role only for requested classification. Workers
 return proposed assignments and ambiguities; the coordinator owns all user
 questions, confirmed atomic replacements, and formal publication.
 
-Classification is optional. Do not create taxonomy or classification artifacts
-when the user did not request them.
+Create taxonomy and classification artifacts only for requested classification.
 
 ## Taxonomy
 
@@ -52,5 +51,4 @@ structurally valid but meaningfully inconsistent manifests.
 
 The compact `<report-stem>.paper-report.json` record carries the published
 review summary. Validate its report hash, source versions, and policy when the
-report is used. Do not require the old temporary receipt to survive cleanup or
-re-review a still-valid report solely because that file was removed.
+report is used. Reuse a valid compact review after temporary receipt cleanup.

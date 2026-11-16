@@ -51,9 +51,8 @@ Include:
 - A reading guide that tells a general reader what to notice and in what order.
 - First-use explanations for specialist terms actually used in the report.
 
-Explain terms in place, following the mathematical foundation and example rules
-in [report-style.md](report-style.md). A short index is optional when it improves
-navigation; do not reproduce the paper's vocabulary as a mandatory glossary.
+Explain report terms in place, following the mathematical foundation and example
+rules in [report-style.md](report-style.md). Add a short index when it helps navigation.
 
 ## 2. Core Content
 
@@ -71,13 +70,20 @@ Use ordinary language here; develop mechanisms below.
 Ground applications and contributions in the sources, preserving whether an
 application is proposed or demonstrated.
 
-### Mechanism Q&A
+### Research Q&A
 
-Select questions that explain the paper's consequential design choices and how
-they affect results; let the paper determine their number. Answer directly with
-the causal steps and a small case where useful. Link to module details for full
-calculations instead of repeating them. Apply the shared terminology and prose
-rules to questions and answers alike.
+Cover the foundations the paper builds on, its research problem, main innovations,
+each key module, experimental evidence, importance and distinctive contribution,
+and downstream applications. Choose enough questions to explain each aspect;
+separate questions with distinct reasoning and merge overlapping ones.
+
+Give a direct answer, explain the necessary background, and develop the steps
+connecting conditions, operations, and consequences. Use concrete scenarios or
+worked numbers to explain abstract ideas. Give each answer the paragraphs needed
+to make its reasoning understandable on its own; link full calculations and module
+details as supporting material. Ground the work's value in specific differences,
+results, and uses, distinguishing proposed applications from demonstrated ones.
+Apply the shared terminology and prose rules to questions and answers alike.
 
 ### Differences from related work
 
@@ -98,15 +104,13 @@ policy and direct attribution; never invent the missing baseline detail.
 Explain each environment setting and assumption, where it appears, how it
 affects the method or claim, and why the paper says or structurally requires it.
 Do not invent necessity arguments. Mark a narrow contextual interpretation as
-interpretation. State actual conditions directly, without appending denials of
-general guarantees or hypothetical reader interpretations.
+interpretation. State actual conditions directly under the shared style rule.
 
 ## 4. End-to-End Flow
 
 Before the graph and module table, state the overall input and output whenever
 the work has them. Describe the actual objects and relevant shapes or units;
-separate training from model use when their inputs or outputs differ. Keep the
-whole-model boundary visible instead of leaving it scattered across module rows.
+separate training from model use when their inputs or outputs differ.
 
 Provide one complete Mermaid flow from input to output. Include state,
 iterations, branches, stopping conditions, and outputs where present. Wrap
@@ -140,8 +144,7 @@ Give every paper-appropriate module its own level-three subsection. For each:
 
 - State its inputs and outputs.
 - Explain its central idea, mechanism, role, connection to adjacent modules,
-  and necessary operating conditions as a complete narrative, following the
-  shared prose rule rather than appending a scope disclaimer.
+  and necessary operating conditions as a complete narrative under the shared style rule.
 - Include every module-core equation required to define the method, objective,
   update, constraint, or key conclusion.
 - Apply the formula-card protocol immediately after each equation.
@@ -214,11 +217,9 @@ Separate:
 - Future directions stated by the paper.
 - Independently verified related papers when future-work search is approved.
 
-State concrete causes and consequences under the shared style rule. A missing
-general guarantee or a restatement of method scope is not itself a defect.
-State defects directly under the shared style rule. Do not fill the section
-with hypothetical objections. Report experimental failures in section 6 and
-avoid repeating their full explanation here.
+State each defect's concrete cause, condition, and consequence under the shared
+style rule. Explain experimental failures in section 6 and refer to those
+findings here when they motivate future work.
 
 Related papers require a separate search budget in the initial plan and original full
 text. Explain similarities, differences, and relationship to the target paper

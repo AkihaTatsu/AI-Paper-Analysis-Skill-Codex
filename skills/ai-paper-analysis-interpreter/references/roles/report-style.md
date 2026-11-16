@@ -14,29 +14,28 @@ diagram labels, and formula explanations in both paper and category reports.
 
 At the first use of each necessary specialist term, give its plain meaning and
 a concrete analogy, small simulation, or worked numerical example. Explain the
-operation, not just a renamed object. Use the plain name consistently afterward;
+operation and how the example maps to it. Use the plain name consistently afterward;
 briefly recall an earlier explanation only when needed. Independently explained
 formulas and complete input/output flows also need worked demonstrations, even
 when their terms have already been introduced. Follow the formula and paper
-content contracts for their concrete inputs, operations, and results. An acronym expansion or
-a definition made of other unexplained terms is insufficient. Avoid introducing
-terms that the explanation does not need.
+content contracts for their concrete inputs, operations, and results. Explain
+acronyms and definitions with familiar words, introducing terms as the explanation needs them.
 
 Preserve method and experiment coverage, equations, numbers, units, conditions,
 source attribution, and evidence locators. Retain the intermediate steps needed
 to follow a conclusion. Introduce illustrative numbers as an example, keeping
 them distinct from experimental measurements. Explain a paper's specific
-contribution through supported differences, without inventing uniqueness or
-turning a proposed application into a demonstrated result.
+contribution through supported differences and distinguish proposed applications
+from demonstrated results.
 
 ## Bilingual checks
 
 Output supports Chinese and English only. The sole executable rule catalog is
 [prose-rules.json](../contracts/prose-rules.json). Maintain each problem category
-in both languages using natural constructions, not literal translations. A
+in both languages using natural constructions. A
 language-specific subrule must state why the other language is inapplicable.
 The scanner extracts candidates; the reviewer judges both matches and unlisted
-paraphrases. A clean scan does not replace reading the prose.
+paraphrases while reading the complete prose.
 
 ## Information and structure
 
@@ -47,21 +46,16 @@ the report was assembled or checked. Remove defensive tails such as "this does
 not mean", "cannot establish", and "does not prove" that rebut an unasked
 objection. Express the actual condition or finding directly. Keep an informative
 comparison only when both sides supply facts needed to understand the method,
-result, or mathematical relation. Source support and logical validity alone do
-not make a sentence useful. Apply this equally to author-written caveats and
-writer-added deductions. Introduce an example once; do not add a second sentence
-defending its illustrative status.
+result, or mathematical relation. Apply this equally to author-written caveats
+and writer-added deductions. Introduce each example once and proceed with its
+inputs, operations, and result.
 
 Report a defect only when the paper explicitly identifies it or it follows
 directly from the architecture. State the concrete cause and consequence; for
 an architectural deduction, show the short reasoning and cite its premises.
-A defect must identify a concrete mechanism, condition, and consequence. Merely
-not claiming a broader theorem or not checking a larger problem is not a defect
-to append. Do not turn a scope description into a denial of guarantees.
-Do not add hypothetical failure lists or general warnings. Preserve actual
+Keep limitations tied to these concrete mechanisms and evidence. Preserve actual
 negative results, conflicting values, and missing measurements as direct facts
-at the relevant location. Attribute a target-only account to the target authors
-instead of appending a disclaimer.
+at the relevant location. Attribute a target-only account directly to the target authors.
 
 Organize paragraphs around ideas, with clear referents and connected reasoning.
 Merge fragments that merely label an input, operation, or result. Choose the
@@ -71,8 +65,8 @@ switch locally to a clearer example or numerical calculation when needed.
 
 Give each representation a purpose: diagrams show connections, tables present
 values or comparisons, and prose explains mechanisms and conclusions. In paper
-reports, mechanism Q&A explains design choices, walkthroughs trace a case, and
-formula cards work through calculations. Use cross-references for repeated
+reports, research Q&A develops understanding under the paper-content contract,
+walkthroughs trace a case, and formula cards work through calculations. Use cross-references for repeated
 explanations while retaining each formula's demonstration and the flow's
 intermediate outputs. Avoid reciting table cells or announcing a visible layout.
 
@@ -84,7 +78,7 @@ closers, and dashes used to string clauses together. Prefer ordinary punctuation
 in prose; preserve punctuation in quotations, titles, names, numerical ranges,
 mathematics, code, commands, paths, and link targets.
 
-Judge scanner candidates in context; do not treat a match as an automatic deletion or a style score.
+Judge scanner candidates in context and record a justified edit or retention.
 Technical uses, informative comparisons, and factual conditions remain.
 Review every first-use explanation against the stated mathematical foundation
 and check that its example actually explains the operation. Check defensive
@@ -92,4 +86,4 @@ wording semantically; deleting a negative word alone can change a true claim.
 Review terminology problems under `terminology`; review scanner candidates, repetition, filler,
 unclear organization, and missing reasoning under `reasoning`. Give an exact
 passage and repair condition through the existing issue workflow. Check that
-the repair preserves facts and evidence; no additional review round is needed.
+the repair preserves facts and evidence during that review.

@@ -44,15 +44,14 @@ syntax requires.
 After the complete report exists, run `prepare-report` with its report kind and
 intended publication path. It includes the shared direction fixer; the
 standalone `fix-mermaid-direction <candidate.md>` and its `--dry-run` remain
-available for a focused direction change. These commands prepare a candidate
-and do not bypass semantic review or publication approval.
+available for a focused direction change. Follow candidate preparation with
+semantic review and publication under the accepted plan.
 
 Use the official locked Mermaid parser and the shared deterministic TB/LR
 layout estimates. Prefer width <= height, then smaller width and height; if
 neither qualifies, prefer the smaller width/height ratio and then width. Keep
-the current direction on an exact tie or a zero-/one-node graph. Do not choose
-from node counts or graph topology. Estimates are not measured rendered SVG
-dimensions, and final browser rendering is still required.
+the current direction on an exact tie or a zero-/one-node graph. Use the estimated
+dimensions for direction selection and verify the rendered graph in the final browser audit.
 
 The read-only audit uses those same estimates and blocks a mismatched direction.
 Describe the flow using node or module names instead of fixed left/right or
@@ -68,13 +67,12 @@ do not replace a missing required parser, renderer, or browser with a heuristic.
 Require Markdownlint with `MD013` disabled, CommonMark/GFM parsing,
 Obsidian-profile checks, MkDocs strict build, MathJax, KaTeX, Mermaid rendering,
 relative-link checks, and browser console checks. A syntax or rendering failure
-blocks publication. A content-level `partial` report is not an exception to
-this gate.
+blocks publication for both complete and partial reports.
 
 Run `audit-paper` or `audit-category-report` with a current `--content-review`
 receipt and the intended `--publication-path`. Link validity is judged at that
 publication location. The receipt binds an actual whole-report semantic review
-to the candidate and sources; command success cannot replace the review.
+to the candidate and sources.
 Final content validation rescans bilingual prose candidates and requires exact,
 individually justified retention records; unresolved candidates block publication.
 Final content validation also requires a demonstration for each planned formula

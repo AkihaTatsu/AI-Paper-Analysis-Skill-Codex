@@ -28,8 +28,7 @@ only when the corresponding passage changes, retaining all required objects.
 Write the whole report in one pass using the approved language and main scenario,
 with clearer local examples where useful. Apply the shared bilingual prose
 rules during drafting; factual conditions and results replace defensive tails.
-Explain terms at first use; a source
-inventory does not require a glossary of every term in the source.
+Explain report terms at first use.
 Apply the linked content, formula, and evidence contracts while drafting; do not
 stop for paragraph review or chapter approval. Stable evidence markers belong
 on the factual sentence they support, and `prepare-report --evidence` owns their
