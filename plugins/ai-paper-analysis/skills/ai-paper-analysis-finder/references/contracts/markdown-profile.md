@@ -47,20 +47,21 @@ standalone `fix-mermaid-direction <candidate.md>` and its `--dry-run` remain
 available for a focused direction change. Follow candidate preparation with
 semantic review and publication under the accepted plan.
 
-Use the official locked Mermaid parser and the shared deterministic TB/LR
-layout estimates. Prefer width <= height, then smaller width and height; if
+Use the same locked Mermaid version for parsing, direction selection, and final
+rendering. Render TB and LR in the browser and compare their SVG dimensions.
+Prefer width <= height, then smaller width and height; if
 neither qualifies, prefer the smaller width/height ratio and then width. Keep
-the current direction on an exact tie or a zero-/one-node graph. Use the estimated
-dimensions for direction selection and verify the rendered graph in the final browser audit.
+the current direction on an exact tie or a zero-/one-node graph. Check the whole
+graph, including subgraph arrangement and internal flow, in the final browser audit.
 
-The read-only audit uses those same estimates and blocks a mismatched direction.
+Preparation, read-only audit, and final rendering share this direction check.
+A mismatched direction blocks publication.
 Describe the flow using node or module names instead of fixed left/right or
 top/bottom positions: automatic preparation may change the orientation. Review
 any remaining spatial wording against the prepared graph before publication.
 Wrap paper modules in `subgraph`. Avoid raw HTML and formulas in labels.
 Every Mermaid block must pass the official locked `mermaid.parse()` check.
-Unsupported layout estimation or parser/rendering failure blocks publication;
-do not replace a missing required parser, renderer, or browser with a heuristic.
+Parser, browser, rendering, or dimension-measurement failure blocks publication.
 
 ## Publication gate
 

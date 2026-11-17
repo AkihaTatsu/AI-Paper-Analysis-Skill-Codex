@@ -45,9 +45,9 @@ prepare-report CANDIDATE --report-kind paper|category --publication-path FORMAL_
 ```
 
 This invocation performs safe deterministic repairs and checks section-bound
-evidence coverage without launching the browser. The writer handles any listed
-coverage omissions in one batch and makes one fast recheck. It does not perform
-an open-ended coverage or polishing sweep. A remaining failure is returned as a
+evidence coverage, using browser-rendered dimensions for Mermaid direction.
+The writer handles any listed coverage omissions in one batch and makes one fast
+recheck. It does not perform an open-ended coverage or polishing sweep. A remaining failure is returned as a
 blocker rather than hidden or retried indefinitely.
 
 ## 3. Review once and revise residuals once

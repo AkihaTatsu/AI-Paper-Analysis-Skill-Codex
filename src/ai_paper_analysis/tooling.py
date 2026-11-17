@@ -272,14 +272,14 @@ def _refresh_renderer_program(source: Path, destination: Path) -> None:
 def _require_node() -> str:
     node = shutil.which("node")
     if node is None:
-        raise ToolBootstrapError("Node.js >=22.12 is required for report tools")
+        raise ToolBootstrapError("Node.js >=22.13 is required for report tools")
     raw = _capture([node, "--version"]).lstrip("v")
     try:
         version = tuple(int(part) for part in raw.split(".")[:2])
     except ValueError as error:
         raise ToolBootstrapError(f"Could not parse Node.js version: {raw}") from error
-    if version < (22, 12):
-        raise ToolBootstrapError(f"Node.js >=22.12 is required; found {raw}")
+    if version < (22, 13):
+        raise ToolBootstrapError(f"Node.js >=22.13 is required; found {raw}")
     return node
 
 

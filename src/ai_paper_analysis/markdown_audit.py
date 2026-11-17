@@ -328,7 +328,7 @@ def _renderer_script_path() -> Path | None:
 
 
 def _mermaid_check_records(blocks: list[tuple[int, str]]) -> list[dict[str, Any]]:
-    """Return official syntax and pure layout estimates through one Node process."""
+    """Return official syntax and rendered layout dimensions through one Node process."""
 
     if not blocks:
         return []
@@ -387,10 +387,10 @@ def _record_errors(record: dict[str, Any], *, enforce_direction: bool) -> list[s
         message = " ".join(str(record.get("message") or "parse error").split())[:500]
         return [f"line {line}: invalid Mermaid syntax: {message}"]
     if record.get("layout_error"):
-        return [f"line {line}: Mermaid layout estimation failed: {record['layout_error']}"]
+        return [f"line {line}: Mermaid layout measurement failed: {record['layout_error']}"]
     layout = record.get("layout")
     if not isinstance(layout, dict):
-        return [f"line {line}: Mermaid layout estimate unavailable"]
+        return [f"line {line}: Mermaid layout measurement unavailable"]
     if layout.get("skipped"):
         return []
     try:
@@ -423,11 +423,11 @@ def _record_errors(record: dict[str, Any], *, enforce_direction: bool) -> list[s
                 raise ValueError("invalid dimensions")
         tb, lr = layout["sizes"]["TB"], layout["sizes"]["LR"]
     except (KeyError, TypeError, ValueError) as error:
-        return [f"line {line}: invalid Mermaid layout estimate ({error})"]
+        return [f"line {line}: invalid Mermaid layout measurement ({error})"]
     if enforce_direction and layout["changed"]:
         return [
             f"line {line}: Mermaid direction should be {layout['recommended']}; "
-            f"estimated TB={tb['width']:g} x {tb['height']:g}, "
+            f"rendered TB={tb['width']:g} x {tb['height']:g}, "
             f"LR={lr['width']:g} x {lr['height']:g}; run fix-mermaid-direction"
         ]
     return []
@@ -439,7 +439,7 @@ def _mermaid_syntax_audit(
     require_module_subgraphs: bool = False,
     context: AuditContext | None = None,
 ) -> tuple[list[str], list[str]]:
-    """Check syntax and estimated direction without modifying the report."""
+    """Check syntax and rendered direction without modifying the report."""
 
     try:
         records = _check_records(blocks, context)

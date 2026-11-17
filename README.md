@@ -13,7 +13,7 @@ All four Skills are explicit-only: invoke `$ai-paper-analysis`, `$ai-paper-analy
 
 ## Installation
 
-Use Python 3.11 or newer and uv. Report capabilities also require Node.js 22.12 or newer and npm. Windows, macOS and Linux use the same Python installer. Optional OCR, SOPS/age and access credentials retain their explicit setup and authorization boundaries.
+Use Python 3.11 or newer and uv. Report capabilities also require Node.js 22.13 or newer and npm. Windows, macOS and Linux use the same Python installer. Optional OCR, SOPS/age and access credentials retain their explicit setup and authorization boundaries.
 
 From this checked-out repository, install one or more independent Skills:
 
@@ -70,7 +70,7 @@ ai-paper-analysis-runtime render-pdf-pages paper.pdf temporary-pages --pages 3-5
 ai-paper-analysis-runtime prepare-report candidate.md --report-kind paper --publication-path papers/report.md --evidence packet.json --coverage-matrix coverage.json
 ```
 
-`prepare-report` repairs deterministic defects, generates reserved evidence footnotes from `--evidence` packets, and collects preflight failures without launching the browser. `--coverage-matrix` checks that each temporary coverage row cites its required evidence in the intended numbered section; `--review-issues` applies exact review patches, then checks consolidated obsolete literals and required evidence. `--dry-run` checks prepared bytes without changing the input. The final `audit-paper-report` or `audit-category-report` performs the workflow's only complete browser render. TB/LR direction, including a missing declaration direction, uses the deterministic layout estimator.
+`prepare-report` repairs deterministic defects, generates reserved evidence footnotes from `--evidence` packets, and collects preflight failures. Mermaid preparation uses the browser to measure TB/LR layouts. `--coverage-matrix` checks that each temporary coverage row cites its required evidence in the intended numbered section; `--review-issues` applies exact review patches, then checks consolidated obsolete literals and required evidence. `--dry-run` checks prepared bytes without changing the input. The final `audit-paper-report` or `audit-category-report` performs the workflow's only complete browser render. TB/LR direction, including a missing declaration direction, uses actual SVG dimensions from the same locked Mermaid version as the final renderer.
 
 Completed concise source coverage can be reused from the project-local `.ai-paper-analysis/evidence-cache/` through `lookup-evidence-cache` and `record-evidence-cache`. Cache identity includes source bytes, evidence policy, source class, and coverage scope; original files, extracted/full text, and report prose are never copied into it.
 

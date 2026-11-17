@@ -29,6 +29,7 @@ import "@mathjax/src/js/input/tex/newcommand/NewcommandConfiguration.js";
 import "@mathjax/src/js/input/tex/textmacros/TextMacrosConfiguration.js";
 import "@mathjax/src/js/input/tex/configmacros/ConfigMacrosConfiguration.js";
 import { renderMermaid } from "@mermaid-js/mermaid-cli";
+import { measureMermaidLayout } from "./check_mermaid.mjs";
 
 const rendererRoot = resolve(fileURLToPath(new URL("..", import.meta.url)));
 
@@ -297,8 +298,16 @@ export async function renderReport(report, overrides = {}) {
     try {
       for (const [index, diagram] of diagrams.entries()) {
         try {
-          const { data } = await (overrides.renderMermaid || renderMermaid)(browser, diagram, "svg");
-          writeFileSync(join(temporary, `diagram-${index}.svg`), data);
+          const render = overrides.renderMermaid || renderMermaid;
+          const layout = await measureMermaidLayout(diagram, browser, render);
+          if (layout.skipped) {
+            await render(browser, diagram, "svg");
+          } else if (layout.changed) {
+            const { TB, LR } = layout.sizes;
+            throw new Error(`direction should be ${layout.recommended}; ` +
+              `rendered TB=${TB.width} x ${TB.height}, LR=${LR.width} x ${LR.height}; ` +
+              "run fix-mermaid-direction");
+          }
         } catch (error) {
           errors.push(`Mermaid diagram ${index + 1}: ${compactError(error)}`);
         }
